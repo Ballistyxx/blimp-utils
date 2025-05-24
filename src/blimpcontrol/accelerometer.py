@@ -7,25 +7,32 @@ from typing import List
 from smbus2 import SMBus, i2c_msg
 
 # Attempt to import BMI270 specific configurations and registers.
-# These files (bmi270_config.py, bmi270_registers.py) are expected to be
+# These files (config_file.py, registers.py) are expected to be
 # in the same directory as this file, or accessible via PYTHONPATH.
-# They should be copied from the source_libraries/BMI270/ directory.
 try:
-    from .bmi270_config import bmi270_config_file
-    from .bmi270_registers import (
-        CHIP_ID_ADDRESS, BMI270_CHIP_ID,
+    from .config_file import bmi270_config_file # Changed from .bmi270_config
+    from .registers import (                     # Changed from .bmi270_registers
+        CHIP_ID_ADDRESS, # BMI270_CHIP_ID, # BMI270_CHIP_ID is not in registers.py, it should be defined or imported elsewhere if needed
         CMD, PWR_CONF, PWR_CTRL,
         INIT_CTRL, INIT_ADDR_0, INIT_ADDR_1, INIT_DATA,
         INTERNAL_STATUS,
         ACC_CONF, ACC_RANGE,
         ACC_X_7_0, ACC_Y_7_0, ACC_Z_7_0, # LSB registers for raw data
-        # Constants for configuration values
-        ACC_ODR_100, ACC_BWP_NORMAL, ACC_RANGE_2G
+        # Constants for configuration values from definitions.py might be needed here
+        # ACC_ODR_100, ACC_BWP_NORMAL, ACC_RANGE_2G # These are in definitions.py
     )
+    # It seems BMI270_CHIP_ID and other constants like ACC_ODR_100 might be better placed
+    # in registers.py or a new bmi270_defs.py if they are specific to the chip's interface
+    # For now, let's define BMI270_CHIP_ID here if it's static, or ensure it's in registers.py
+    BMI270_CHIP_ID = 0x24 # Standard BMI270 Chip ID
+    # For ACC_ODR_100, ACC_BWP_NORMAL, ACC_RANGE_2G, these are typically part of a definitions file.
+    # Let's assume they will be imported from a definitions module or defined if not available from registers.py
+    # If your registers.py doesn't have them, you might need to add them or import from definitions.py
+    from .definitions import ACC_ODR_100, ACC_BWP_NORMAL, ACC_RANGE_2G
+
 except ImportError as e:
-    print("ERROR: Could not import bmi270_config.py or bmi270_registers.py.")
-    print("Please ensure these files are copied from 'source_libraries/BMI270/'")
-    print("to the 'src/blimpcontrol/' directory.")
+    print("ERROR: Could not import config_file.py or registers.py, or specific constants from them.")
+    print("Please ensure these files are present in the 'src/blimpcontrol/' directory and contain the necessary variables.")
     print(f"Import error: {e}")
     raise
 
@@ -306,7 +313,7 @@ if __name__ == '__main__':
             time.sleep(0.5)
 
     except ImportError:
-        print("ImportError: Could not run example. Ensure BMI270 config/register files are accessible.")
+        print("ImportError: Could not run example. Ensure BMI270 config/register/registers.py files are accessible.")
         print("Try copying them to src/blimpcontrol/ and run as part of the package.")
     except IOError as e:
         print(f"IOError: {e}")
