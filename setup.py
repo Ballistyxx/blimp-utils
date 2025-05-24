@@ -24,7 +24,7 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: System :: Hardware :: Hardware Drivers",
     ],
-    python_requires='>=3.10',
+    python_requires='>=3.9',
     install_requires=[
         # Add any hardware-specific libraries here if they are pip-installable
         # e.g., 'RPi.GPIO', 'smbus2'
