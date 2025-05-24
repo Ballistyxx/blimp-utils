@@ -2,53 +2,13 @@
 Motor module for the blimpcontrol library.
 """
 
-from typing import Literal, Union # Add Union
+from typing import Literal, Union
 import time
+import RPi.GPIO as GPIO
 
-# In a real scenario, you would use a library like RPi.GPIO
-# For simulation purposes, we'll mock GPIO operations.
-try:
-    import RPi.GPIO as GPIO
-    GPIO.setmode(GPIO.BCM) # Or GPIO.BOARD
-    GPIO.setwarnings(False)
-    IS_RASPBERRY_PI = True
-except (ImportError, RuntimeError):
-    print("RPi.GPIO not available. Simulating GPIO operations.")
-    IS_RASPBERRY_PI = False
-    # Mock GPIO class for non-Pi environments
-    class MockGPIO:
-        OUT = "out"
-        BCM = "bcm"
-        HIGH = 1
-        LOW = 0
-        def __init__(self):
-            self._pin_states = {}
-            self._pin_modes = {}
-
-        def setmode(self, mode):
-            print(f"MockGPIO: setmode({mode})")
-
-        def setwarnings(self, flag):
-            print(f"MockGPIO: setwarnings({flag})")
-
-        def setup(self, pin, mode):
-            print(f"MockGPIO: setup({pin}, {mode})")
-            self._pin_modes[pin] = mode
-            self._pin_states[pin] = self.LOW # Default to LOW
-
-        def output(self, pin, state):
-            if pin not in self._pin_modes or self._pin_modes[pin] != self.OUT:
-                raise RuntimeError(f"Pin {pin} not set up for output.")
-            print(f"MockGPIO: output({pin}, {state})")
-            self._pin_states[pin] = state
-
-        def cleanup(self):
-            print("MockGPIO: cleanup()")
-            self._pin_states = {}
-            self._pin_modes = {}
-
-    GPIO = MockGPIO()
-
+# Setup GPIO mode and warnings
+GPIO.setmode(GPIO.BCM) # Or GPIO.BOARD
+GPIO.setwarnings(False)
 
 class Motor:
     """
@@ -57,8 +17,6 @@ class Motor:
     The DRV8871 typically uses two pins for direction and PWM for speed.
     This class simplifies it to two pins for direction and assumes speed is managed by PWM
     on one of these pins or a separate enable pin if the driver supports it.
-    For this example, we'll treat `pin1` and `pin2` as controlling direction,
-    and speed will be an abstract concept passed to a PWM controller (simulated).
 
     :param pin1: The first GPIO pin connected to the motor driver.
     :type pin1: int
@@ -69,7 +27,7 @@ class Motor:
     """
     VALID_RAMPS = ["linear", "quadratic", "log", "bezier"]
 
-    def __init__(self, pin1: int, pin2: int, pwm_pin: Union[int, None] = None): # Changed to Union
+    def __init__(self, pin1: int, pin2: int, pwm_pin: Union[int, None] = None):
         """
         Initialize the motor.
 
@@ -88,22 +46,22 @@ class Motor:
 
         self.pin1 = pin1
         self.pin2 = pin2
-        self.pwm_pin = pwm_pin if pwm_pin is not None else self.pin1 # Default to PWM on pin1
+        self.pwm_pin_actual = pwm_pin if pwm_pin is not None else self.pin1 # Actual pin for PWM
+        self.pwm_controller = None
 
-        if IS_RASPBERRY_PI or isinstance(GPIO, MockGPIO):
-            GPIO.setup(self.pin1, GPIO.OUT)
-            GPIO.setup(self.pin2, GPIO.OUT)
-            if self.pwm_pin != self.pin1 and self.pwm_pin != self.pin2 : # If dedicated PWM pin
-                 GPIO.setup(self.pwm_pin, GPIO.OUT)
-                 # self.pwm_controller = GPIO.PWM(self.pwm_pin, 1000) # 1kHz frequency
-                 # self.pwm_controller.start(0) # Start with 0% duty cycle
-            # else: # PWM on one of the direction pins
-                # self.pwm_controller = GPIO.PWM(self.pwm_pin, 1000)
-                # self.pwm_controller.start(0)
-            print(f"Motor initialized with pin1={self.pin1}, pin2={self.pin2}, pwm_pin={self.pwm_pin}")
-        else:
-            raise RuntimeError("GPIO library not available or not mocked.")
-
+        GPIO.setup(self.pin1, GPIO.OUT)
+        GPIO.setup(self.pin2, GPIO.OUT)
+        
+        # Setup PWM
+        # If a dedicated pwm_pin is provided and it's different from pin1 and pin2, set it up.
+        # Otherwise, pwm is assumed to be on self.pwm_pin_actual (which defaults to pin1).
+        if self.pwm_pin_actual != self.pin1 and self.pwm_pin_actual != self.pin2:
+            GPIO.setup(self.pwm_pin_actual, GPIO.OUT)
+        
+        self.pwm_controller = GPIO.PWM(self.pwm_pin_actual, 1000) # 1kHz frequency
+        self.pwm_controller.start(0) # Start with 0% duty cycle
+        
+        print(f"Motor initialized with pin1={self.pin1}, pin2={self.pin2}, pwm_pin={self.pwm_pin_actual}")
 
     def _validate_speed(self, speed: int) -> None:
         """
@@ -135,9 +93,9 @@ class Motor:
         :param duty_cycle_percent: The duty cycle (0.0 to 100.0).
         :type duty_cycle_percent: float
         """
-        # self.pwm_controller.ChangeDutyCycle(duty_cycle_percent)
-        print(f"Simulating PWM on pin {self.pwm_pin}: Duty Cycle {duty_cycle_percent:.2f}%")
-
+        if self.pwm_controller:
+            self.pwm_controller.ChangeDutyCycle(duty_cycle_percent)
+        # print(f"PWM on pin {self.pwm_pin_actual}: Duty Cycle {duty_cycle_percent:.2f}%")
 
     def _spin(self, direction: int, speed: int, ramp: str) -> None:
         """
@@ -156,25 +114,23 @@ class Motor:
         duty_cycle = (speed / 255.0) * 100.0
 
         if direction == 0:  # Forward
-            GPIO.output(self.pin1, GPIO.HIGH)
+            GPIO.output(self.pin1, GPIO.HIGH if self.pwm_pin_actual != self.pin1 else GPIO.LOW) # If pin1 is PWM, it's handled by PWM
             GPIO.output(self.pin2, GPIO.LOW)
             print(f"Motor ({self.pin1},{self.pin2}) spinning forward, speed {speed}, ramp {ramp}")
         elif direction == 1:  # Reverse
             GPIO.output(self.pin1, GPIO.LOW)
-            GPIO.output(self.pin2, GPIO.HIGH)
+            GPIO.output(self.pin2, GPIO.HIGH if self.pwm_pin_actual != self.pin2 else GPIO.LOW) # If pin2 is PWM, it's handled by PWM
             print(f"Motor ({self.pin1},{self.pin2}) spinning reverse, speed {speed}, ramp {ramp}")
-        else: # Brake or Coast (depending on driver, DRV8871 brakes with LOW,LOW or HIGH,HIGH)
+        else: # Brake
             GPIO.output(self.pin1, GPIO.LOW)
             GPIO.output(self.pin2, GPIO.LOW)
             print(f"Motor ({self.pin1},{self.pin2}) stopping/braking")
             duty_cycle = 0 # Ensure speed is zero when stopping
-
+        
         # Apply speed via PWM
-        # This is a simplified model. Real ramping would involve changing duty_cycle over time.
         self._set_pwm_duty_cycle(duty_cycle)
         if ramp != "linear": # Placeholder for future ramp implementation
-            print(f"Ramping profile '{ramp}' selected (simulation only).")
-
+            print(f"Ramping profile '{ramp}' selected (actual ramp not implemented).")
 
     def spin_forward(self, speed: int, ramp: str = "linear") -> None:
         """
@@ -187,7 +143,24 @@ class Motor:
         :raises ValueError: if speed or ramp is invalid.
         :example: ``motor.spin_forward(150, ramp="quadratic")``
         """
+        # If pwm_pin is pin1, pin1 controls speed, pin2 direction (LOW for forward)
+        # If pwm_pin is pin2, pin2 controls speed, pin1 direction (HIGH for forward)
+        # If pwm_pin is separate, pin1=HIGH, pin2=LOW for forward
+        if self.pwm_pin_actual == self.pin1:
+            GPIO.output(self.pin2, GPIO.LOW)
+        elif self.pwm_pin_actual == self.pin2:
+             # This case is tricky: if pin2 is PWM, pin1 must be set for direction.
+             # To make pin2 PWM for forward, pin1 would typically be HIGH.
+             # However, our _spin logic assumes pin1=LOW, pin2=HIGH for reverse.
+             # This setup is more aligned with IN1/IN2 on H-bridge where one is PWM, other is dir.
+             # For now, let's assume forward means pin1=HIGH, pin2=LOW (or pin1=PWM, pin2=LOW)
+            GPIO.output(self.pin1, GPIO.HIGH) # This might need adjustment based on H-bridge logic
+        else: # Dedicated PWM pin
+            GPIO.output(self.pin1, GPIO.HIGH)
+            GPIO.output(self.pin2, GPIO.LOW)
+        
         self._spin(direction=0, speed=speed, ramp=ramp)
+
 
     def spin_reverse(self, speed: int, ramp: str = "linear") -> None:
         """
@@ -200,6 +173,17 @@ class Motor:
         :raises ValueError: if speed or ramp is invalid.
         :example: ``motor.spin_reverse(100)``
         """
+        # If pwm_pin is pin1, pin1 controls speed, pin2 direction (HIGH for reverse)
+        # If pwm_pin is pin2, pin2 controls speed, pin1 direction (LOW for reverse)
+        # If pwm_pin is separate, pin1=LOW, pin2=HIGH for reverse
+        if self.pwm_pin_actual == self.pin1:
+            GPIO.output(self.pin2, GPIO.HIGH)
+        elif self.pwm_pin_actual == self.pin2:
+            GPIO.output(self.pin1, GPIO.LOW)
+        else: # Dedicated PWM pin
+            GPIO.output(self.pin1, GPIO.LOW)
+            GPIO.output(self.pin2, GPIO.HIGH)
+
         self._spin(direction=1, speed=speed, ramp=ramp)
 
     def stop(self) -> None:
@@ -212,68 +196,22 @@ class Motor:
         """
         GPIO.output(self.pin1, GPIO.LOW)
         GPIO.output(self.pin2, GPIO.LOW)
-        # self.pwm_controller.ChangeDutyCycle(0)
-        self._set_pwm_duty_cycle(0)
+        if self.pwm_controller:
+            self.pwm_controller.ChangeDutyCycle(0)
         print(f"Motor ({self.pin1},{self.pin2}) stopped.")
 
     def cleanup(self):
         """
         Clean up GPIO resources. Call this when the motor is no longer needed.
         """
-        if IS_RASPBERRY_PI or isinstance(GPIO, MockGPIO):
-            self.stop() # Ensure motor is stopped
-            # self.pwm_controller.stop()
-            GPIO.cleanup([self.pin1, self.pin2, self.pwm_pin] if self.pwm_pin else [self.pin1, self.pin2])
-            print(f"Cleaned up GPIO for motor ({self.pin1},{self.pin2}).")
-
-if __name__ == '__main__':
-    # Example Usage (will use MockGPIO if not on RPi)
-    try:
-        # Motor(pin1, pin2)
-        # For DRV8871, pin1=IN1, pin2=IN2. Speed is controlled by PWM on IN1 or IN2.
-        # Let's assume pwm_pin is one of the INx pins or a separate EN/PWM pin if the driver has one.
-        # If DRV8871 is used with RPi, one pin is PWM, other is direction.
-        # e.g. motor1_in1 = 17 (PWM), motor1_in2 = 18 (Direction HIGH/LOW)
-
-        # Simulating a setup where pin1 is PWM'd for speed, pin2 sets direction part
-        # This is a common way to use H-bridges like L298N or DRV8871 with limited PWM pins
-        # For DRV8871:
-        # Forward: IN1=PWM, IN2=LOW
-        # Reverse: IN1=LOW, IN2=PWM (or IN1=PWM, IN2=HIGH, depending on how you define "forward")
-        # For this class, we'll assume:
-        # spin_forward: pin1=HIGH/PWM, pin2=LOW
-        # spin_reverse: pin1=LOW, pin2=HIGH/PWM
-
-        motor1 = Motor(pin1=17, pin2=18) # Assume pin 17 can be PWM'd
-        motor2 = Motor(pin1=27, pin2=22, pwm_pin=23) # Example with a dedicated PWM pin
-
-        print("\n--- Motor 1 Test ---")
-        motor1.spin_forward(150, ramp="quadratic")
-        time.sleep(1)
-        motor1.spin_reverse(100)
-        time.sleep(1)
-        motor1.stop()
-        time.sleep(0.5)
-
-        print("\n--- Motor 2 Test (with dedicated PWM pin) ---")
-        motor2.spin_forward(255, ramp="linear")
-        time.sleep(1)
-        motor2.stop()
-
-        # Test validation
-        try:
-            motor1.spin_forward(300)
-        except ValueError as e:
-            print(f"Caught expected error: {e}")
-
-        try:
-            motor1.spin_forward(100, ramp="invalid_ramp")
-        except ValueError as e:
-            print(f"Caught expected error: {e}")
-
-    finally:
-        if IS_RASPBERRY_PI or isinstance(GPIO, MockGPIO):
-            motor1.cleanup()
-            motor2.cleanup()
-            # GPIO.cleanup() # General cleanup if other GPIOs were used
-            print("All motors cleaned up.")
+        self.stop() # Ensure motor is stopped
+        if self.pwm_controller:
+            self.pwm_controller.stop()
+        
+        # GPIO.cleanup() # Avoid general cleanup if other parts of the system use GPIO
+        # Only cleanup pins used by this motor instance
+        pins_to_cleanup = {self.pin1, self.pin2}
+        if self.pwm_pin_actual:
+            pins_to_cleanup.add(self.pwm_pin_actual)
+        GPIO.cleanup(list(pins_to_cleanup))
+        print(f"Cleaned up GPIO for motor ({self.pin1},{self.pin2}, pwm_pin={self.pwm_pin_actual}).")
