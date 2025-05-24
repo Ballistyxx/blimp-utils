@@ -206,32 +206,36 @@ class Accelerometer:
             print(f"Error reading word from accelerometer: addr {hex(self.addr)}, reg_low {hex(register_low)}: {e}")
             return 0 # Or raise exception
 
-    def get_x(self) -> int:
+    def get_x_raw(self) -> int:
         """
         Get the raw X-axis acceleration value.
         :return: The raw X-axis acceleration (16-bit signed integer).
+        :example: ``raw_x = accel.get_x_raw()``
         """
         return self._read_sensor_word_signed(ACC_X_7_0)
 
-    def get_y(self) -> int:
+    def get_y_raw(self) -> int:
         """
         Get the raw Y-axis acceleration value.
         :return: The raw Y-axis acceleration (16-bit signed integer).
+        :example: ``raw_y = accel.get_y_raw()``
         """
         return self._read_sensor_word_signed(ACC_Y_7_0)
 
-    def get_z(self) -> int:
+    def get_z_raw(self) -> int:
         """
         Get the raw Z-axis acceleration value.
         :return: The raw Z-axis acceleration (16-bit signed integer).
+        :example: ``raw_z = accel.get_z_raw()``
         """
         return self._read_sensor_word_signed(ACC_Z_7_0)
 
-    def get_xyz(self) -> List[int]:
+    def get_xyz_raw(self) -> List[int]:
         """
         Get all three axes raw acceleration data.
         :return: A list containing [X, Y, Z] raw acceleration values.
         :rtype: List[int]
+        :example: ``raw_xyz = accel.get_xyz_raw()``
         """
         # Reading all 6 data bytes at once might be more efficient if sensor supports it
         # and smbus2 block read is used correctly.
@@ -253,43 +257,47 @@ class Accelerometer:
         except Exception as e:
             print(f"Error reading block data from accelerometer: {e}")
             # Fallback to individual reads if block read fails, or re-raise
-            return [self.get_x(), self.get_y(), self.get_z()]
+            return [self.get_x_raw(), self.get_y_raw(), self.get_z_raw()]
 
 
-    def get_scaled_xyz(self) -> List[float]:
+    def get_xyz(self) -> List[float]:
         """
         Get all three axes acceleration data, scaled to G's.
         :return: A list containing [X, Y, Z] acceleration in G's.
         :rtype: List[float]
+        :example: ``g_xyz = accel.get_xyz()``
         """
-        raw = self.get_xyz()
+        raw = self.get_xyz_raw()
         return [val * self.raw_to_g_factor for val in raw]
 
-    def get_scaled_x(self) -> float:
+    def get_x(self) -> float:
         """
         Get X-axis acceleration data, scaled to G's.
         :return: The X-axis acceleration in G's.
         :rtype: float
+        :example: ``g_x = accel.get_x()``
         """
-        raw = self.get_x()
+        raw = self.get_x_raw()
         return raw * self.raw_to_g_factor
     
-    def get_scaled_y(self) -> float:
+    def get_y(self) -> float:
         """
         Get Y-axis acceleration data, scaled to G's.
         :return: The Y-axis acceleration in G's.
         :rtype: float
+        :example: ``g_y = accel.get_y()``
         """
-        raw = self.get_y()
+        raw = self.get_y_raw()
         return raw * self.raw_to_g_factor
 
-    def get_scaled_z(self) -> float:
+    def get_z(self) -> float:
         """
         Get Z-axis acceleration data, scaled to G's.
         :return: The Z-axis acceleration in G's.
         :rtype: float
+        :example: ``g_z = accel.get_z()``
         """
-        raw = self.get_z()
+        raw = self.get_z_raw()
         return raw * self.raw_to_g_factor
 
     def close(self):
@@ -333,8 +341,8 @@ if __name__ == '__main__':
         print("BMI270 Accelerometer initialized successfully.")
 
         for i in range(10):
-            raw_data = accel.get_xyz()
-            scaled_data = accel.get_scaled_xyz()
+            raw_data = accel.get_xyz_raw()
+            scaled_data = accel.get_xyz()
             print(f"Raw Data: X={raw_data[0]}, Y={raw_data[1]}, Z={raw_data[2]}")
             print(f"Scaled Data (G): X={scaled_data[0]:.2f}, Y={scaled_data[1]:.2f}, Z={scaled_data[2]:.2f}")
             time.sleep(0.5)

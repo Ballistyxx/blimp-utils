@@ -211,88 +211,88 @@ class Gyroscope:
             print(f"Error reading signed word from gyroscope: addr {hex(self.addr)}, reg_lsb {hex(register_lsb)}: {e}")
             return 0 # Return 0 on error, or raise exception
 
-    def get_x(self) -> int:
+    def get_x_raw(self) -> int:
         """
         Get the raw X-axis gyroscope value from BMI270.
         Uses GYR_X_7_0 (LSB) and GYR_X_15_8 (MSB) registers.
 
         :return: The raw X-axis gyroscope value.
         :rtype: int
-        :example: ``raw_x = gyro.get_x()``
+        :example: ``raw_x = gyro.get_x_raw()``
         """
         return self._read_sensor_word_signed(GYR_X_7_0)
 
-    def get_y(self) -> int:
+    def get_y_raw(self) -> int:
         """
         Get the raw Y-axis gyroscope value from BMI270.
         Uses GYR_Y_7_0 (LSB) and GYR_Y_15_8 (MSB) registers.
 
         :return: The raw Y-axis gyroscope value.
         :rtype: int
-        :example: ``raw_y = gyro.get_y()``
+        :example: ``raw_y = gyro.get_y_raw()``
         """
         return self._read_sensor_word_signed(GYR_Y_7_0)
 
-    def get_z(self) -> int:
+    def get_z_raw(self) -> int:
         """
         Get the raw Z-axis gyroscope value from BMI270.
         Uses GYR_Z_7_0 (LSB) and GYR_Z_15_8 (MSB) registers.
 
         :return: The raw Z-axis gyroscope value.
         :rtype: int
-        :example: ``raw_z = gyro.get_z()``
+        :example: ``raw_z = gyro.get_z_raw()``
         """
         return self._read_sensor_word_signed(GYR_Z_7_0)
 
-    def get_xyz(self) -> List[int]:
+    def get_xyz_raw(self) -> List[int]:
         """
         Get the raw X, Y, and Z-axis gyroscope values.
 
         :return: A list containing [X, Y, Z] raw gyroscope values.
         :rtype: list[int]
-        :example: ``raw_xyz = gyro.get_xyz()``
+        :example: ``raw_xyz = gyro.get_xyz_raw()``
         """
-        return [self.get_x(), self.get_y(), self.get_z()]
+        return [self.get_x_raw(), self.get_y_raw(), self.get_z_raw()]
 
-    def get_scaled_x(self) -> float:
+    def get_x(self) -> float:
         """
         Get the X-axis gyroscope value scaled to degrees per second (dps).
 
         :return: The X-axis gyroscope value in dps.
         :rtype: float
-        :example: ``dps_x = gyro.get_scaled_x()``
+        :example: ``dps_x = gyro.get_x()``
         """
-        return self.get_x() * self.raw_to_dps_factor
+        return self.get_x_raw() * self.raw_to_dps_factor
 
-    def get_scaled_y(self) -> float:
+    def get_y(self) -> float:
         """
         Get the Y-axis gyroscope value scaled to degrees per second (dps).
 
         :return: The Y-axis gyroscope value in dps.
         :rtype: float
-        :example: ``dps_y = gyro.get_scaled_y()``
+        :example: ``dps_y = gyro.get_y()``
         """
-        return self.get_y() * self.raw_to_dps_factor
+        return self.get_y_raw() * self.raw_to_dps_factor
 
-    def get_scaled_z(self) -> float:
+    def get_z(self) -> float:
         """
         Get the Z-axis gyroscope value scaled to degrees per second (dps).
 
         :return: The Z-axis gyroscope value in dps.
         :rtype: float
-        :example: ``dps_z = gyro.get_scaled_z()``
+        :example: ``dps_z = gyro.get_z()``
         """
-        return self.get_z() * self.raw_to_dps_factor
+        return self.get_z_raw() * self.raw_to_dps_factor
 
-    def get_scaled_xyz(self) -> List[float]:
+    def get_xyz(self) -> List[float]:
         """
         Get the X, Y, and Z-axis gyroscope values scaled to degrees per second (dps).
 
         :return: A list containing [X, Y, Z] gyroscope values in dps.
         :rtype: list[float]
-        :example: ``dps_xyz = gyro.get_scaled_xyz()``
+        :example: ``dps_xyz = gyro.get_xyz()``
         """
-        return [self.get_scaled_x(), self.get_scaled_y(), self.get_scaled_z()]
+        return [self.get_x(), self.get_y(), self.get_z()]
 
     def close(self) -> None:
         """
@@ -320,8 +320,8 @@ if __name__ == '__main__':
         print("Gyroscope (BMI270) initialized successfully.")
         
         for _ in range(10):
-            raw_xyz = gyro.get_xyz()
-            scaled_xyz = gyro.get_scaled_xyz()
+            raw_xyz = gyro.get_xyz_raw()
+            scaled_xyz = gyro.get_xyz()
             print(f"Raw Gyro (X,Y,Z): {raw_xyz}")
             print(f"Scaled Gyro (X,Y,Z) [dps]: {scaled_xyz[0]:.2f}, {scaled_xyz[1]:.2f}, {scaled_xyz[2]:.2f}")
             time.sleep(0.5)
