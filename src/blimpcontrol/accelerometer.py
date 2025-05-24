@@ -1,141 +1,319 @@
 """
-Accelerometer module for the blimpcontrol library.
+Accelerometer module for the blimpcontrol library, specifically for BMI270.
 """
 
+import time
 from typing import List
-from smbus2 import SMBus
+from smbus2 import SMBus, i2c_msg
+
+# Attempt to import BMI270 specific configurations and registers.
+# These files (bmi270_config.py, bmi270_registers.py) are expected to be
+# in the same directory as this file, or accessible via PYTHONPATH.
+# They should be copied from the source_libraries/BMI270/ directory.
+try:
+    from .bmi270_config import bmi270_config_file
+    from .bmi270_registers import (
+        CHIP_ID_ADDRESS, BMI270_CHIP_ID,
+        CMD, PWR_CONF, PWR_CTRL,
+        INIT_CTRL, INIT_ADDR_0, INIT_ADDR_1, INIT_DATA,
+        INTERNAL_STATUS,
+        ACC_CONF, ACC_RANGE,
+        ACC_X_7_0, ACC_Y_7_0, ACC_Z_7_0, # LSB registers for raw data
+        # Constants for configuration values
+        ACC_ODR_100, ACC_BWP_NORMAL, ACC_RANGE_2G
+    )
+except ImportError as e:
+    print("ERROR: Could not import bmi270_config.py or bmi270_registers.py.")
+    print("Please ensure these files are copied from 'source_libraries/BMI270/'")
+    print("to the 'src/blimpcontrol/' directory.")
+    print(f"Import error: {e}")
+    raise
 
 class Accelerometer:
     """
-    A class to represent the accelerometer.
+    A class to represent the BMI270 accelerometer.
 
-    :param bus: The I2C bus number.
+    :param bus: The I2C bus number (e.g., 1 for Raspberry Pi).
     :type bus: int
-    :param addr: The I2C address of the accelerometer.
+    :param addr: The I2C address of the accelerometer (typically 0x68 or 0x69 for BMI270).
     :type addr: int
     """
-    def __init__(self, bus: int, addr: int):
-        """
-        Initialize the accelerometer.
-
-        :param bus: The I2C bus number.
-        :type bus: int
-        :param addr: The I2C address of the accelerometer.
-        :type addr: int
-        :raises TypeError: if bus or addr are not integers.
-        :raises IOError: if I2C bus cannot be opened.
-        """
+    def __init__(self, bus: int, addr: int = 0x68): # Default BMI270 address
         if not isinstance(bus, int):
             raise TypeError("I2C bus must be an integer")
         if not isinstance(addr, int):
             raise TypeError("I2C address must be an integer")
+
         self.bus_num = bus
         self.addr = addr
+        self.i2c_bus = None # Initialize to None
+
         try:
             self.i2c_bus = SMBus(self.bus_num)
         except Exception as e:
             raise IOError(f"Failed to open I2C bus {self.bus_num}: {e}")
-        print(f"Accelerometer initialized on I2C bus {self.bus_num}, address {hex(self.addr)}")
 
-    def _read_sensor_byte(self, register: int) -> int:
-        """
-        Reads a single byte from a given register.
-
-        :param register: The register to read from.
-        :type register: int
-        :return: The byte value read from the sensor.
-        :rtype: int
-        """
         try:
-            return self.i2c_bus.read_byte_data(self.addr, register)
+            self._check_chip_id()
+            self._load_config_file()
+            self._configure_sensor()
+            # Default G range for scaling, can be changed by re-configuring
+            self.current_g_range = 2.0
+            self.raw_to_g_factor = self.current_g_range / 32768.0
+
+            print(f"Accelerometer (BMI270) initialized on I2C bus {self.bus_num}, address {hex(self.addr)}")
         except Exception as e:
-            print(f"Error reading byte from accelerometer: addr {hex(self.addr)}, reg {hex(register)}: {e}")
-            # Depending on desired error handling, could raise exception or return default
-            return 0 
+            if self.i2c_bus:
+                self.i2c_bus.close()
+            raise IOError(f"Failed to initialize BMI270 accelerometer: {e}")
 
-    def _read_sensor_word(self, register_low: int, little_endian: bool = True) -> int:
+    def _write_register(self, register: int, value: int):
+        """Helper to write a byte to a register."""
+        self.i2c_bus.write_byte_data(self.addr, register, value)
+
+    def _read_register(self, register: int) -> int:
+        """Helper to read a byte from a register."""
+        return self.i2c_bus.read_byte_data(self.addr, register)
+
+    def _check_chip_id(self):
+        """Verify that the device at the address is a BMI270."""
+        chip_id = self._read_register(CHIP_ID_ADDRESS)
+        if chip_id != BMI270_CHIP_ID:
+            raise IOError(
+                f"BMI270 not found at address {hex(self.addr)} on bus {self.bus_num}. "
+                f"Chip ID: {hex(chip_id)}, Expected: {hex(BMI270_CHIP_ID)}"
+            )
+        print(f"BMI270 Chip ID {hex(chip_id)} verified.")
+
+    def _load_config_file(self):
+        """Loads the configuration firmware into the BMI270."""
+        print("Loading BMI270 configuration file...")
+        # Check if initialization is already done (e.g. after soft reset)
+        # A status of 0x01 indicates POR detected and init sequence not running & no errors.
+        # If already initialized, no need to reload config.
+        # However, a simple power cycle would require re-init.
+        # For robustness, we typically load it unless a specific state indicates it's loaded.
+        # The reference BMI270.py checks if INTERNAL_STATUS is 0x01 and skips if so.
+        # Let's assume we always try to load unless it's a warm start scenario not covered here.
+
+        self._write_register(PWR_CONF, 0x00)  # Disable advanced power save during init
+        time.sleep(0.00045)  # 450 microseconds delay
+
+        self._write_register(INIT_CTRL, 0x00) # Prepare for config load
+
+        # Load the configuration file in 32-byte chunks
+        # The bmi270_config_file is 8192 bytes (256 chunks of 32 bytes)
+        for i in range(256):
+            chunk = bmi270_config_file[i*32 : (i+1)*32]
+            
+            # Set the address for the configuration data chunk
+            self._write_register(INIT_ADDR_0, 0x00) # LSB of address for this chunk
+            self._write_register(INIT_ADDR_1, i)    # MSB of address for this chunk
+            
+            # Write the 32-byte chunk to INIT_DATA register
+            # smbus2 write_i2c_block_data expects a list of ints (bytes)
+            write_msg = i2c_msg.write(self.addr, [INIT_DATA] + list(chunk))
+            self.i2c_bus.i2c_rdwr(write_msg)
+            time.sleep(0.000020) # 20 microseconds delay between writes
+
+        self._write_register(INIT_CTRL, 0x01) # Finalize config load
+        time.sleep(0.020) # 20 milliseconds delay for initialization to complete
+
+        # Verify initialization
+        status = self._read_register(INTERNAL_STATUS)
+        # Expected status after successful init is 0x01 (POR detected, no errors, init not running)
+        if status == 0x01:
+            print("BMI270 configuration loaded successfully.")
+        else:
+            # Check for error bits (bits 2 and 3 of INTERNAL_STATUS)
+            if status & 0x0C: # 0b00001100
+                raise IOError(f"BMI270 configuration load failed: Error bits set in INTERNAL_STATUS (0x{status:02x})")
+            elif status & 0x02: # 0b00000010 (init_running)
+                 raise IOError(f"BMI270 configuration load failed: Stuck in init (INTERNAL_STATUS 0x{status:02x})")
+            else:
+                raise IOError(f"BMI270 configuration load failed: INTERNAL_STATUS is 0x{status:02x}, expected 0x01.")
+
+
+    def _configure_sensor(self):
+        """Configures accelerometer parameters (Power, ODR, Range)."""
+        print("Configuring BMI270 accelerometer...")
+        # 1. Set advanced power save mode (adv_power_save = 0 for normal/performance)
+        # PWR_CONF register (0x7C), bit 0 is adv_power_save.
+        # Set to 0x00 to ensure adv_power_save = 0. Other bits are reserved or for FIFO.
+        self._write_register(PWR_CONF, 0x00)
+        time.sleep(0.001) # Small delay
+
+        # 2. Configure Accelerometer settings (ACC_CONF register 0x40)
+        # Bits 0-3: acc_odr (Output Data Rate)
+        # Bits 4-6: acc_bwp (Bandwidth Parameter)
+        # Bit 7: acc_filter_perf (Accelerometer filter performance)
+        # For 100Hz ODR, Normal BWP, Filter Performance Enabled:
+        # ACC_ODR_100 (0x08) | (ACC_BWP_NORMAL (0x02) << 4) | (1 << 7)
+        # 0x08 | 0x20 | 0x80 = 0xA8
+        acc_conf_val = ACC_ODR_100 | (ACC_BWP_NORMAL << 4) | (1 << 7)
+        self._write_register(ACC_CONF, acc_conf_val) # e.g., 0xA8
+        time.sleep(0.001)
+
+        # 3. Configure Accelerometer Range (ACC_RANGE register 0x41)
+        # Bits 0-1: acc_range
+        # ACC_RANGE_2G (0x00), ACC_RANGE_4G (0x01), ACC_RANGE_8G (0x02), ACC_RANGE_16G (0x03)
+        self._write_register(ACC_RANGE, ACC_RANGE_2G) # Set to +/- 2G range
+        self.current_g_range = 2.0 # Store for scaling
+        self.raw_to_g_factor = self.current_g_range / 32768.0
+        time.sleep(0.001)
+
+        # 4. Enable Accelerometer (PWR_CTRL register 0x7D)
+        # Bit 2: acc_en. Set to 1 to enable.
+        # Other bits: aux_en (0), gyr_en (1), temp_en (3)
+        # To enable only accelerometer: 0b00000100 = 0x04
+        # Read current PWR_CTRL, set bit 2, write back to preserve other settings if any.
+        # However, BMI270.py reference often writes 0x0E (acc,gyr,temp) then 0x02 to PWR_CONF.
+        # For a dedicated accelerometer class, just enabling accelerometer is fine.
+        pwr_ctrl_val = self._read_register(PWR_CTRL)
+        self._write_register(PWR_CTRL, pwr_ctrl_val | 0x04) # Set acc_en bit
+        time.sleep(0.050) # Allow sensor to stabilize (datasheet recommends 2ms after acc_en)
+
+        print(f"BMI270 accelerometer configured: ODR=100Hz, Range=+/-{self.current_g_range}G.")
+
+    def _read_sensor_word_signed(self, register_low: int) -> int:
         """
-        Reads a 16-bit word (two bytes) from the sensor starting at register_low.
-        Assumes LSB is at register_low and MSB is at register_low + 1 if little_endian is True.
-
-        :param register_low: The starting register (LSB).
-        :type register_low: int
-        :param little_endian: True if data is little-endian, False for big-endian.
-        :type little_endian: bool
-        :return: The 16-bit value read from the sensor.
-        :rtype: int
+        Reads a 16-bit signed word (two bytes, little-endian) from the sensor.
+        LSB is at register_low, MSB is at register_low + 1.
         """
         try:
-            low_byte = self.i2c_bus.read_byte_data(self.addr, register_low)
-            high_byte = self.i2c_bus.read_byte_data(self.addr, register_low + 1)
-            if little_endian:
-                return (high_byte << 8) | low_byte
-            else:
-                return (low_byte << 8) | high_byte
+            # Read 2 bytes starting from register_low
+            read_msg = i2c_msg.write(self.addr, [register_low])
+            read_msg_data = i2c_msg.read(self.addr, 2)
+            self.i2c_bus.i2c_rdwr(read_msg, read_msg_data)
+            
+            low_byte = list(read_msg_data)[0]
+            high_byte = list(read_msg_data)[1]
+            
+            value = (high_byte << 8) | low_byte
+            
+            # Convert to signed 16-bit integer
+            if value & (1 << 15):  # Check if MSB (sign bit) is set
+                value -= (1 << 16) # Compute two's complement
+            return value
         except Exception as e:
             print(f"Error reading word from accelerometer: addr {hex(self.addr)}, reg_low {hex(register_low)}: {e}")
-            return 0
+            return 0 # Or raise exception
 
     def get_x(self) -> int:
         """
         Get the raw X-axis acceleration value.
-        This is a placeholder and needs to be adapted to your specific accelerometer's registers.
-        For BMI270, ACC_X_LSB is 0x0C and ACC_X_MSB is 0x0D.
-
-        :return: The raw X-axis acceleration.
-        :rtype: int
-        :example: ``accel.get_x()``
+        :return: The raw X-axis acceleration (16-bit signed integer).
         """
-        # Example for BMI270: ACC_X_LSB (0x0C), ACC_X_MSB (0x0D)
-        # Data is 16-bit signed, little-endian
-        raw_x = self._read_sensor_word(0x0C, little_endian=True)
-        # Convert to signed if necessary (e.g., if sensor returns two's complement)
-        if raw_x & (1 << 15): # Check if MSB is set (negative number)
-            raw_x -= (1 << 16)
-        return raw_x
+        return self._read_sensor_word_signed(ACC_X_7_0)
 
     def get_y(self) -> int:
         """
         Get the raw Y-axis acceleration value.
-        Placeholder for specific accelerometer (e.g., BMI270: ACC_Y_LSB 0x0E, ACC_Y_MSB 0x0F).
-
-        :return: The raw Y-axis acceleration.
-        :rtype: int
-        :example: ``accel.get_y()``
+        :return: The raw Y-axis acceleration (16-bit signed integer).
         """
-        raw_y = self._read_sensor_word(0x0E, little_endian=True)
-        if raw_y & (1 << 15):
-            raw_y -= (1 << 16)
-        return raw_y
+        return self._read_sensor_word_signed(ACC_Y_7_0)
 
     def get_z(self) -> int:
         """
         Get the raw Z-axis acceleration value.
-        Placeholder for specific accelerometer (e.g., BMI270: ACC_Z_LSB 0x10, ACC_Z_MSB 0x11).
+        :return: The raw Z-axis acceleration (16-bit signed integer).
+        """
+        return self._read_sensor_word_signed(ACC_Z_7_0)
 
-        :return: The raw Z-axis acceleration.
-        :rtype: int
-        :example: ``accel.get_z()``
+    def get_raw_data(self) -> List[int]:
         """
-        raw_z = self._read_sensor_word(0x10, little_endian=True)
-        if raw_z & (1 << 15):
-            raw_z -= (1 << 16)
-        return raw_z
+        Get all three axes raw acceleration data.
+        :return: A list containing [X, Y, Z] raw acceleration values.
+        :rtype: List[int]
+        """
+        # Reading all 6 data bytes at once might be more efficient if sensor supports it
+        # and smbus2 block read is used correctly.
+        # For now, individual reads are clear and map to existing methods.
+        # BMI270 data registers are contiguous (0x0C to 0x11 for ACC_X/Y/Z LSB/MSB)
+        try:
+            data_bytes = self.i2c_bus.read_i2c_block_data(self.addr, ACC_X_7_0, 6)
+            
+            ax = (data_bytes[1] << 8) | data_bytes[0]
+            ay = (data_bytes[3] << 8) | data_bytes[2]
+            az = (data_bytes[5] << 8) | data_bytes[4]
 
-    def get_xyz(self) -> List[int]:
-        """
-        Get the raw X, Y, and Z-axis acceleration values.
+            # Convert to signed
+            if ax & (1 << 15): ax -= (1 << 16)
+            if ay & (1 << 15): ay -= (1 << 16)
+            if az & (1 << 15): az -= (1 << 16)
+            
+            return [ax, ay, az]
+        except Exception as e:
+            print(f"Error reading block data from accelerometer: {e}")
+            # Fallback to individual reads if block read fails, or re-raise
+            return [self.get_x(), self.get_y(), self.get_z()]
 
-        :return: A list containing [X, Y, Z] acceleration values.
-        :rtype: list[int]
-        :example: ``accel.get_xyz()``
-        """
-        return [self.get_x(), self.get_y(), self.get_z()]
 
-    def close(self) -> None:
+    def get_scaled_data(self) -> List[float]:
         """
-        Close the I2C bus connection.
+        Get all three axes acceleration data, scaled to G's.
+        :return: A list containing [X, Y, Z] acceleration in G's.
+        :rtype: List[float]
         """
-        if hasattr(self, 'i2c_bus') and self.i2c_bus:
-            self.i2c_bus.close()
-            print(f"I2C bus {self.bus_num} closed for accelerometer {hex(self.addr)}.")
+        raw = self.get_raw_data()
+        return [val * self.raw_to_g_factor for val in raw]
+
+    def close(self):
+        """
+        Clean up and close the I2C bus connection.
+        It's important to call this when done with the sensor.
+        """
+        if self.i2c_bus:
+            try:
+                # Optional: Put sensor in a low power/suspend mode if applicable
+                # For BMI270, disabling acc via PWR_CTRL could be an option:
+                # current_pwr_ctrl = self._read_register(PWR_CTRL)
+                # self._write_register(PWR_CTRL, current_pwr_ctrl & ~0x04) # Clear acc_en bit
+                pass
+            except Exception as e:
+                print(f"Error during accelerometer shutdown: {e}")
+            finally:
+                self.i2c_bus.close()
+                self.i2c_bus = None
+                print(f"Accelerometer I2C bus {self.bus_num} closed.")
+
+# Example usage (optional, for testing directly)
+if __name__ == '__main__':
+    try:
+        # Ensure bmi270_config.py and bmi270_registers.py are in src/blimpcontrol/
+        # or that src/blimpcontrol is in PYTHONPATH for the imports to work.
+        # If running this directly, you might need to adjust sys.path or run as a module.
+        # Example: python -m blimpcontrol.accelerometer (if __init__.py makes it a package)
+        
+        # For direct script execution, relative imports might fail.
+        # A temporary workaround for direct testing if files are in same dir:
+        # import sys
+        # import os
+        # sys.path.append(os.path.dirname(__file__)) # Add current dir to path
+        # from bmi270_config import bmi270_config_file # Now this might work
+        # from bmi270_registers import *
+        
+        print("Attempting to initialize BMI270 Accelerometer...")
+        # Default I2C bus for Raspberry Pi is 1. Address 0x68 or 0x69.
+        accel = Accelerometer(bus=1, addr=0x68) 
+        print("BMI270 Accelerometer initialized successfully.")
+
+        for i in range(10):
+            raw_data = accel.get_raw_data()
+            scaled_data = accel.get_scaled_data()
+            print(f"Raw Data: X={raw_data[0]}, Y={raw_data[1]}, Z={raw_data[2]}")
+            print(f"Scaled Data (G): X={scaled_data[0]:.2f}, Y={scaled_data[1]:.2f}, Z={scaled_data[2]:.2f}")
+            time.sleep(0.5)
+
+    except ImportError:
+        print("ImportError: Could not run example. Ensure BMI270 config/register files are accessible.")
+        print("Try copying them to src/blimpcontrol/ and run as part of the package.")
+    except IOError as e:
+        print(f"IOError: {e}")
+        print("Please check I2C connection, address, and that the sensor is a BMI270.")
+        print("Ensure 'i2cdetect -y 1' shows the device at the specified address.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+    finally:
+        if 'accel' in locals() and accel.i2c_bus:
+            accel.close()
