@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blimpcontrol.motor &mdash; Falcon Flight 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="blimpcontrol.utils" href="blimpcontrol.utils.html" />
+    <link rel="prev" title="blimpcontrol.magnetometer" href="blimpcontrol.magnetometer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Falcon Flight
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="blimpcontrol.accelerometer.html">blimpcontrol.accelerometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimpcontrol.gyroscope.html">blimpcontrol.gyroscope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimpcontrol.magnetometer.html">blimpcontrol.magnetometer</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">blimpcontrol.motor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#blimpcontrol.motor.Motor"><code class="docutils literal notranslate"><span class="pre">Motor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.Motor.VALID_RAMPS"><code class="docutils literal notranslate"><span class="pre">Motor.VALID_RAMPS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.Motor.spin_forward"><code class="docutils literal notranslate"><span class="pre">Motor.spin_forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.Motor.spin_reverse"><code class="docutils literal notranslate"><span class="pre">Motor.spin_reverse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.Motor.stop"><code class="docutils literal notranslate"><span class="pre">Motor.stop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.Motor.cleanup"><code class="docutils literal notranslate"><span class="pre">Motor.cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO"><code class="docutils literal notranslate"><span class="pre">MockGPIO</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.BCM"><code class="docutils literal notranslate"><span class="pre">MockGPIO.BCM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.HIGH"><code class="docutils literal notranslate"><span class="pre">MockGPIO.HIGH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.LOW"><code class="docutils literal notranslate"><span class="pre">MockGPIO.LOW</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.OUT"><code class="docutils literal notranslate"><span class="pre">MockGPIO.OUT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.cleanup"><code class="docutils literal notranslate"><span class="pre">MockGPIO.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.output"><code class="docutils literal notranslate"><span class="pre">MockGPIO.output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.setmode"><code class="docutils literal notranslate"><span class="pre">MockGPIO.setmode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.setup"><code class="docutils literal notranslate"><span class="pre">MockGPIO.setup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.motor.MockGPIO.setwarnings"><code class="docutils literal notranslate"><span class="pre">MockGPIO.setwarnings()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="blimpcontrol.utils.html">blimpcontrol.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimpcontrol.interfaces.html">blimpcontrol.interfaces</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Falcon Flight</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">Modules</a></li>
+      <li class="breadcrumb-item active">blimpcontrol.motor</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/blimpcontrol.motor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-blimpcontrol.motor">
+<span id="blimpcontrol-motor"></span><h1>blimpcontrol.motor<a class="headerlink" href="#module-blimpcontrol.motor" title="Link to this heading"></a></h1>
+<p>Motor module for the blimpcontrol library.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="blimpcontrol.motor.Motor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimpcontrol.motor.</span></span><span class="sig-name descname"><span class="pre">Motor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwm_pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.motor.Motor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a bidirectional brushed DC motor controlled by a DRV8871-like driver.</p>
+<p>The DRV8871 typically uses two pins for direction and PWM for speed.
+This class simplifies it to two pins for direction and assumes speed is managed by PWM
+on one of these pins or a separate enable pin if the driver supports it.
+For this example, we’ll treat <cite>pin1</cite> and <cite>pin2</cite> as controlling direction,
+and speed will be an abstract concept passed to a PWM controller (simulated).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin1</strong> (<em>int</em>) – The first GPIO pin connected to the motor driver.</p></li>
+<li><p><strong>pin2</strong> (<em>int</em>) – The second GPIO pin connected to the motor driver.</p></li>
+<li><p><strong>pwm_pin</strong> (<em>int</em><em>, </em><em>optional</em>) – Optional PWM pin if speed control is separate. For DRV8871, often one of the direction pins is PWM’d.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blimpcontrol.motor.Motor.VALID_RAMPS">
+<span class="sig-name descname"><span class="pre">VALID_RAMPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['linear',</span> <span class="pre">'quadratic',</span> <span class="pre">'log',</span> <span class="pre">'bezier']</span></em><a class="headerlink" href="#blimpcontrol.motor.Motor.VALID_RAMPS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.Motor.spin_forward">
+<span class="sig-name descname"><span class="pre">spin_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ramp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#blimpcontrol.motor.Motor.spin_forward" title="Link to this definition"></a></dt>
+<dd><p>Spin the motor forward.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>speed</strong> (<em>int</em>) – The motor speed (0-255).</p></li>
+<li><p><strong>ramp</strong> (<em>str</em><em>, </em><em>optional</em>) – The ramp profile. Defaults to “linear”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if speed or ramp is invalid.</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">motor.spin_forward(150,</span> <span class="pre">ramp=&quot;quadratic&quot;)</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.Motor.spin_reverse">
+<span class="sig-name descname"><span class="pre">spin_reverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ramp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#blimpcontrol.motor.Motor.spin_reverse" title="Link to this definition"></a></dt>
+<dd><p>Spin the motor reverse.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>speed</strong> (<em>int</em>) – The motor speed (0-255).</p></li>
+<li><p><strong>ramp</strong> (<em>str</em><em>, </em><em>optional</em>) – The ramp profile. Defaults to “linear”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if speed or ramp is invalid.</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">motor.spin_reverse(100)</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.Motor.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#blimpcontrol.motor.Motor.stop" title="Link to this definition"></a></dt>
+<dd><p>Stop the motor (brake).</p>
+<p>This typically involves setting both control pins to LOW or both to HIGH
+for a DRV8871 driver to brake the motor.
+:example: <code class="docutils literal notranslate"><span class="pre">motor.stop()</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.Motor.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.motor.Motor.cleanup" title="Link to this definition"></a></dt>
+<dd><p>Clean up GPIO resources. Call this when the motor is no longer needed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimpcontrol.motor.</span></span><span class="sig-name descname"><span class="pre">MockGPIO</span></span><a class="headerlink" href="#blimpcontrol.motor.MockGPIO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.BCM">
+<span class="sig-name descname"><span class="pre">BCM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bcm'</span></em><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.BCM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.HIGH">
+<span class="sig-name descname"><span class="pre">HIGH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.HIGH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.LOW">
+<span class="sig-name descname"><span class="pre">LOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.LOW" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.OUT">
+<span class="sig-name descname"><span class="pre">OUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'out'</span></em><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.OUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.cleanup" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.output">
+<span class="sig-name descname"><span class="pre">output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.output" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.setmode">
+<span class="sig-name descname"><span class="pre">setmode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.setmode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.setup" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.motor.MockGPIO.setwarnings">
+<span class="sig-name descname"><span class="pre">setwarnings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.motor.MockGPIO.setwarnings" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="blimpcontrol.magnetometer.html" class="btn btn-neutral float-left" title="blimpcontrol.magnetometer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="blimpcontrol.utils.html" class="btn btn-neutral float-right" title="blimpcontrol.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Eli Ferrara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
