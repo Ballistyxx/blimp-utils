@@ -1,6 +1,7 @@
 """
 blimpcontrol - A Python library for the Falcon Flight controller board.
 """
+from typing import Union # Add Union
 
 from .accelerometer import Accelerometer
 from .gyroscope import Gyroscope
@@ -27,9 +28,9 @@ DEFAULT_MOTOR_PINS = {
 }
 
 # Global instances for sensors and motors
-accelerometer_instance: Accelerometer | None = None
-gyroscope_instance: Gyroscope | None = None
-magnetometer_instance: Magnetometer | None = None
+accelerometer_instance: Union[Accelerometer, None] = None
+gyroscope_instance: Union[Gyroscope, None] = None
+magnetometer_instance: Union[Magnetometer, None] = None
 motors: dict[str, Motor] = {}
 
 def init(
@@ -37,7 +38,7 @@ def init(
     accel_addr: int = DEFAULT_ACCEL_ADDR,
     gyro_addr: int = DEFAULT_GYRO_ADDR,
     mag_addr: int = DEFAULT_MAG_ADDR,
-    motor_pins: dict[str, dict[str, int]] | None = None,
+    motor_pins: Union[dict[str, dict[str, int]], None] = None,
     gpio_warnings: bool = False
 ) -> tuple[Accelerometer, Gyroscope, Magnetometer, dict[str, Motor]]:
     """

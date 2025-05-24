@@ -2,7 +2,7 @@
 Motor module for the blimpcontrol library.
 """
 
-from typing import Literal
+from typing import Literal, Union # Add Union
 import time
 
 # In a real scenario, you would use a library like RPi.GPIO
@@ -69,7 +69,7 @@ class Motor:
     """
     VALID_RAMPS = ["linear", "quadratic", "log", "bezier"]
 
-    def __init__(self, pin1: int, pin2: int, pwm_pin: int | None = None):
+    def __init__(self, pin1: int, pin2: int, pwm_pin: Union[int, None] = None): # Changed to Union
         """
         Initialize the motor.
 
