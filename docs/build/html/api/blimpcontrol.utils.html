@@ -50,12 +50,7 @@
 <li class="toctree-l2"><a class="reference internal" href="blimpcontrol.gyroscope.html">blimpcontrol.gyroscope</a></li>
 <li class="toctree-l2"><a class="reference internal" href="blimpcontrol.magnetometer.html">blimpcontrol.magnetometer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="blimpcontrol.motor.html">blimpcontrol.motor</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">blimpcontrol.utils</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#blimpcontrol.utils.example_util_function"><code class="docutils literal notranslate"><span class="pre">example_util_function()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#blimpcontrol.utils.mock_i2c_read_byte"><code class="docutils literal notranslate"><span class="pre">mock_i2c_read_byte()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#blimpcontrol.utils.mock_i2c_write_byte"><code class="docutils literal notranslate"><span class="pre">mock_i2c_write_byte()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">blimpcontrol.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="blimpcontrol.interfaces.html">blimpcontrol.interfaces</a></li>
 </ul>
 </li>
@@ -86,60 +81,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-blimpcontrol.utils">
-<span id="blimpcontrol-utils"></span><h1>blimpcontrol.utils<a class="headerlink" href="#module-blimpcontrol.utils" title="Link to this heading"></a></h1>
-<p>Utility functions for the blimpcontrol library.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.utils.example_util_function">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.utils.</span></span><span class="sig-name descname"><span class="pre">example_util_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.utils.example_util_function" title="Link to this definition"></a></dt>
-<dd><p>An example utility function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A string message.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.utils.mock_i2c_read_byte">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.utils.</span></span><span class="sig-name descname"><span class="pre">mock_i2c_read_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">register</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.utils.mock_i2c_read_byte" title="Link to this definition"></a></dt>
-<dd><p>Mocks an I2C byte read for simulation purposes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bus</strong> (<em>int</em>) – I2C bus number.</p></li>
-<li><p><strong>addr</strong> (<em>int</em>) – I2C device address.</p></li>
-<li><p><strong>register</strong> (<em>int</em>) – Register to read from.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A simulated byte value (e.g., 0-255).</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.utils.mock_i2c_write_byte">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.utils.</span></span><span class="sig-name descname"><span class="pre">mock_i2c_write_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">register</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#blimpcontrol.utils.mock_i2c_write_byte" title="Link to this definition"></a></dt>
-<dd><p>Mocks an I2C byte write for simulation purposes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bus</strong> (<em>int</em>) – I2C bus number.</p></li>
-<li><p><strong>addr</strong> (<em>int</em>) – I2C device address.</p></li>
-<li><p><strong>register</strong> (<em>int</em>) – Register to write to.</p></li>
-<li><p><strong>value</strong> (<em>int</em>) – Byte value to write.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="blimpcontrol-utils">
+<h1>blimpcontrol.utils<a class="headerlink" href="#blimpcontrol-utils" title="Link to this heading"></a></h1>
 </section>
 
 

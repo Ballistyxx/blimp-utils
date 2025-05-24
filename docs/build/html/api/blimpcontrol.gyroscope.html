@@ -53,6 +53,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.gyroscope.Gyroscope.get_y"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_y()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.gyroscope.Gyroscope.get_z"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_z()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.gyroscope.Gyroscope.get_xyz"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_xyz()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.gyroscope.Gyroscope.close"><code class="docutils literal notranslate"><span class="pre">Gyroscope.close()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -109,7 +110,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="blimpcontrol.gyroscope.Gyroscope.get_x">
 <span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.gyroscope.Gyroscope.get_x" title="Link to this definition"></a></dt>
-<dd><p>Get the raw X-axis gyroscope value.</p>
+<dd><p>Get the raw X-axis gyroscope value.
+Placeholder for specific gyroscope (e.g., BMI270: GYR_X_LSB 0x12, GYR_X_MSB 0x13).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The raw X-axis gyroscope value.</p>
@@ -126,7 +128,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="blimpcontrol.gyroscope.Gyroscope.get_y">
 <span class="sig-name descname"><span class="pre">get_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.gyroscope.Gyroscope.get_y" title="Link to this definition"></a></dt>
-<dd><p>Get the raw Y-axis gyroscope value.</p>
+<dd><p>Get the raw Y-axis gyroscope value.
+Placeholder for specific gyroscope (e.g., BMI270: GYR_Y_LSB 0x14, GYR_Y_MSB 0x15).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The raw Y-axis gyroscope value.</p>
@@ -143,7 +146,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="blimpcontrol.gyroscope.Gyroscope.get_z">
 <span class="sig-name descname"><span class="pre">get_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.gyroscope.Gyroscope.get_z" title="Link to this definition"></a></dt>
-<dd><p>Get the raw Z-axis gyroscope value.</p>
+<dd><p>Get the raw Z-axis gyroscope value.
+Placeholder for specific gyroscope (e.g., BMI270: GYR_Z_LSB 0x16, GYR_Z_MSB 0x17).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The raw Z-axis gyroscope value.</p>
@@ -172,6 +176,12 @@
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">gyro.get_xyz()</span></code></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.gyroscope.Gyroscope.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#blimpcontrol.gyroscope.Gyroscope.close" title="Link to this definition"></a></dt>
+<dd><p>Close the I2C bus connection.</p>
 </dd></dl>
 
 </dd></dl>

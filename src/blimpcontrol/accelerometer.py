@@ -227,7 +227,7 @@ class Accelerometer:
         """
         return self._read_sensor_word_signed(ACC_Z_7_0)
 
-    def get_raw_data(self) -> List[int]:
+    def get_xyz(self) -> List[int]:
         """
         Get all three axes raw acceleration data.
         :return: A list containing [X, Y, Z] raw acceleration values.
@@ -256,14 +256,41 @@ class Accelerometer:
             return [self.get_x(), self.get_y(), self.get_z()]
 
 
-    def get_scaled_data(self) -> List[float]:
+    def get_scaled_xyz(self) -> List[float]:
         """
         Get all three axes acceleration data, scaled to G's.
         :return: A list containing [X, Y, Z] acceleration in G's.
         :rtype: List[float]
         """
-        raw = self.get_raw_data()
+        raw = self.get_xyz()
         return [val * self.raw_to_g_factor for val in raw]
+
+    def get_scaled_x(self) -> float:
+        """
+        Get X-axis acceleration data, scaled to G's.
+        :return: The X-axis acceleration in G's.
+        :rtype: float
+        """
+        raw = self.get_x()
+        return raw * self.raw_to_g_factor
+    
+    def get_scaled_y(self) -> float:
+        """
+        Get Y-axis acceleration data, scaled to G's.
+        :return: The Y-axis acceleration in G's.
+        :rtype: float
+        """
+        raw = self.get_y()
+        return raw * self.raw_to_g_factor
+
+    def get_scaled_z(self) -> float:
+        """
+        Get Z-axis acceleration data, scaled to G's.
+        :return: The Z-axis acceleration in G's.
+        :rtype: float
+        """
+        raw = self.get_z()
+        return raw * self.raw_to_g_factor
 
     def close(self):
         """
@@ -306,8 +333,8 @@ if __name__ == '__main__':
         print("BMI270 Accelerometer initialized successfully.")
 
         for i in range(10):
-            raw_data = accel.get_raw_data()
-            scaled_data = accel.get_scaled_data()
+            raw_data = accel.get_xyz()
+            scaled_data = accel.get_scaled_xyz()
             print(f"Raw Data: X={raw_data[0]}, Y={raw_data[1]}, Z={raw_data[2]}")
             print(f"Scaled Data (G): X={scaled_data[0]:.2f}, Y={scaled_data[1]:.2f}, Z={scaled_data[2]:.2f}")
             time.sleep(0.5)

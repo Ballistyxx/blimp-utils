@@ -46,12 +46,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#blimpcontrol.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blimpcontrol.get_accelerometer"><code class="docutils literal notranslate"><span class="pre">get_accelerometer()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blimpcontrol.get_gyroscope"><code class="docutils literal notranslate"><span class="pre">get_gyroscope()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blimpcontrol.get_magnetometer"><code class="docutils literal notranslate"><span class="pre">get_magnetometer()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blimpcontrol.get_motor"><code class="docutils literal notranslate"><span class="pre">get_motor()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blimpcontrol.get_all_motors"><code class="docutils literal notranslate"><span class="pre">get_all_motors()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.accelerometer.html">blimpcontrol.accelerometer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.gyroscope.html">blimpcontrol.gyroscope</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.magnetometer.html">blimpcontrol.magnetometer</a></li>
@@ -86,100 +80,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-blimpcontrol">
-<span id="modules"></span><h1>Modules<a class="headerlink" href="#module-blimpcontrol" title="Link to this heading"></a></h1>
-<p>blimpcontrol - A Python library for the Falcon Flight controller board.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.init">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.</span></span><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i2c_bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accel_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">104</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">104</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">motor_pins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpio_warnings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api/blimpcontrol.accelerometer.html#blimpcontrol.accelerometer.Accelerometer" title="blimpcontrol.accelerometer.Accelerometer"><span class="pre">Accelerometer</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="api/blimpcontrol.gyroscope.html#blimpcontrol.gyroscope.Gyroscope" title="blimpcontrol.gyroscope.Gyroscope"><span class="pre">Gyroscope</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="api/blimpcontrol.magnetometer.html#blimpcontrol.magnetometer.Magnetometer" title="blimpcontrol.magnetometer.Magnetometer"><span class="pre">Magnetometer</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="api/blimpcontrol.motor.html#blimpcontrol.motor.Motor" title="blimpcontrol.motor.Motor"><span class="pre">Motor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blimpcontrol.init" title="Link to this definition"></a></dt>
-<dd><p>Initializes the blimpcontrol library, setting up sensors and motors.</p>
-<p>This function configures the GPIO mode (BCM), disables warnings,
-and initializes the accelerometer, gyroscope, magnetometer, and up to 4 motors
-with specified or default I2C addresses and GPIO pins.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>i2c_bus</strong> (<em>int</em>) – The I2C bus number for the sensors. Defaults to <cite>DEFAULT_I2C_BUS</cite>.</p></li>
-<li><p><strong>accel_addr</strong> (<em>int</em>) – The I2C address for the accelerometer. Defaults to <cite>DEFAULT_ACCEL_ADDR</cite>.</p></li>
-<li><p><strong>gyro_addr</strong> (<em>int</em>) – The I2C address for the gyroscope. Defaults to <cite>DEFAULT_GYRO_ADDR</cite>.</p></li>
-<li><p><strong>mag_addr</strong> (<em>int</em>) – The I2C address for the magnetometer. Defaults to <cite>DEFAULT_MAG_ADDR</cite>.</p></li>
-<li><p><strong>motor_pins</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – A dictionary defining the pins for each motor.
-If None, uses <cite>DEFAULT_MOTOR_PINS</cite>.
-Example: <code class="docutils literal notranslate"><span class="pre">{&quot;motor1&quot;:</span> <span class="pre">{&quot;pin1&quot;:</span> <span class="pre">17,</span> <span class="pre">&quot;pin2&quot;:</span> <span class="pre">18},</span> <span class="pre">...}</span></code></p></li>
-<li><p><strong>gpio_warnings</strong> (<em>bool</em>) – Whether to enable GPIO warnings. Defaults to False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple containing the initialized (Accelerometer, Gyroscope, Magnetometer, motors_dict).</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple[<a class="reference internal" href="api/blimpcontrol.accelerometer.html#blimpcontrol.accelerometer.Accelerometer" title="blimpcontrol.accelerometer.Accelerometer">Accelerometer</a>, <a class="reference internal" href="api/blimpcontrol.gyroscope.html#blimpcontrol.gyroscope.Gyroscope" title="blimpcontrol.gyroscope.Gyroscope">Gyroscope</a>, <a class="reference internal" href="api/blimpcontrol.magnetometer.html#blimpcontrol.magnetometer.Magnetometer" title="blimpcontrol.magnetometer.Magnetometer">Magnetometer</a>, dict[str, <a class="reference internal" href="api/blimpcontrol.motor.html#blimpcontrol.motor.Motor" title="blimpcontrol.motor.Motor">Motor</a>]]</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>ImportError</strong> – if RPi.GPIO is not available and not being mocked.</p></li>
-<li><p><strong>ValueError</strong> – if motor_pins configuration is invalid.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">blimpcontrol</span> <span class="kn">import</span> <span class="n">init</span><span class="p">,</span> <span class="n">Accelerometer</span><span class="p">,</span> <span class="n">Gyroscope</span><span class="p">,</span> <span class="n">Magnetometer</span><span class="p">,</span> <span class="n">Motor</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">accel</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">all_motors</span> <span class="o">=</span> <span class="n">init</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">motor1</span> <span class="o">=</span> <span class="n">all_motors</span><span class="p">[</span><span class="s2">&quot;motor1&quot;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">motor1</span><span class="o">.</span><span class="n">spin_forward</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">accel</span><span class="o">.</span><span class="n">get_xyz</span><span class="p">())</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.get_accelerometer">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.</span></span><span class="sig-name descname"><span class="pre">get_accelerometer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api/blimpcontrol.accelerometer.html#blimpcontrol.accelerometer.Accelerometer" title="blimpcontrol.accelerometer.Accelerometer"><span class="pre">Accelerometer</span></a></span></span><a class="headerlink" href="#blimpcontrol.get_accelerometer" title="Link to this definition"></a></dt>
-<dd><p>Returns the initialized Accelerometer instance.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.get_gyroscope">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.</span></span><span class="sig-name descname"><span class="pre">get_gyroscope</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api/blimpcontrol.gyroscope.html#blimpcontrol.gyroscope.Gyroscope" title="blimpcontrol.gyroscope.Gyroscope"><span class="pre">Gyroscope</span></a></span></span><a class="headerlink" href="#blimpcontrol.get_gyroscope" title="Link to this definition"></a></dt>
-<dd><p>Returns the initialized Gyroscope instance.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.get_magnetometer">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.</span></span><span class="sig-name descname"><span class="pre">get_magnetometer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api/blimpcontrol.magnetometer.html#blimpcontrol.magnetometer.Magnetometer" title="blimpcontrol.magnetometer.Magnetometer"><span class="pre">Magnetometer</span></a></span></span><a class="headerlink" href="#blimpcontrol.get_magnetometer" title="Link to this definition"></a></dt>
-<dd><p>Returns the initialized Magnetometer instance.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.get_motor">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.</span></span><span class="sig-name descname"><span class="pre">get_motor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="api/blimpcontrol.motor.html#blimpcontrol.motor.Motor" title="blimpcontrol.motor.Motor"><span class="pre">Motor</span></a></span></span><a class="headerlink" href="#blimpcontrol.get_motor" title="Link to this definition"></a></dt>
-<dd><p>Returns a specific initialized Motor instance by name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the motor (e.g., “motor1”).</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The Motor instance.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="api/blimpcontrol.motor.html#blimpcontrol.motor.Motor" title="blimpcontrol.motor.Motor">Motor</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>KeyError</strong> – if the motor name is not found.</p></li>
-<li><p><strong>RuntimeError</strong> – if motors are not initialized via blimpcontrol.init().</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="blimpcontrol.get_all_motors">
-<span class="sig-prename descclassname"><span class="pre">blimpcontrol.</span></span><span class="sig-name descname"><span class="pre">get_all_motors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="api/blimpcontrol.motor.html#blimpcontrol.motor.Motor" title="blimpcontrol.motor.Motor"><span class="pre">Motor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blimpcontrol.get_all_motors" title="Link to this definition"></a></dt>
-<dd><p>Returns the dictionary of all initialized motor instances.</p>
-</dd></dl>
-
+  <section id="modules">
+<h1>Modules<a class="headerlink" href="#modules" title="Link to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul>

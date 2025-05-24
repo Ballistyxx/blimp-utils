@@ -54,6 +54,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.magnetometer.Magnetometer.get_y"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_y()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.magnetometer.Magnetometer.get_z"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_z()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.magnetometer.Magnetometer.get_xyz"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_xyz()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.magnetometer.Magnetometer.close"><code class="docutils literal notranslate"><span class="pre">Magnetometer.close()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -109,7 +110,9 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="blimpcontrol.magnetometer.Magnetometer.get_x">
 <span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.magnetometer.Magnetometer.get_x" title="Link to this definition"></a></dt>
-<dd><p>Get the raw X-axis magnetometer value.</p>
+<dd><p>Get the raw X-axis magnetometer value.
+Placeholder: Adjust registers for your specific magnetometer (e.g., BMM350).
+For BMM350, X LSB is 0x04, X MSB is 0x05.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The raw X-axis magnetometer value.</p>
@@ -126,7 +129,9 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="blimpcontrol.magnetometer.Magnetometer.get_y">
 <span class="sig-name descname"><span class="pre">get_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.magnetometer.Magnetometer.get_y" title="Link to this definition"></a></dt>
-<dd><p>Get the raw Y-axis magnetometer value.</p>
+<dd><p>Get the raw Y-axis magnetometer value.
+Placeholder: Adjust registers for your specific magnetometer (e.g., BMM350).
+For BMM350, Y LSB is 0x06, Y MSB is 0x07.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The raw Y-axis magnetometer value.</p>
@@ -143,7 +148,9 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="blimpcontrol.magnetometer.Magnetometer.get_z">
 <span class="sig-name descname"><span class="pre">get_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.magnetometer.Magnetometer.get_z" title="Link to this definition"></a></dt>
-<dd><p>Get the raw Z-axis magnetometer value.</p>
+<dd><p>Get the raw Z-axis magnetometer value.
+Placeholder: Adjust registers for your specific magnetometer (e.g., BMM350).
+For BMM350, Z LSB is 0x08, Z MSB is 0x09.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The raw Z-axis magnetometer value.</p>
@@ -172,6 +179,12 @@
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">mag.get_xyz()</span></code></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimpcontrol.magnetometer.Magnetometer.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#blimpcontrol.magnetometer.Magnetometer.close" title="Link to this definition"></a></dt>
+<dd><p>Close the I2C bus connection.</p>
 </dd></dl>
 
 </dd></dl>

@@ -46,16 +46,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">blimpcontrol.accelerometer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#blimpcontrol.accelerometer.Accelerometer"><code class="docutils literal notranslate"><span class="pre">Accelerometer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.accelerometer.Accelerometer.get_x"><code class="docutils literal notranslate"><span class="pre">Accelerometer.get_x()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.accelerometer.Accelerometer.get_y"><code class="docutils literal notranslate"><span class="pre">Accelerometer.get_y()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.accelerometer.Accelerometer.get_z"><code class="docutils literal notranslate"><span class="pre">Accelerometer.get_z()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#blimpcontrol.accelerometer.Accelerometer.get_xyz"><code class="docutils literal notranslate"><span class="pre">Accelerometer.get_xyz()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">blimpcontrol.accelerometer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="blimpcontrol.gyroscope.html">blimpcontrol.gyroscope</a></li>
 <li class="toctree-l2"><a class="reference internal" href="blimpcontrol.magnetometer.html">blimpcontrol.magnetometer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="blimpcontrol.motor.html">blimpcontrol.motor</a></li>
@@ -90,92 +81,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-blimpcontrol.accelerometer">
-<span id="blimpcontrol-accelerometer"></span><h1>blimpcontrol.accelerometer<a class="headerlink" href="#module-blimpcontrol.accelerometer" title="Link to this heading"></a></h1>
-<p>Accelerometer module for the blimpcontrol library.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="blimpcontrol.accelerometer.Accelerometer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimpcontrol.accelerometer.</span></span><span class="sig-name descname"><span class="pre">Accelerometer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimpcontrol.accelerometer.Accelerometer" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A class to represent the accelerometer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bus</strong> (<em>int</em>) – The I2C bus number.</p></li>
-<li><p><strong>addr</strong> (<em>int</em>) – The I2C address of the accelerometer.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="blimpcontrol.accelerometer.Accelerometer.get_x">
-<span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.accelerometer.Accelerometer.get_x" title="Link to this definition"></a></dt>
-<dd><p>Get the raw X-axis acceleration value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The raw X-axis acceleration.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
-</dd>
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">accel.get_x()</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="blimpcontrol.accelerometer.Accelerometer.get_y">
-<span class="sig-name descname"><span class="pre">get_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.accelerometer.Accelerometer.get_y" title="Link to this definition"></a></dt>
-<dd><p>Get the raw Y-axis acceleration value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The raw Y-axis acceleration.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
-</dd>
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">accel.get_y()</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="blimpcontrol.accelerometer.Accelerometer.get_z">
-<span class="sig-name descname"><span class="pre">get_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimpcontrol.accelerometer.Accelerometer.get_z" title="Link to this definition"></a></dt>
-<dd><p>Get the raw Z-axis acceleration value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The raw Z-axis acceleration.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
-</dd>
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">accel.get_z()</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="blimpcontrol.accelerometer.Accelerometer.get_xyz">
-<span class="sig-name descname"><span class="pre">get_xyz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blimpcontrol.accelerometer.Accelerometer.get_xyz" title="Link to this definition"></a></dt>
-<dd><p>Get the raw X, Y, and Z-axis acceleration values.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A list containing [X, Y, Z] acceleration values.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[int]</p>
-</dd>
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">accel.get_xyz()</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+  <section id="blimpcontrol-accelerometer">
+<h1>blimpcontrol.accelerometer<a class="headerlink" href="#blimpcontrol-accelerometer" title="Link to this heading"></a></h1>
 </section>
 
 
