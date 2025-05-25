@@ -11,7 +11,7 @@ from .motor import Motor
 # Default sensor addresses and bus (assuming I2C)
 DEFAULT_ACCEL_ADDR = 0x68
 DEFAULT_GYRO_ADDR = 0x68
-DEFAULT_MAG_ADDR = 0x10 # Example for BMM350, verify for your specific sensor
+DEFAULT_MAG_ADDR = 0x14 # Corrected BMM350 default address
 DEFAULT_I2C_BUS = 1     # Common on Raspberry Pi
 
 # Default motor pin configurations (using BCM numbering)
