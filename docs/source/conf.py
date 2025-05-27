@@ -38,7 +38,7 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 # -- Options for autodoc -----------------------------------------------------
-autodoc_mock_imports = ["RPi.GPIO", "RPi", "smbus2", "serial", "magnetometer_vars"] # Mock hardware-specific libraries
+autodoc_mock_imports = ["RPi.GPIO", "RPi", "smbus2", "serial"] # Mock hardware-specific libraries
 autodoc_member_order = 'bysource' # Optional: Order members by source order
 
 # -- Options for MyST Parser -------------------------------------------------

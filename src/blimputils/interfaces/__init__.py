@@ -1,4 +1,4 @@
 """
-Interfaces for the blimputils library.
+Interfaces for the blimp-utils library.
 """
 from .sensor import SensorInterface

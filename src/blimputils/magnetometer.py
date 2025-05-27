@@ -8,13 +8,14 @@ implementation of underlying methods for interacting with the sensor.
 
 
 :license: The MIT License (MIT)
-:author: [Eli Ferrara](eli.ferrara256@gmail.com)
+:author: Eli Ferrara 
+:email: eli.ferrara256@gmail.com
 :version: V1.0.0
-:date: 2025-05-26
+:date: 2025-05-27
 :url: https://github.com/Ballistyxx/blimp-utils
 """
 
-import serial
+#import serial
 import time
 import os
 import math

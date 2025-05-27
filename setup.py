@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="blimputils",
+    name="blimp-utils",
     version="1.0.0",
     author="Eli Ferrara",
     author_email="eli.ferrara256@gmail.com",

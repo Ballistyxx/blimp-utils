@@ -1,5 +1,13 @@
 """
-blimputils - A Python library for the Falcon Flight controller board.
+blimp-utils - A Python library for the Falcon Flight embedded controller board.
+
+
+:license: The MIT License (MIT)
+:author: Eli Ferrara 
+:email: eli.ferrara256@gmail.com
+:version: V1.0.0
+:date: 2025-05-27
+:url: https://github.com/Ballistyxx/blimp-utils
 """
 from typing import Union, Dict, Tuple # Adjusted imports
 

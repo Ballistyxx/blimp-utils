@@ -1,5 +1,13 @@
 """
-Utility functions for the blimputils library.
+Utility functions for the blimp-utils library.
+
+
+:license: The MIT License (MIT)
+:author: Eli Ferrara 
+:email: eli.ferrara256@gmail.com
+:version: V1.0.0
+:date: 2025-05-27
+:url: https://github.com/Ballistyxx/blimp-utils
 """
 
 def example_util_function():
