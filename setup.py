@@ -7,11 +7,11 @@ setuptools.setup(
     name="blimputils",
     version="1.0.0",
     author="Eli Ferrara",
-    author_email="your_email@example.com", # Replace with actual email
+    author_email="eli.ferrara256@gmail.com",
     description="A Python library for a custom embedded flight controller board.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Ballistyxx/blimp-utils", # Replace with actual URL
+    url="https://github.com/Ballistyxx/blimp-utils",
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
     classifiers=[
