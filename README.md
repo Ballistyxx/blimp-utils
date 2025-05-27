@@ -1,5 +1,3 @@
-# blimp-utils Rev. 1.0.0
-
 **blimp-utils** is a Python library for a custom embedded flight controller board. The board includes an accelerometer, gyroscope, magnetometer, and motor drivers for up to 4 brushed DC motors. This library is designed for production use, fully documented using Sphinx, and built with modularity and extensibility in mind.
 
 ## Features
@@ -13,11 +11,12 @@
 
 ## Installation
 
-To install the library, you can use pip with a `setup.py` or `pyproject.toml` (once created):
+To install the library, run the following command in a terminal:
 
 ```bash
-# Placeholder for actual installation command
-# pip install .
+git clone https://github.com/Ballistyxx/blimp-utils.git
+cd blimp-utils
+sudo pip3 install .
 ```
 
 ## Usage Examples
@@ -70,10 +69,14 @@ print("\nExample finished.")
 The full documentation is built with Sphinx and can be found in the `docs/build/html` directory after running `make html` inside `docs/`.
 
 ```bash
-cd docs
+git clone https://github.com/Ballistyxx/blimp-utils.git
+cd blimp-utils/docs
+make clean
 make html
 # Open docs/build/html/index.html in your browser
 ```
+
+Documentation can also be found at https://ballistyxx.github.io/blimp-utils/
 
 ## Modules
 
