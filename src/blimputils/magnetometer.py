@@ -48,177 +48,7 @@ except np.linalg.LinAlgError:
 _LOCAL_EARTH_FIELD_UT = 45.0 # Default placeholder - USER SHOULD UPDATE THIS
 
 # --------------------------------------------
-class bmm350_dut_offset_coef:
-    """
-    BMM350 magnetometer DUT offset coefficient structure.
-
-    :param t_offs: Temperature offset.
-    :type t_offs: float
-    :param offset_x: X-axis offset.
-    :type offset_x: float
-    :param offset_y: Y-axis offset.
-    :type offset_y: float
-    :param offset_z: Z-axis offset.
-    :type offset_z: float
-    """
-    def __init__(self, t_offs: float, offset_x: float, offset_y: float, offset_z: float):
-        self.t_offs = t_offs
-        self.offset_x = offset_x
-        self.offset_y = offset_y
-        self.offset_z = offset_z
-
-class bmm350_dut_sensit_coef:
-    """
-    BMM350 magnetometer DUT sensitivity coefficient structure.
-
-    :param t_sens: Temperature sensitivity.
-    :type t_sens: float
-    :param sens_x: X-axis sensitivity.
-    :type sens_x: float
-    :param sens_y: Y-axis sensitivity.
-    :type sens_y: float
-    :param sens_z: Z-axis sensitivity.
-    :type sens_z: float
-    """
-    def __init__(self, t_sens: float, sens_x: float, sens_y: float, sens_z: float):
-        self.t_sens = t_sens
-        self.sens_x = sens_x
-        self.sens_y = sens_y
-        self.sens_z = sens_z
-
-class bmm350_dut_tco:
-    """
-    BMM350 magnetometer DUT TCO (Temperature Coefficient of Offset) structure.
-
-    :param tco_x: TCO for X-axis.
-    :type tco_x: float
-    :param tco_y: TCO for Y-axis.
-    :type tco_y: float
-    :param tco_z: TCO for Z-axis.
-    :type tco_z: float
-    """
-    def __init__(self, tco_x: float, tco_y: float, tco_z: float):
-        self.tco_x = tco_x
-        self.tco_y = tco_y
-        self.tco_z = tco_z
-class bmm350_dut_tcs:
-    """
-    BMM350 magnetometer DUT TCS (Temperature Coefficient of Sensitivity) structure.
-
-    :param tcs_x: TCS for X-axis.
-    :type tcs_x: float
-    :param tcs_y: TCS for Y-axis.
-    :type tcs_y: float
-    :param tcs_z: TCS for Z-axis.
-    :type tcs_z: float
-    """
-    def __init__(self, tcs_x: float, tcs_y: float, tcs_z: float):
-        self.tcs_x = tcs_x
-        self.tcs_y = tcs_y
-        self.tcs_z = tcs_z
-
-class bmm350_cross_axis:
-    """
-    BMM350 magnetometer cross-axis compensation structure.
-
-    :param cross_x_y: Cross-axis sensitivity from Y to X.
-    :type cross_x_y: float
-    :param cross_y_x: Cross-axis sensitivity from X to Y.
-    :type cross_y_x: float
-    :param cross_z_x: Cross-axis sensitivity from X to Z.
-    :type cross_z_x: float
-    :param cross_z_y: Cross-axis sensitivity from Y to Z.
-    :type cross_z_y: float
-    """
-    def __init__(self, cross_x_y: float, cross_y_x: float, cross_z_x: float, cross_z_y: float):
-        self.cross_x_y = cross_x_y
-        self.cross_y_x = cross_y_x
-        self.cross_z_x = cross_z_x
-        self.cross_z_y = cross_z_y
-
-class bmm350_mag_compensate:
-    """
-    BMM350 magnetometer compensation data structure.
-    Aggregates various coefficient structures for sensor compensation.
-    """
-    def __init__(self, dut_offset_coef: bmm350_dut_offset_coef, dut_sensit_coef: bmm350_dut_sensit_coef, dut_tco: bmm350_dut_tco, dut_tcs: bmm350_dut_tcs, dut_t0: float, cross_axis: bmm350_cross_axis):
-        self.dut_offset_coef = dut_offset_coef
-        self.dut_sensit_coef = dut_sensit_coef
-        self.dut_tco = dut_tco
-        self.dut_tcs = dut_tcs
-        self.dut_t0 = dut_t0
-        self.cross_axis = cross_axis
-
-class bmm350_dev:
-  """
-  BMM350 device structure.
-  Holds device-specific information like chip ID, OTP data, and compensation settings.
-  """
-  def __init__(self, mag_comp: bmm350_mag_compensate):
-    self.chipID   = 0
-    self.otp_data = [0] * 32
-    self.var_id = 0
-    self.mag_comp = mag_comp
-    self.power_mode = 0
-    self.axis_en = 0
-
-# Create instances of the required classes with example values
-dut_offset_coef = bmm350_dut_offset_coef(t_offs=0, offset_x=0, offset_y=0, offset_z=0)
-dut_sensit_coef = bmm350_dut_sensit_coef(t_sens=0, sens_x=0, sens_y=0, sens_z=0)
-dut_tco = bmm350_dut_tco(tco_x=0, tco_y=0, tco_z=0)
-dut_tcs = bmm350_dut_tcs(tcs_x=0, tcs_y=0, tcs_z=0)
-cross_axis = bmm350_cross_axis(cross_x_y=0, cross_y_x=0, cross_z_x=0, cross_z_y=0)
-mag_comp = bmm350_mag_compensate(
-    dut_offset_coef=dut_offset_coef,
-    dut_sensit_coef=dut_sensit_coef,
-    dut_tco=dut_tco,
-    dut_tcs=dut_tcs,
-    dut_t0=0,
-    cross_axis=cross_axis
-)
-# The bmm350_mag_compensate object now contains all the data defined above.
-bmm350_sensor = bmm350_dev(mag_comp)
-
-
-# Uncompensated geomagnetic and temperature data
-class BMM350RawMagData:
-  """
-  Structure to hold uncompensated (raw) magnetometer and temperature data.
-  """
-  def __init__(self):
-    self.raw_x_data = 0
-    self.raw_y_data = 0
-    self.raw_z_data = 0
-    self.raw_t_data = 0
-_raw_mag_data = BMM350RawMagData()
-
-class BMM350MagData:
-  """
-  Structure to hold compensated magnetometer data (X, Y, Z) and temperature.
-  """
-  def __init__(self):
-    self.x  = 0
-    self.y  = 0
-    self.z  = 0
-    self.temperature  = 0
-_mag_data = BMM350MagData()
-
-class bmm350_pmu_cmd_status_0:
-    """
-    BMM350 PMU (Power Management Unit) command status 0 register structure.
-    Reflects the status of PMU commands and sensor state.
-    """
-    def __init__(self, pmu_cmd_busy, odr_ovwr, avr_ovwr, pwr_mode_is_normal, cmd_is_illegal, pmu_cmd_value):
-        self.pmu_cmd_busy = pmu_cmd_busy
-        self.odr_ovwr = odr_ovwr
-        self.avr_ovwr = avr_ovwr
-        self.pwr_mode_is_normal = pwr_mode_is_normal
-        self.cmd_is_illegal = cmd_is_illegal
-        self.pmu_cmd_value = pmu_cmd_value
-pmu_cmd_stat_0 = bmm350_pmu_cmd_status_0(pmu_cmd_busy=0, odr_ovwr=0, avr_ovwr=0, pwr_mode_is_normal=0, cmd_is_illegal=0, pmu_cmd_value=0)
-
-# --------------------------------------------
-class magnetometer_bmm350(object):
+class Magnetometer(object):
   """
   Main class for interacting with the BMM350 magnetometer.
   Handles sensor initialization, configuration, and data acquisition.
@@ -915,11 +745,181 @@ class magnetometer_bmm350(object):
           Data[2] = magData[2]
     return Data
 
+# --------------------------------------------
+class bmm350_dut_offset_coef:
+    """
+    BMM350 magnetometer DUT offset coefficient structure.
+
+    :param t_offs: Temperature offset.
+    :type t_offs: float
+    :param offset_x: X-axis offset.
+    :type offset_x: float
+    :param offset_y: Y-axis offset.
+    :type offset_y: float
+    :param offset_z: Z-axis offset.
+    :type offset_z: float
+    """
+    def __init__(self, t_offs: float, offset_x: float, offset_y: float, offset_z: float):
+        self.t_offs = t_offs
+        self.offset_x = offset_x
+        self.offset_y = offset_y
+        self.offset_z = offset_z
+
+class bmm350_dut_sensit_coef:
+    """
+    BMM350 magnetometer DUT sensitivity coefficient structure.
+
+    :param t_sens: Temperature sensitivity.
+    :type t_sens: float
+    :param sens_x: X-axis sensitivity.
+    :type sens_x: float
+    :param sens_y: Y-axis sensitivity.
+    :type sens_y: float
+    :param sens_z: Z-axis sensitivity.
+    :type sens_z: float
+    """
+    def __init__(self, t_sens: float, sens_x: float, sens_y: float, sens_z: float):
+        self.t_sens = t_sens
+        self.sens_x = sens_x
+        self.sens_y = sens_y
+        self.sens_z = sens_z
+
+class bmm350_dut_tco:
+    """
+    BMM350 magnetometer DUT TCO (Temperature Coefficient of Offset) structure.
+
+    :param tco_x: TCO for X-axis.
+    :type tco_x: float
+    :param tco_y: TCO for Y-axis.
+    :type tco_y: float
+    :param tco_z: TCO for Z-axis.
+    :type tco_z: float
+    """
+    def __init__(self, tco_x: float, tco_y: float, tco_z: float):
+        self.tco_x = tco_x
+        self.tco_y = tco_y
+        self.tco_z = tco_z
+class bmm350_dut_tcs:
+    """
+    BMM350 magnetometer DUT TCS (Temperature Coefficient of Sensitivity) structure.
+
+    :param tcs_x: TCS for X-axis.
+    :type tcs_x: float
+    :param tcs_y: TCS for Y-axis.
+    :type tcs_y: float
+    :param tcs_z: TCS for Z-axis.
+    :type tcs_z: float
+    """
+    def __init__(self, tcs_x: float, tcs_y: float, tcs_z: float):
+        self.tcs_x = tcs_x
+        self.tcs_y = tcs_y
+        self.tcs_z = tcs_z
+
+class bmm350_cross_axis:
+    """
+    BMM350 magnetometer cross-axis compensation structure.
+
+    :param cross_x_y: Cross-axis sensitivity from Y to X.
+    :type cross_x_y: float
+    :param cross_y_x: Cross-axis sensitivity from X to Y.
+    :type cross_y_x: float
+    :param cross_z_x: Cross-axis sensitivity from X to Z.
+    :type cross_z_x: float
+    :param cross_z_y: Cross-axis sensitivity from Y to Z.
+    :type cross_z_y: float
+    """
+    def __init__(self, cross_x_y: float, cross_y_x: float, cross_z_x: float, cross_z_y: float):
+        self.cross_x_y = cross_x_y
+        self.cross_y_x = cross_y_x
+        self.cross_z_x = cross_z_x
+        self.cross_z_y = cross_z_y
+
+class bmm350_mag_compensate:
+    """
+    BMM350 magnetometer compensation data structure.
+    Aggregates various coefficient structures for sensor compensation.
+    """
+    def __init__(self, dut_offset_coef: bmm350_dut_offset_coef, dut_sensit_coef: bmm350_dut_sensit_coef, dut_tco: bmm350_dut_tco, dut_tcs: bmm350_dut_tcs, dut_t0: float, cross_axis: bmm350_cross_axis):
+        self.dut_offset_coef = dut_offset_coef
+        self.dut_sensit_coef = dut_sensit_coef
+        self.dut_tco = dut_tco
+        self.dut_tcs = dut_tcs
+        self.dut_t0 = dut_t0
+        self.cross_axis = cross_axis
+
+class bmm350_dev:
+  """
+  BMM350 device structure.
+  Holds device-specific information like chip ID, OTP data, and compensation settings.
+  """
+  def __init__(self, mag_comp: bmm350_mag_compensate):
+    self.chipID   = 0
+    self.otp_data = [0] * 32
+    self.var_id = 0
+    self.mag_comp = mag_comp
+    self.power_mode = 0
+    self.axis_en = 0
+
+# Create instances of the required classes with example values
+dut_offset_coef = bmm350_dut_offset_coef(t_offs=0, offset_x=0, offset_y=0, offset_z=0)
+dut_sensit_coef = bmm350_dut_sensit_coef(t_sens=0, sens_x=0, sens_y=0, sens_z=0)
+dut_tco = bmm350_dut_tco(tco_x=0, tco_y=0, tco_z=0)
+dut_tcs = bmm350_dut_tcs(tcs_x=0, tcs_y=0, tcs_z=0)
+cross_axis = bmm350_cross_axis(cross_x_y=0, cross_y_x=0, cross_z_x=0, cross_z_y=0)
+mag_comp = bmm350_mag_compensate(
+    dut_offset_coef=dut_offset_coef,
+    dut_sensit_coef=dut_sensit_coef,
+    dut_tco=dut_tco,
+    dut_tcs=dut_tcs,
+    dut_t0=0,
+    cross_axis=cross_axis
+)
+# The bmm350_mag_compensate object now contains all the data defined above.
+bmm350_sensor = bmm350_dev(mag_comp)
+
+
+# Uncompensated geomagnetic and temperature data
+class BMM350RawMagData:
+  """
+  Structure to hold uncompensated (raw) magnetometer and temperature data.
+  """
+  def __init__(self):
+    self.raw_x_data = 0
+    self.raw_y_data = 0
+    self.raw_z_data = 0
+    self.raw_t_data = 0
+_raw_mag_data = BMM350RawMagData()
+
+class BMM350MagData:
+  """
+  Structure to hold compensated magnetometer data (X, Y, Z) and temperature.
+  """
+  def __init__(self):
+    self.x  = 0
+    self.y  = 0
+    self.z  = 0
+    self.temperature  = 0
+_mag_data = BMM350MagData()
+
+class bmm350_pmu_cmd_status_0:
+    """
+    BMM350 PMU (Power Management Unit) command status 0 register structure.
+    Reflects the status of PMU commands and sensor state.
+    """
+    def __init__(self, pmu_cmd_busy, odr_ovwr, avr_ovwr, pwr_mode_is_normal, cmd_is_illegal, pmu_cmd_value):
+        self.pmu_cmd_busy = pmu_cmd_busy
+        self.odr_ovwr = odr_ovwr
+        self.avr_ovwr = avr_ovwr
+        self.pwr_mode_is_normal = pwr_mode_is_normal
+        self.cmd_is_illegal = cmd_is_illegal
+        self.pmu_cmd_value = pmu_cmd_value
+pmu_cmd_stat_0 = bmm350_pmu_cmd_status_0(pmu_cmd_busy=0, odr_ovwr=0, avr_ovwr=0, pwr_mode_is_normal=0, cmd_is_illegal=0, pmu_cmd_value=0)
+
 # I2C interface
-class magnetometer_bmm350_I2C(magnetometer_bmm350):
+class Magnetometer_I2C(Magnetometer):
   """
   I2C interface implementation for the BMM350 magnetometer.
-  Inherits from :class:`magnetometer_bmm350` and provides I2C communication methods.
+  Inherits from :class:`Magnetometer` and provides I2C communication methods.
   """
   def __init__(self, bus, addr):
     """
@@ -937,7 +937,7 @@ class magnetometer_bmm350_I2C(magnetometer_bmm350):
       self.i2cbus = smbus.SMBus(bus)
     else:
       self.test_platform()
-    super(magnetometer_bmm350_I2C, self).__init__(self.bus)
+    super(Magnetometer_I2C, self).__init__(self.bus)
 
   def is_raspberrypi(self):
     import io
