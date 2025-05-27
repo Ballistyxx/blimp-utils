@@ -1,6 +1,6 @@
-# blimp-control
+# blimp-utils
 
-**blimp-control** is a Python library for a custom embedded flight controller board. The board includes an accelerometer, gyroscope, magnetometer, and 4 brushed DC motors. This library is designed for production use, fully documented using Sphinx, and built with modularity and extensibility in mind.
+**blimp-utils** is a Python library for a custom embedded flight controller board. The board includes an accelerometer, gyroscope, magnetometer, and 4 brushed DC motors. This library is designed for production use, fully documented using Sphinx, and built with modularity and extensibility in mind.
 
 ## Features
 
@@ -8,7 +8,7 @@
 - Clear, class-based API.
 - Simulation of I²C and GPIO operations for development off-hardware.
 - Comprehensive Sphinx documentation.
-- Python 3.10+ type hinting.
+- Python 3.9+ type hinting.
 - PEP8 compliant.
 
 ## Installation
@@ -22,25 +22,23 @@ To install the library, you can use pip with a `setup.py` or `pyproject.toml` (o
 
 ## Usage Examples
 
-Here's a quick example of how to use the `blimpcontrol` library:
+Here's a quick example of how to use the `blimputils` library:
 
 ```python
-from blimpcontrol import Motor, Accelerometer, Gyroscope, Magnetometer
+from blimputils import Motor, Accelerometer, Gyroscope, Magnetometer
 
-# Initialize a motor on GPIO pins 17 and 18
-# Assumes pin 17 is used for PWM if no dedicated pwm_pin is provided
-motor1 = Motor(pin1=17, pin2=18)
+# Initialize a motor on GPIO pins 13 and 21
+# Assumes pin 13 is used for PWM if no dedicated pwm_pin is provided
+motor1 = Motor(pin1=13, pin2=21)
 
 # Initialize an accelerometer on I2C bus 1, address 0x68
 accel = Accelerometer(bus=1, addr=0x68) # BMI270 default address
 
-# Initialize a gyroscope (often same chip as accelerometer)
+# Initialize a gyroscope (same chip as accelerometer)
 gyro = Gyroscope(bus=1, addr=0x68) # BMI270 default address
 
-# Initialize a magnetometer on I2C bus 1, address 0x10 (example for BMM350)
-# Note: BMM350 typical addresses can vary, e.g. 0x10, 0x11, 0x12, 0x13
-# Or DFRobot module default 0x13
-mag = Magnetometer(bus=1, addr=0x13)
+# Initialize a magnetometer on I2C bus 1, address 0x14
+mag = Magnetometer(bus=1, addr=0x14)
 
 
 print("--- Motor Control ---")
@@ -79,12 +77,12 @@ make html
 
 ## Modules
 
-- `blimpcontrol.accelerometer`: Provides the `Accelerometer` class.
-- `blimpcontrol.gyroscope`: Provides the `Gyroscope` class.
-- `blimpcontrol.magnetometer`: Provides the `Magnetometer` class.
-- `blimpcontrol.motor`: Provides the `Motor` class.
-- `blimpcontrol.utils`: Utility functions.
-- `blimpcontrol.interfaces`: Abstract base classes (e.g., `SensorInterface`).
+- `blimputils.accelerometer`: Provides the `Accelerometer` class.
+- `blimputils.gyroscope`: Provides the `Gyroscope` class.
+- `blimputils.magnetometer`: Provides the `Magnetometer` class.
+- `blimputils.motor`: Provides the `Motor` class.
+- `blimputils.utils`: Utility functions.
+- `blimputils.interfaces`: Abstract base classes (e.g., `SensorInterface`).
 
 Refer to the Sphinx documentation for detailed API references.
 
@@ -94,4 +92,4 @@ Contributions are welcome! Please ensure your code follows PEP8 and includes typ
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details (not created yet, but assuming MIT).
+This project is licensed under the MIT License - see the `LICENSE` file for details

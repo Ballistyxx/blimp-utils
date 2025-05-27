@@ -1,7 +1,7 @@
-blimpcontrol.motor
+blimputils.utils
 ==================
 
-.. automodule:: blimpcontrol.motor
+.. automodule:: blimputils.utils
    :members:
    :undoc-members:
    :show-inheritance:

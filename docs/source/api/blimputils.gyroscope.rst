@@ -1,7 +1,7 @@
-blimpcontrol.gyroscope
+blimputils.gyroscope
 ======================
 
-.. automodule:: blimpcontrol.gyroscope
+.. automodule:: blimputils.gyroscope
    :members:
    :undoc-members:
    :show-inheritance:

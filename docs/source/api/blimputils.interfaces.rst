@@ -1,7 +1,7 @@
-blimpcontrol.magnetometer
+blimputils.interfaces
 =========================
 
-.. automodule:: blimpcontrol.magnetometer
+.. automodule:: blimputils.interfaces.sensor
    :members:
    :undoc-members:
    :show-inheritance:

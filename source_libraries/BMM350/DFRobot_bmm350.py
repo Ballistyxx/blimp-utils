@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*
 '''
-  @file DFRobot_bmm350.py
-  @note DFRobot_bmm350 Class infrastructure, implementation of underlying methods
+  @file Magnetometer_bmm350.py
+  @note Magnetometer_bmm350 Class infrastructure, implementation of underlying methods
   @copyright   Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   @license     The MIT License (MIT)
   @author      [GDuang](yonglei.ren@dfrobot.com)
   @version     V1.0.0
   @date        2024-05-06
-  @url         https://github.com/DFRobot/DFRobot_BMM350
+  @url         https://github.com/DFRobot/Magnetometer_BMM350
 '''
 import serial
 import time
@@ -894,7 +894,7 @@ class bmm350_pmu_cmd_status_0:
 pmu_cmd_stat_0 = bmm350_pmu_cmd_status_0(pmu_cmd_busy=0, odr_ovwr=0, avr_ovwr=0, pwr_mode_is_normal=0, cmd_is_illegal=0, pmu_cmd_value=0)
 
 # --------------------------------------------
-class DFRobot_bmm350(object):
+class Magnetometer_bmm350(object):
   I2C_MODE                       = 1
   I3C_MODE                       = 2
   __thresholdMode = 2
@@ -1522,7 +1522,7 @@ class DFRobot_bmm350(object):
     return Data
 
 # I2C interface
-class DFRobot_bmm350_I2C(DFRobot_bmm350):
+class Magnetometer_bmm350_I2C(Magnetometer_bmm350):
   '''!
     @brief An example of an i2c interface module
   '''
@@ -1534,7 +1534,7 @@ class DFRobot_bmm350_I2C(DFRobot_bmm350):
       self.i2cbus = smbus.SMBus(bus)
     else:
       self.test_platform()
-    super(DFRobot_bmm350_I2C, self).__init__(self.bus)
+    super(Magnetometer_bmm350_I2C, self).__init__(self.bus)
 
   def is_raspberrypi(self):
     import io

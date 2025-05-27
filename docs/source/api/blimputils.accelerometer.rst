@@ -1,7 +1,7 @@
-blimpcontrol.accelerometer
+blimputils.accelerometer
 ==========================
 
-.. automodule:: blimpcontrol.accelerometer
+.. automodule:: blimputils.accelerometer
    :members:
    :undoc-members:
    :show-inheritance:

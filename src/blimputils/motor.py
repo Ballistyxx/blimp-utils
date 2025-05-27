@@ -1,5 +1,5 @@
 """
-Motor module for the blimpcontrol library.
+Motor module for the blimputils library.
 """
 
 from typing import Literal, Union
@@ -14,7 +14,7 @@ class Motor:
     """
     A class to represent a bidirectional brushed DC motor controlled by a DRV8871-like driver.
 
-    The DRV8871 typically uses two pins for direction and PWM for speed.
+    The DRV8871 uses two pins for direction.
     This class simplifies it to two pins for direction and assumes speed is managed by PWM
     on one of these pins or a separate enable pin if the driver supports it.
 

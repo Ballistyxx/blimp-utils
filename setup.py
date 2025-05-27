@@ -4,19 +4,19 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="blimpcontrol",
+    name="blimputils",
     version="1.0.0",
     author="Eli Ferrara",
     author_email="your_email@example.com", # Replace with actual email
     description="A Python library for a custom embedded flight controller board.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/your_username/blimpcontrol", # Replace with actual URL
+    url="https://github.com/Ballistyxx/blimp-utils", # Replace with actual URL
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License", # Assuming MIT License
         "Operating System :: OS Independent",
         "Development Status :: 4 - Beta", # Or another appropriate status

@@ -1,5 +1,5 @@
 """
-Accelerometer module for the blimpcontrol library, specifically for BMI270.
+Accelerometer module for the blimputils library, specifically for BMI270.
 """
 
 import time
@@ -25,14 +25,14 @@ try:
     # in registers.py or a new bmi270_defs.py if they are specific to the chip's interface
     # For now, let's define BMI270_CHIP_ID here if it's static, or ensure it's in registers.py
     BMI270_CHIP_ID = 0x24 # Standard BMI270 Chip ID
-    # For ACC_ODR_100, ACC_BWP_NORMAL, ACC_RANGE_2G, these are typically part of a definitions file.
+    
     # Let's assume they will be imported from a definitions module or defined if not available from registers.py
     # If your registers.py doesn't have them, you might need to add them or import from definitions.py
     from .definitions import ACC_ODR_100, ACC_BWP_NORMAL, ACC_RANGE_2G
 
 except ImportError as e:
     print("ERROR: Could not import config_file.py or registers.py, or specific constants from them.")
-    print("Please ensure these files are present in the 'src/blimpcontrol/' directory and contain the necessary variables.")
+    print("Please ensure these files are present in the 'src/blimputils/' directory and contain the necessary variables.")
     print(f"Import error: {e}")
     raise
 
@@ -322,10 +322,10 @@ class Accelerometer:
 # Example usage (optional, for testing directly)
 if __name__ == '__main__':
     try:
-        # Ensure bmi270_config.py and bmi270_registers.py are in src/blimpcontrol/
-        # or that src/blimpcontrol is in PYTHONPATH for the imports to work.
+        # Ensure bmi270_config.py and bmi270_registers.py are in src/blimputils/
+        # or that src/blimputils is in PYTHONPATH for the imports to work.
         # If running this directly, you might need to adjust sys.path or run as a module.
-        # Example: python -m blimpcontrol.accelerometer (if __init__.py makes it a package)
+        # Example: python -m blimputils.accelerometer (if __init__.py makes it a package)
         
         # For direct script execution, relative imports might fail.
         # A temporary workaround for direct testing if files are in same dir:
@@ -349,7 +349,7 @@ if __name__ == '__main__':
 
     except ImportError:
         print("ImportError: Could not run example. Ensure BMI270 config/register/registers.py files are accessible.")
-        print("Try copying them to src/blimpcontrol/ and run as part of the package.")
+        print("Try copying them to src/blimputils/ and run as part of the package.")
     except IOError as e:
         print(f"IOError: {e}")
         print("Please check I2C connection, address, and that the sensor is a BMI270.")

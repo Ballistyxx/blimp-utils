@@ -1,5 +1,5 @@
 """
-Gyroscope module for the blimpcontrol library, specifically for BMI270.
+Gyroscope module for the blimputils library, specifically for BMI270.
 """
 
 import time
@@ -23,7 +23,7 @@ try:
     )
 except ImportError as e:
     print("ERROR: Could not import BMI270 specific files (config_file.py, registers.py, definitions.py).")
-    print("Please ensure these files are present in the 'src/blimpcontrol/' directory and contain the necessary variables.")
+    print("Please ensure these files are present in the 'src/blimputils/' directory and contain the necessary variables.")
     print(f"Import error: {e}")
     raise
 
@@ -45,7 +45,7 @@ class Gyroscope:
 
     :param bus: The I2C bus number (e.g., 1 for Raspberry Pi).
     :type bus: int
-    :param addr: The I2C address of the BMI270 (typically 0x68 or 0x69).
+    :param addr: The I2C address of the BMI270 (hardwired to 0x68).
     :type addr: int
     :param default_odr: Default Output Data Rate for the gyroscope, e.g., GYR_ODR_100.
     :type default_odr: int
@@ -311,7 +311,7 @@ class Gyroscope:
                 self.i2c_bus.close()
                 print(f"I2C bus {self.bus_num} closed for gyroscope {hex(self.addr)}.")
 
-# Example usage (for testing, typically not part of the library file):
+# Example usage (for testing, not part of the library file):
 if __name__ == '__main__':
     try:
         # Assuming I2C bus 1, default address 0x68

@@ -1,16 +1,16 @@
 Modules
 =======
 
-.. automodule:: blimpcontrol
+.. automodule:: blimputils
    :members:
 
 .. toctree::
    :maxdepth: 1
    :caption: API Reference:
 
-   api/blimpcontrol.accelerometer
-   api/blimpcontrol.gyroscope
-   api/blimpcontrol.magnetometer
-   api/blimpcontrol.motor
-   api/blimpcontrol.utils
-   api/blimpcontrol.interfaces
+   api/blimputils.accelerometer
+   api/blimputils.gyroscope
+   api/blimputils.magnetometer
+   api/blimputils.motor
+   api/blimputils.utils
+   api/blimputils.interfaces

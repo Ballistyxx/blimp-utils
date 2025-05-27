@@ -4,9 +4,10 @@
    contain the root `toctree` directive.
 
 Welcome to blimp-utils's documentation!
-===========================
+=========================================
 
-.. mdinclude:: ../../README.md
+.. include:: ../../README.md
+   :parser: myst_parser.sphinx_
 
 Contents
 --------

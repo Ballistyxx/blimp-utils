@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="blimpcontrol.accelerometer" href="api/blimpcontrol.accelerometer.html" />
+    <link rel="next" title="blimputils.accelerometer" href="api/blimputils.accelerometer.html" />
     <link rel="prev" title="Usage" href="usage.html" /> 
 </head>
 
@@ -46,12 +46,14 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.accelerometer.html">blimpcontrol.accelerometer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.gyroscope.html">blimpcontrol.gyroscope</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.magnetometer.html">blimpcontrol.magnetometer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.motor.html">blimpcontrol.motor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.utils.html">blimpcontrol.utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/blimpcontrol.interfaces.html">blimpcontrol.interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blimputils.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blimputils.cleanup"><code class="docutils literal notranslate"><span class="pre">cleanup()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.accelerometer.html">blimputils.accelerometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.gyroscope.html">blimputils.gyroscope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.magnetometer.html">blimputils.magnetometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.motor.html">blimputils.motor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.utils.html">blimputils.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.interfaces.html">blimputils.interfaces</a></li>
 </ul>
 </li>
 </ul>
@@ -80,17 +82,49 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="modules">
-<h1>Modules<a class="headerlink" href="#modules" title="Link to this heading"></a></h1>
+  <section id="module-blimputils">
+<span id="modules"></span><h1>Modules<a class="headerlink" href="#module-blimputils" title="Link to this heading"></a></h1>
+<p>blimputils - A Python library for the Falcon Flight controller board.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="blimputils.init">
+<span class="sig-prename descclassname"><span class="pre">blimputils.</span></span><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i2c_bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accel_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">104</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">104</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">motor_pins_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="api/blimputils.accelerometer.html#blimputils.accelerometer.Accelerometer" title="blimputils.accelerometer.Accelerometer"><span class="pre">Accelerometer</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="api/blimputils.gyroscope.html#blimputils.gyroscope.Gyroscope" title="blimputils.gyroscope.Gyroscope"><span class="pre">Gyroscope</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="api/blimputils.magnetometer.html#blimputils.magnetometer.magnetometer_bmm350" title="blimputils.magnetometer.magnetometer_bmm350"><span class="pre">magnetometer_bmm350</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="api/blimputils.motor.html#blimputils.motor.Motor" title="blimputils.motor.Motor"><span class="pre">Motor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blimputils.init" title="Link to this definition"></a></dt>
+<dd><p>Initializes the sensors and motors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i2c_bus</strong> – The I2C bus number for sensors.</p></li>
+<li><p><strong>accel_addr</strong> – I2C address for the accelerometer. If None, accelerometer is not initialized.</p></li>
+<li><p><strong>gyro_addr</strong> – I2C address for the gyroscope. If None, gyroscope is not initialized.</p></li>
+<li><p><strong>mag_addr</strong> – I2C address for the magnetometer. If None, magnetometer is not initialized.</p></li>
+<li><p><strong>motor_pins_config</strong> – Configuration for motor pins.
+Example: {“motor1”: {“pin1”: 17, “pin2”: 18, “pwm_pin”: None}}
+If None, uses DEFAULT_MOTOR_PINS.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the initialized (or None) sensor instances and a dictionary of motor instances.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>IOError</strong> – If sensor initialization fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="blimputils.cleanup">
+<span class="sig-prename descclassname"><span class="pre">blimputils.</span></span><span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.cleanup" title="Link to this definition"></a></dt>
+<dd><p>Cleans up resources used by sensors and motors.</p>
+</dd></dl>
+
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api/blimpcontrol.accelerometer.html">blimpcontrol.accelerometer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/blimpcontrol.gyroscope.html">blimpcontrol.gyroscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/blimpcontrol.magnetometer.html">blimpcontrol.magnetometer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/blimpcontrol.motor.html">blimpcontrol.motor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/blimpcontrol.utils.html">blimpcontrol.utils</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/blimpcontrol.interfaces.html">blimpcontrol.interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/blimputils.accelerometer.html">blimputils.accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/blimputils.gyroscope.html">blimputils.gyroscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/blimputils.magnetometer.html">blimputils.magnetometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/blimputils.motor.html">blimputils.motor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/blimputils.utils.html">blimputils.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/blimputils.interfaces.html">blimputils.interfaces</a></li>
 </ul>
 </div>
 </section>
@@ -100,7 +134,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="usage.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="api/blimpcontrol.accelerometer.html" class="btn btn-neutral float-right" title="blimpcontrol.accelerometer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api/blimputils.accelerometer.html" class="btn btn-neutral float-right" title="blimputils.accelerometer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

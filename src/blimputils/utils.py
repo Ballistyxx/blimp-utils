@@ -1,5 +1,5 @@
 """
-Utility functions for the blimpcontrol library.
+Utility functions for the blimputils library.
 """
 
 def example_util_function():
