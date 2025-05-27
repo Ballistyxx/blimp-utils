@@ -656,7 +656,7 @@ class magnetometer_bmm350(object):
     """
     Get the measurement enable status for X, Y, and Z axes.
 
-    :return: A string describing the enable status of each axis (e.g., "The x axis is enable! The y axis is enable! The z axis is enable! ").
+    :return: A string describing the enable status of each axis (e.g., "x-axis enabled, y-axis enabled, z-axis enabled.").
     :rtype: str
     """
     axis_en = bmm350_sensor.axis_en
@@ -664,9 +664,9 @@ class magnetometer_bmm350(object):
     en_y = self.BMM350_GET_BITS(axis_en, BMM350_EN_Y_MSK, BMM350_EN_Y_POS)
     en_z = self.BMM350_GET_BITS(axis_en, BMM350_EN_Z_MSK, BMM350_EN_Z_POS)
     result = ""
-    result += "The x axis is enable! " if en_x == 1 else "The x axis is disable! "
-    result += "The y axis is enable! " if en_y == 1 else "The y axis is disable! "
-    result += "The z axis is enable! " if en_z == 1 else "The z axis is disable! "
+    result += "x-axis enabled, " if en_x == 1 else "x-axis disabled, "
+    result += "y-axis enabled, " if en_y == 1 else "y-axis disabled, "
+    result += "z-axis enabled. " if en_z == 1 else "z-axis disabled. "
     return result
 
   def get_raw_magnetic_data_for_calibration(self):
@@ -856,10 +856,6 @@ class magnetometer_bmm350(object):
     An interrupt is triggered when the geomagnetic value of any enabled channel
     crosses a defined threshold. The interrupt can be configured for low threshold
     (triggers if value < threshold) or high threshold (triggers if value > threshold).
-
-    .. note:: The actual threshold used by the sensor might be scaled.
-              The original comment mentioned "default to expand 16 times".
-              Verify this behavior with the sensor datasheet.
 
     :param modes: Threshold interrupt mode.
     :type modes: int
