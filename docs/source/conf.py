@@ -23,6 +23,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',  # For Google and NumPy style docstrings
     'sphinx_rtd_theme',
+    'sphinx.ext.githubpages',  # For GitHub Pages support
     'myst_parser', # For Markdown support
 ]
 
