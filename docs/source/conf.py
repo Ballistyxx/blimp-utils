@@ -36,6 +36,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store'] # Exclude build director
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_favicon = '_static/favicon.ico'
+html_title = 'blimp-utils Documentation'
 
 # -- Options for autodoc -----------------------------------------------------
 autodoc_mock_imports = ["RPi.GPIO", "RPi", "smbus2", "serial"] # Mock hardware-specific libraries
