@@ -11,10 +11,18 @@ sys.path.insert(0, os.path.abspath('../../src')) # Point Sphinx to the src direc
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Falcon Flight'
+project = 'blimp-utils'
 copyright = '2025, Eli Ferrara'
 author = 'Eli Ferrara'
 release = '1.0.0'
+
+# :license: The MIT License (MIT)
+# :author: Eli Ferrara 
+# :email: eli.ferrara256@gmail.com
+# :version: V1.0.0
+# :date: 2025-05-28
+# :url: https://github.com/Ballistyxx/blimp-utils
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

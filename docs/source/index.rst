@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. Welcome to blimp-utils' documentation!
+Welcome to blimp-utils' documentation!
 =========================================
 
 .. include:: ../../README.md
@@ -19,4 +19,3 @@ Contents
 
    usage.rst
    modules.rst
-

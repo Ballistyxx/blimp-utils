@@ -1,13 +1,5 @@
 """
 Accelerometer module for the blimp-utils library, specifically for the Bosch-Sensortec BMI270.
-
-
-:license: The MIT License (MIT)
-:author: Eli Ferrara 
-:email: eli.ferrara256@gmail.com
-:version: V1.0.0
-:date: 2025-05-27
-:url: https://github.com/Ballistyxx/blimp-utils
 """
 
 import time
@@ -217,33 +209,41 @@ class Accelerometer:
     def get_x_raw(self) -> int:
         """
         Get the raw X-axis acceleration value.
+
         :return: The raw X-axis acceleration (16-bit signed integer).
         :example: ``raw_x = accel.get_x_raw()``
+
         """
         return self._read_sensor_word_signed(ACC_X_7_0)
 
     def get_y_raw(self) -> int:
         """
         Get the raw Y-axis acceleration value.
+
         :return: The raw Y-axis acceleration (16-bit signed integer).
         :example: ``raw_y = accel.get_y_raw()``
+
         """
         return self._read_sensor_word_signed(ACC_Y_7_0)
 
     def get_z_raw(self) -> int:
         """
         Get the raw Z-axis acceleration value.
+
         :return: The raw Z-axis acceleration (16-bit signed integer).
         :example: ``raw_z = accel.get_z_raw()``
+
         """
         return self._read_sensor_word_signed(ACC_Z_7_0)
 
     def get_xyz_raw(self) -> List[int]:
         """
         Get all three axes raw acceleration data.
+
         :return: A list containing [X, Y, Z] raw acceleration values.
         :rtype: List[int]
         :example: ``raw_xyz = accel.get_xyz_raw()``
+
         """
         # Reading all 6 data bytes at once might be more efficient if sensor supports it
         # and smbus2 block read is used correctly.
@@ -271,9 +271,11 @@ class Accelerometer:
     def get_xyz(self) -> List[float]:
         """
         Get all three axes acceleration data, scaled to G's.
+
         :return: A list containing [X, Y, Z] acceleration in G's.
         :rtype: List[float]
         :example: ``g_xyz = accel.get_xyz()``
+
         """
         raw = self.get_xyz_raw()
         return [val * self.raw_to_g_factor for val in raw]
@@ -281,9 +283,11 @@ class Accelerometer:
     def get_x(self) -> float:
         """
         Get X-axis acceleration data, scaled to G's.
+
         :return: The X-axis acceleration in G's.
         :rtype: float
         :example: ``g_x = accel.get_x()``
+
         """
         raw = self.get_x_raw()
         return raw * self.raw_to_g_factor
@@ -291,9 +295,11 @@ class Accelerometer:
     def get_y(self) -> float:
         """
         Get Y-axis acceleration data, scaled to G's.
+
         :return: The Y-axis acceleration in G's.
         :rtype: float
         :example: ``g_y = accel.get_y()``
+
         """
         raw = self.get_y_raw()
         return raw * self.raw_to_g_factor
@@ -301,9 +307,11 @@ class Accelerometer:
     def get_z(self) -> float:
         """
         Get Z-axis acceleration data, scaled to G's.
+
         :return: The Z-axis acceleration in G's.
         :rtype: float
         :example: ``g_z = accel.get_z()``
+        
         """
         raw = self.get_z_raw()
         return raw * self.raw_to_g_factor

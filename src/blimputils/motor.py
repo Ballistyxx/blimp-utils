@@ -1,13 +1,5 @@
 """
 Motor module for the blimp-utils library, specifically for the Texas Instruments DRV8871 Motor Driver.
-
-
-:license: The MIT License (MIT)
-:author: Eli Ferrara 
-:email: eli.ferrara256@gmail.com
-:version: V1.0.0
-:date: 2025-05-27
-:url: https://github.com/Ballistyxx/blimp-utils
 """
 
 from typing import Literal, Union

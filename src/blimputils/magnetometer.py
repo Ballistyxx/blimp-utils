@@ -3,16 +3,8 @@
 magnetometer.py
 ======================
 
-Module for the BMM350 magnetometer. Provides class infrastructure and
+Module for the Bosch-Sensortec BMM350 magnetometer. Provides class infrastructure and
 implementation of underlying methods for interacting with the sensor.
-
-
-:license: The MIT License (MIT)
-:author: Eli Ferrara 
-:email: eli.ferrara256@gmail.com
-:version: V1.0.0
-:date: 2025-05-27
-:url: https://github.com/Ballistyxx/blimp-utils
 """
 
 #import serial
