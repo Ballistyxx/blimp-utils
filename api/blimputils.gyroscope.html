@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blimputils.gyroscope &mdash; blimp-utils Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="blimputils.magnetometer" href="blimputils.magnetometer.html" />
+    <link rel="prev" title="blimputils.accelerometer" href="blimputils.accelerometer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            blimp-utils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#blimputils.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#blimputils.cleanup"><code class="docutils literal notranslate"><span class="pre">cleanup()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.accelerometer.html">blimputils.accelerometer</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">blimputils.gyroscope</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope"><code class="docutils literal notranslate"><span class="pre">Gyroscope</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_x_raw"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_x_raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_y_raw"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_y_raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_z_raw"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_z_raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_xyz_raw"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_xyz_raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_x"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_x()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_y"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_z"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_z()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.get_xyz"><code class="docutils literal notranslate"><span class="pre">Gyroscope.get_xyz()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.gyroscope.Gyroscope.close"><code class="docutils literal notranslate"><span class="pre">Gyroscope.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.magnetometer.html">blimputils.magnetometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.motor.html">blimputils.motor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.utils.html">blimputils.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.interfaces.html">blimputils.interfaces</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">blimp-utils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">Modules</a></li>
+      <li class="breadcrumb-item active">blimputils.gyroscope</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/blimputils.gyroscope.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-blimputils.gyroscope">
+<span id="blimputils-gyroscope"></span><h1>blimputils.gyroscope<a class="headerlink" href="#module-blimputils.gyroscope" title="Link to this heading"></a></h1>
+<p>Gyroscope module for the blimp-utils library, specifically for the Bosch-Sensortec BMI270.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.gyroscope.</span></span><span class="sig-name descname"><span class="pre">Gyroscope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">104</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_odr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_bwp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent the BMI270 gyroscope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bus</strong> (<em>int</em>) – The I2C bus number (e.g., 1 for Raspberry Pi).</p></li>
+<li><p><strong>addr</strong> (<em>int</em>) – The I2C address of the BMI270 (hardwired to 0x68).</p></li>
+<li><p><strong>default_odr</strong> (<em>int</em>) – Default Output Data Rate for the gyroscope, e.g., GYR_ODR_100.</p></li>
+<li><p><strong>default_bwp</strong> (<em>int</em>) – Default Bandwidth Parameter for the gyroscope, e.g., GYR_BWP_NORMAL.</p></li>
+<li><p><strong>default_range</strong> (<em>int</em>) – Default range setting for the gyroscope, e.g., GYR_RANGE_2000.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – if bus or addr are not integers.</p></li>
+<li><p><strong>IOError</strong> – if I2C bus cannot be opened or BMI270 initialization fails.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_x_raw">
+<span class="sig-name descname"><span class="pre">get_x_raw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_x_raw" title="Link to this definition"></a></dt>
+<dd><p>Get the raw X-axis gyroscope value from BMI270.
+Uses GYR_X_7_0 (LSB) and GYR_X_15_8 (MSB) registers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The raw X-axis gyroscope value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">raw_x</span> <span class="pre">=</span> <span class="pre">gyro.get_x_raw()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_y_raw">
+<span class="sig-name descname"><span class="pre">get_y_raw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_y_raw" title="Link to this definition"></a></dt>
+<dd><p>Get the raw Y-axis gyroscope value from BMI270.
+Uses GYR_Y_7_0 (LSB) and GYR_Y_15_8 (MSB) registers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The raw Y-axis gyroscope value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">raw_y</span> <span class="pre">=</span> <span class="pre">gyro.get_y_raw()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_z_raw">
+<span class="sig-name descname"><span class="pre">get_z_raw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_z_raw" title="Link to this definition"></a></dt>
+<dd><p>Get the raw Z-axis gyroscope value from BMI270.
+Uses GYR_Z_7_0 (LSB) and GYR_Z_15_8 (MSB) registers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The raw Z-axis gyroscope value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">raw_z</span> <span class="pre">=</span> <span class="pre">gyro.get_z_raw()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_xyz_raw">
+<span class="sig-name descname"><span class="pre">get_xyz_raw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_xyz_raw" title="Link to this definition"></a></dt>
+<dd><p>Get the raw X, Y, and Z-axis gyroscope values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list containing [X, Y, Z] raw gyroscope values.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[int]</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">raw_xyz</span> <span class="pre">=</span> <span class="pre">gyro.get_xyz_raw()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_x">
+<span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_x" title="Link to this definition"></a></dt>
+<dd><p>Get the X-axis gyroscope value scaled to degrees per second (dps).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The X-axis gyroscope value in dps.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">dps_x</span> <span class="pre">=</span> <span class="pre">gyro.get_x()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_y">
+<span class="sig-name descname"><span class="pre">get_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_y" title="Link to this definition"></a></dt>
+<dd><p>Get the Y-axis gyroscope value scaled to degrees per second (dps).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Y-axis gyroscope value in dps.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">dps_y</span> <span class="pre">=</span> <span class="pre">gyro.get_y()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_z">
+<span class="sig-name descname"><span class="pre">get_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_z" title="Link to this definition"></a></dt>
+<dd><p>Get the Z-axis gyroscope value scaled to degrees per second (dps).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Z-axis gyroscope value in dps.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">dps_z</span> <span class="pre">=</span> <span class="pre">gyro.get_z()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.get_xyz">
+<span class="sig-name descname"><span class="pre">get_xyz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.get_xyz" title="Link to this definition"></a></dt>
+<dd><p>Get the X, Y, and Z-axis gyroscope values scaled to degrees per second (dps).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list containing [X, Y, Z] gyroscope values in dps.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[float]</p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">dps_xyz</span> <span class="pre">=</span> <span class="pre">gyro.get_xyz()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.gyroscope.Gyroscope.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#blimputils.gyroscope.Gyroscope.close" title="Link to this definition"></a></dt>
+<dd><p>Close the I2C bus connection.
+Also attempts to disable the gyroscope if it was enabled by this instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="blimputils.accelerometer.html" class="btn btn-neutral float-left" title="blimputils.accelerometer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="blimputils.magnetometer.html" class="btn btn-neutral float-right" title="blimputils.magnetometer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Eli Ferrara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
