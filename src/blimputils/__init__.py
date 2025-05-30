@@ -5,7 +5,7 @@ from typing import Union, Dict, Tuple # Adjusted imports
 
 from .accelerometer import Accelerometer
 from .gyroscope import Gyroscope
-from .magnetometer import Magnetometer
+from .magnetometer import Magnetometer_I2C
 from .motor import Motor
 
 # Default sensor addresses and bus (assuming I2C)
@@ -26,7 +26,7 @@ DEFAULT_MOTOR_PINS: Dict[str, Dict[str, int]] = {
 # Type hints for clarity
 accelerometer_instance: Union[Accelerometer, None] = None
 gyroscope_instance: Union[Gyroscope, None] = None
-magnetometer_instance: Union[Magnetometer, None] = None
+magnetometer_instance: Union[Magnetometer_I2C, None] = None
 motors: Dict[str, Motor] = {}
 
 def init(
@@ -35,7 +35,7 @@ def init(
     gyro_addr: Union[int, None] = DEFAULT_GYRO_ADDR,   # Allow None to skip init
     mag_addr: Union[int, None] = DEFAULT_MAG_ADDR,     # Allow None to skip init
     motor_pins_config: Union[Dict[str, Dict[str, Union[int, None]]], None] = None,
-) -> Tuple[Union[Accelerometer, None], Union[Gyroscope, None], Union[Magnetometer, None], Dict[str, Motor]]:
+) -> Tuple[Union[Accelerometer, None], Union[Gyroscope, None], Union[Magnetometer_I2C, None], Dict[str, Motor]]:
     """
     Initializes the sensors and motors.
 
@@ -74,7 +74,7 @@ def init(
 
     if mag_addr is not None:
         try:
-            magnetometer_instance = Magnetometer(bus=i2c_bus)
+            magnetometer_instance = Magnetometer_I2C(bus=i2c_bus, addr=mag_addr)
         except IOError as e:
             print(f"Failed to initialize magnetometer: {e}")
             magnetometer_instance = None
