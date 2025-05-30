@@ -74,7 +74,7 @@ def init(
 
     if mag_addr is not None:
         try:
-            magnetometer_instance = Magnetometer(bus=i2c_bus, addr=mag_addr)
+            magnetometer_instance = Magnetometer(bus=i2c_bus)
         except IOError as e:
             print(f"Failed to initialize magnetometer: {e}")
             magnetometer_instance = None
