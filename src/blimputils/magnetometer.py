@@ -1,13 +1,17 @@
-# -*- coding: utf-8 -*
-'''
+# -*- coding: utf-8 -*-
+"""
+magnetometer.py
+======================
 
-'''
+Module for the Bosch-Sensortec BMM350 magnetometer. Provides class infrastructure and
+implementation of underlying methods for interacting with the sensor.
+"""
 import serial
 import time
 import os
 import math
 import numpy as np # Added for matrix multiplication
-from magnetometer_vars import *
+from .magnetometer_vars import *
 
 # Define BMM350_FLOAT_DATA_ERROR if not already defined elsewhere (e.g. in magnetometer_vars.py)
 # This is a common way to handle sensor errors.
@@ -44,9 +48,23 @@ _LOCAL_EARTH_FIELD_UT = 45.0 # Default placeholder - USER SHOULD UPDATE THIS
 
 # --------------------------------------------
 '''!
-  @brief bmm350 magnetometer dut offset coefficient structure
+  bmm350 magnetometer dut offset coefficient structure
 '''
 class bmm350_dut_offset_coef:
+    """
+    BMM350 magnetometer DUT offset coefficient structure.
+
+    Stores temperature and XYZ offset coefficients.
+
+    :param t_offs: Temperature offset coefficient.
+    :type t_offs: float
+    :param offset_x: X-axis offset coefficient.
+    :type offset_x: float
+    :param offset_y: Y-axis offset coefficient.
+    :type offset_y: float
+    :param offset_z: Z-axis offset coefficient.
+    :type offset_z: float
+    """
     def __init__(self, t_offs: float, offset_x: float, offset_y: float, offset_z: float):
         self.t_offs = t_offs
         self.offset_x = offset_x
@@ -54,9 +72,23 @@ class bmm350_dut_offset_coef:
         self.offset_z = offset_z
 
 '''!
-  @brief bmm350 magnetometer dut sensitivity coefficient structure
+  bmm350 magnetometer dut sensitivity coefficient structure
 '''
 class bmm350_dut_sensit_coef:
+    """
+    BMM350 magnetometer DUT sensitivity coefficient structure.
+
+    Stores temperature and XYZ sensitivity coefficients.
+
+    :param t_sens: Temperature sensitivity coefficient.
+    :type t_sens: float
+    :param sens_x: X-axis sensitivity coefficient.
+    :type sens_x: float
+    :param sens_y: Y-axis sensitivity coefficient.
+    :type sens_y: float
+    :param sens_z: Z-axis sensitivity coefficient.
+    :type sens_z: float
+    """
     def __init__(self, t_sens: float, sens_x: float, sens_y: float, sens_z: float):
         self.t_sens = t_sens
         self.sens_x = sens_x
@@ -64,26 +96,64 @@ class bmm350_dut_sensit_coef:
         self.sens_z = sens_z
 
 '''!
-  @brief bmm350 magnetometer dut tco structure
+  bmm350 magnetometer dut tco structure
 '''
 class bmm350_dut_tco:
+    """
+    BMM350 magnetometer DUT TCO (Temperature Coefficient of Offset) structure.
+
+    Stores TCO coefficients for X, Y, and Z axes.
+
+    :param tco_x: X-axis TCO coefficient.
+    :type tco_x: float
+    :param tco_y: Y-axis TCO coefficient.
+    :type tco_y: float
+    :param tco_z: Z-axis TCO coefficient.
+    :type tco_z: float
+    """
     def __init__(self, tco_x: float, tco_y: float, tco_z: float):
         self.tco_x = tco_x
         self.tco_y = tco_y
         self.tco_z = tco_z
 '''!
-  @brief bmm350 magnetometer dut tcs structure
+  bmm350 magnetometer dut tcs structure
 '''
 class bmm350_dut_tcs:
+    """
+    BMM350 magnetometer DUT TCS (Temperature Coefficient of Sensitivity) structure.
+
+    Stores TCS coefficients for X, Y, and Z axes.
+
+    :param tcs_x: X-axis TCS coefficient.
+    :type tcs_x: float
+    :param tcs_y: Y-axis TCS coefficient.
+    :type tcs_y: float
+    :param tcs_z: Z-axis TCS coefficient.
+    :type tcs_z: float
+    """
     def __init__(self, tcs_x: float, tcs_y: float, tcs_z: float):
         self.tcs_x = tcs_x
         self.tcs_y = tcs_y
         self.tcs_z = tcs_z
 
 '''!
-  @brief bmm350 magnetometer cross axis compensation structure
+  bmm350 magnetometer cross axis compensation structure
 '''
 class bmm350_cross_axis:
+    """
+    BMM350 magnetometer cross-axis compensation structure.
+
+    Stores cross-axis sensitivity coefficients.
+
+    :param cross_x_y: Cross-axis sensitivity from Y to X.
+    :type cross_x_y: float
+    :param cross_y_x: Cross-axis sensitivity from X to Y.
+    :type cross_y_x: float
+    :param cross_z_x: Cross-axis sensitivity from X to Z.
+    :type cross_z_x: float
+    :param cross_z_y: Cross-axis sensitivity from Y to Z.
+    :type cross_z_y: float
+    """
     def __init__(self, cross_x_y: float, cross_y_x: float, cross_z_x: float, cross_z_y: float):
         self.cross_x_y = cross_x_y
         self.cross_y_x = cross_y_x
@@ -91,9 +161,27 @@ class bmm350_cross_axis:
         self.cross_z_y = cross_z_y
 
 '''!
-  @brief bmm350 magnetometer compensate structure
+  bmm350 magnetometer compensate structure
 '''
 class bmm350_mag_compensate:
+    """
+    BMM350 magnetometer compensation data structure.
+
+    Holds all compensation coefficients required for sensor data correction.
+
+    :param dut_offset_coef: DUT offset coefficients.
+    :type dut_offset_coef: bmm350_dut_offset_coef
+    :param dut_sensit_coef: DUT sensitivity coefficients.
+    :type dut_sensit_coef: bmm350_dut_sensit_coef
+    :param dut_tco: DUT TCO coefficients.
+    :type dut_tco: bmm350_dut_tco
+    :param dut_tcs: DUT TCS coefficients.
+    :type dut_tcs: bmm350_dut_tcs
+    :param dut_t0: DUT T0 (reference temperature).
+    :type dut_t0: float
+    :param cross_axis: Cross-axis compensation coefficients.
+    :type cross_axis: bmm350_cross_axis
+    """
     def __init__(self, dut_offset_coef: bmm350_dut_offset_coef, dut_sensit_coef: bmm350_dut_sensit_coef, dut_tco: bmm350_dut_tco, dut_tcs: bmm350_dut_tcs, dut_t0: float, cross_axis: bmm350_cross_axis):
         self.dut_offset_coef = dut_offset_coef
         self.dut_sensit_coef = dut_sensit_coef
@@ -103,9 +191,18 @@ class bmm350_mag_compensate:
         self.cross_axis = cross_axis
 
 '''!
-  @brief bmm350 device structure
+  bmm350 device structure
 '''
 class bmm350_dev:
+  """
+  BMM350 device structure.
+
+  Represents the BMM350 sensor device, including its chip ID, OTP data,
+  compensation data, power mode, and enabled axes.
+
+  :param mag_comp: Magnetometer compensation data.
+  :type mag_comp: bmm350_mag_compensate
+  """
   def __init__(self, mag_comp: bmm350_mag_compensate):
     self.chipID   = 0
     self.otp_data = [0] * 32
@@ -134,6 +231,11 @@ bmm350_sensor = bmm350_dev(mag_comp)
 
 # Uncompensated geomagnetic and temperature data
 class BMM350RawMagData:
+  """
+  Structure to hold uncompensated (raw) BMM350 magnetometer and temperature data.
+
+  Used internally to store raw ADC counts before any compensation or scaling.
+  """
   def __init__(self):
     self.raw_x_data = 0
     self.raw_y_data = 0
@@ -142,6 +244,12 @@ class BMM350RawMagData:
 _raw_mag_data = BMM350RawMagData()
 
 class BMM350MagData:
+  """
+  Structure to hold compensated BMM350 magnetometer and temperature data.
+
+  Stores the final X, Y, Z magnetic field values (typically in µT) and
+  the temperature (typically in °C) after all compensations.
+  """
   def __init__(self):
     self.x  = 0
     self.y  = 0
@@ -150,6 +258,24 @@ class BMM350MagData:
 _mag_data = BMM350MagData()
 
 class bmm350_pmu_cmd_status_0:
+    """
+    BMM350 PMU (Power Management Unit) command status 0 register structure.
+
+    Decodes the bits of the PMU_CMD_STATUS_0 register.
+
+    :param pmu_cmd_busy: PMU command busy status.
+    :type pmu_cmd_busy: int
+    :param odr_ovwr: ODR (Output Data Rate) overwrite status.
+    :type odr_ovwr: int
+    :param avr_ovwr: Averaging overwrite status.
+    :type avr_ovwr: int
+    :param pwr_mode_is_normal: Power mode is normal status.
+    :type pwr_mode_is_normal: int
+    :param cmd_is_illegal: Command is illegal status.
+    :type cmd_is_illegal: int
+    :param pmu_cmd_value: PMU command value.
+    :type pmu_cmd_value: int
+    """
     def __init__(self, pmu_cmd_busy, odr_ovwr, avr_ovwr, pwr_mode_is_normal, cmd_is_illegal, pmu_cmd_value):
         self.pmu_cmd_busy = pmu_cmd_busy
         self.odr_ovwr = odr_ovwr
@@ -161,12 +287,32 @@ pmu_cmd_stat_0 = bmm350_pmu_cmd_status_0(pmu_cmd_busy=0, odr_ovwr=0, avr_ovwr=0,
 
 # I2C interface
 class Magnetometer(object):
-  '''!
-    @brief An example of an i2c interface module
-  '''
+  """
+  Bosch BMM350 Magnetometer sensor class.
+
+  Provides methods to initialize, configure, and read data from the BMM350 sensor
+  using I2C communication. This class handles low-level register interactions,
+  OTP data loading, power mode management, and data compensation.
+
+  :param bus: The I2C bus number (e.g., 1 for Raspberry Pi's /dev/i2c-1).
+  :type bus: int
+  :param addr: The I2C address of the BMM350 sensor.
+               Defaults to ``BMM350_I2C_ADDRESS_PRIMARY`` if not provided,
+               but typically specified during instantiation.
+  :type addr: int
+  """
   I2C_MODE = 1
   def __init__(self, bus, addr):
-    
+    """
+    Initialize the BMM350 sensor.
+
+    Sets up I2C communication based on the detected platform (Raspberry Pi or other Linux/Windows).
+
+    :param bus: The I2C bus number.
+    :type bus: int
+    :param addr: The I2C address of the BMM350 sensor.
+    :type addr: int
+    """
     self.__i2c_i3c = self.I2C_MODE
     self.bus = bus
     self.__addr = addr
@@ -177,19 +323,86 @@ class Magnetometer(object):
       self.test_platform()
 
   def BMM350_SET_BITS(self, reg_data, bitname_msk, bitname_pos, data):
+    """
+    Set specific bits in a register value.
+
+    :param reg_data: The original register value.
+    :type reg_data: int
+    :param bitname_msk: The mask for the bits to be set.
+    :type bitname_msk: int
+    :param bitname_pos: The starting position of the bits.
+    :type bitname_pos: int
+    :param data: The data to write to the specified bits.
+    :type data: int
+    :return: The modified register value.
+    :rtype: int
+    """
     return (reg_data & ~bitname_msk) | ((data << bitname_pos) & bitname_msk)
 
   def BMM350_GET_BITS(self, reg_data, mask, pos):
+    """
+    Get specific bits from a register value.
+
+    :param reg_data: The register value.
+    :type reg_data: int
+    :param mask: The mask for the bits to be retrieved.
+    :type mask: int
+    :param pos: The starting position of the bits.
+    :type pos: int
+    :return: The value of the specified bits.
+    :rtype: int
+    """
     return (reg_data & mask) >> pos
  
   def BMM350_GET_BITS_POS_0(self, reg_data, mask):
+    """
+    Get specific bits from a register value, assuming bit position 0.
+
+    :param reg_data: The register value.
+    :type reg_data: int
+    :param mask: The mask for the bits to be retrieved.
+    :type mask: int
+    :return: The value of the specified bits.
+    :rtype: int
+    """
     return reg_data & mask
 
   def BMM350_SET_BITS_POS_0(self, reg_data, mask, data):
+    """
+    Set specific bits in a register value, assuming bit position 0.
+
+    :param reg_data: The original register value.
+    :type reg_data: int
+    :param mask: The mask for the bits to be set.
+    :type mask: int
+    :param data: The data to write to the specified bits.
+    :type data: int
+    :return: The modified register value.
+    :rtype: int
+    """
     return ((reg_data & ~(mask)) | (data & mask))  
 
   # brief This internal API converts the raw data from the IC data registers to signed integer
   def fix_sign(self, inval, number_of_bits):
+    """
+    Convert raw data from IC data registers to a signed integer.
+
+    This internal API handles the conversion of unsigned ADC values to
+    signed integer representations based on the number of bits.
+
+    :param inval: The input unsigned integer value.
+    :type inval: int
+    :param number_of_bits: The number of bits representing the signed integer.
+    :type number_of_bits: int
+    :options number_of_bits:
+        * ``BMM350_SIGNED_8_BIT``
+        * ``BMM350_SIGNED_12_BIT``
+        * ``BMM350_SIGNED_16_BIT``
+        * ``BMM350_SIGNED_21_BIT``
+        * ``BMM350_SIGNED_24_BIT``
+    :return: The signed integer value.
+    :rtype: int
+    """
     power = 0
     if number_of_bits == BMM350_SIGNED_8_BIT:
       power = 128; # 2^7
@@ -209,6 +422,13 @@ class Magnetometer(object):
 
   # brief This internal API is used to update magnetometer offset and sensitivity data.
   def update_mag_off_sens(self):
+    """
+    Update magnetometer offset and sensitivity data from OTP values.
+
+    This internal API reads the OTP (One-Time Programmable) memory data
+    and populates the compensation structures (`bmm350_sensor.mag_comp`)
+    with offset, sensitivity, TCO, TCS, T0, and cross-axis coefficients.
+    """
     off_x_lsb_msb = bmm350_sensor.otp_data[BMM350_MAG_OFFSET_X] & 0x0FFF
     off_y_lsb_msb = ((bmm350_sensor.otp_data[BMM350_MAG_OFFSET_X] & 0xF000) >> 4) + (bmm350_sensor.otp_data[BMM350_MAG_OFFSET_Y] & BMM350_LSB_MASK)
     off_z_lsb_msb = (bmm350_sensor.otp_data[BMM350_MAG_OFFSET_Y] & 0x0F00) + (bmm350_sensor.otp_data[BMM350_MAG_OFFSET_Z] & BMM350_LSB_MASK)
@@ -259,6 +479,20 @@ class Magnetometer(object):
 
 
   def bmm350_set_powermode(self, powermode):
+    """
+    Set the power mode of the BMM350 sensor.
+
+    Transitions the sensor to the specified power mode (Suspend, Normal, Forced, Forced Fast).
+    Includes necessary delays for mode transitions.
+
+    :param powermode: The desired power mode.
+    :type powermode: int
+    :options powermode:
+        * ``BMM350_SUSPEND_MODE``
+        * ``BMM350_NORMAL_MODE``
+        * ``BMM350_FORCED_MODE``
+        * ``BMM350_FORCED_MODE_FAST``
+    """
     last_pwr_mode = self.read_reg(BMM350_REG_PMU_CMD, 1)
     if (last_pwr_mode[0] == BMM350_PMU_CMD_NM) or (last_pwr_mode[0] == BMM350_PMU_CMD_UPD_OAE):
       self.write_reg(BMM350_REG_PMU_CMD, BMM350_PMU_CMD_SUS)
@@ -291,6 +525,13 @@ class Magnetometer(object):
 
 
   def bmm350_magnetic_reset_and_wait(self):
+    """
+    Perform a magnetic reset sequence and wait for completion.
+
+    This sequence involves transitioning to suspend mode, issuing
+    magnetic reset commands (BR and FGR), and then optionally
+    restoring the previous normal mode if it was active.
+    """
     # 1. Read PMU CMD status
     reg_data = self.read_reg(BMM350_REG_PMU_CMD_STATUS_0, 1)
     pmu_cmd_stat_0.pmu_cmd_busy = self.BMM350_GET_BITS_POS_0(reg_data[0], BMM350_PMU_CMD_BUSY_MSK)
@@ -316,12 +557,17 @@ class Magnetometer(object):
 
 
   def sensor_init(self):
-    '''!
-      @brief Init bmm350 check whether the chip id is right
-      @return 
-      @retval 0  is init success
-      @retval -1 is init failed
-    '''
+    """
+    Initialize the BMM350 sensor.
+
+    Performs a software reset, verifies the chip ID, downloads OTP compensation data,
+    updates internal compensation parameters, and performs a magnetic reset.
+
+    :return: Status of the initialization.
+    :rtype: int
+    :retval BMM350_OK: Initialization successful.
+    :retval BMM350_CHIP_ID_ERROR: Chip ID mismatch, initialization failed.
+    """
     # _magData = [0, 0, 0]
     # rslt = self._get_compensated_mag_xyz_data(_magData)
     rslt = BMM350_OK
@@ -369,14 +615,25 @@ class Magnetometer(object):
 
 
   def get_chip_id(self):
+    """
+    Read the chip ID from the BMM350 sensor.
+
+    :return: The chip ID value.
+    :rtype: int
+    """
     chip_id = self.read_reg(BMM350_REG_CHIP_ID, 1)
     return chip_id[0]
 
 
   def soft_reset(self):
-    '''!
-      @brief Soft reset, restore to suspended mode after soft reset. (You need to manually enter the normal mode)
-    '''
+    """
+    Perform a soft reset on the BMM350 sensor.
+
+    Restores the sensor to suspend mode after the soft reset.
+    This involves issuing a soft reset command, disabling OTP,
+    performing a magnetic reset, and finally setting the power mode to suspend.
+    The user needs to manually set the desired operation mode afterwards.
+    """
     self.write_reg(BMM350_REG_CMD, BMM350_CMD_SOFTRESET) # Software reset
     time.sleep(BMM350_SOFT_RESET_DELAY)
     self.write_reg(BMM350_REG_OTP_CMD_REG, BMM350_OTP_CMD_PWR_OFF_OTP) # Disable OTP
@@ -385,23 +642,35 @@ class Magnetometer(object):
 
 
   def set_operation_mode(self, modes):
-    '''!
-      @brief Set sensor operation mode
-      @param modes
-      @n BMM350_SUSPEND_MODE      suspend mode: Suspend mode is the default power mode of BMM350 after the chip is powered, Current consumption in suspend mode is minimal, 
-                                  so, this mode is useful for periods when data conversion is not needed. Read and write of all registers is possible.
-      @n BMM350_NORMAL_MODE       normal mode: Get geomagnetic data normally.      
-      @n BMM350_FORCED_MODE       forced mode: Single measurement, the sensor restores to suspend mode when the measurement is done.
-      @n BMM350_FORCED_MODE_FAST  To reach ODR = 200Hz is only possible by using FM_ FAST.
-    '''
+    """
+    Set the sensor operation mode.
+
+    Allows switching between suspend, normal, forced, and forced-fast modes.
+
+    :param modes: The desired operation mode.
+    :type modes: int
+    :options modes:
+        * ``BMM350_SUSPEND_MODE``: Suspend mode. Minimal current consumption.
+                                   All registers are accessible. Default after power-on.
+        * ``BMM350_NORMAL_MODE``: Normal mode. Continuous measurement at the configured ODR.
+        * ``BMM350_FORCED_MODE``: Forced mode. Single measurement, then returns to suspend mode.
+        * ``BMM350_FORCED_MODE_FAST``: Forced mode fast. Single measurement with faster ODR capability (up to 200Hz), then returns to suspend mode.
+    """
     self.bmm350_set_powermode(modes)
 
 
   def get_operation_mode(self):
-    '''!
-      @brief Get sensor operation mode
-      @return Return the character string of the operation mode
-    '''
+    """
+    Get the current sensor operation mode.
+
+    :return: A string describing the current operation mode.
+    :rtype: str
+    :retval "bmm350 is suspend mode!": Sensor is in suspend mode.
+    :retval "bmm350 is normal mode!": Sensor is in normal mode.
+    :retval "bmm350 is forced mode!": Sensor is in forced mode.
+    :retval "bmm350 is forced_fast mode!": Sensor is in forced-fast mode.
+    :retval "error mode!": Unknown or error in power mode status.
+    """
     result = ""
     if bmm350_sensor.power_mode == BMM350_SUSPEND_MODE:
        result = "bmm350 is suspend mode!"
@@ -417,19 +686,25 @@ class Magnetometer(object):
 
 
   def set_rate(self, rates):
-    '''!
-      @brief Set the rate of obtaining geomagnetic data, the higher, the faster (without delay function)
-      @param rate
-      @n BMM350_DATA_RATE_1_5625HZ
-      @n BMM350_DATA_RATE_3_125HZ
-      @n BMM350_DATA_RATE_6_25HZ
-      @n BMM350_DATA_RATE_12_5HZ  (default rate)
-      @n BMM350_DATA_RATE_25HZ
-      @n BMM350_DATA_RATE_50HZ
-      @n BMM350_DATA_RATE_100HZ
-      @n BMM350_DATA_RATE_200HZ
-      @n BMM350_DATA_RATE_400HZ
-    '''
+    """
+    Set the data output rate (ODR) for geomagnetic data.
+
+    The ODR determines how frequently new data is available from the sensor
+    when in normal mode.
+
+    :param rates: The desired data rate identifier.
+    :type rates: int
+    :options rates:
+        * ``BMM350_DATA_RATE_1_5625HZ`` (1.5625 Hz)
+        * ``BMM350_DATA_RATE_3_125HZ`` (3.125 Hz)
+        * ``BMM350_DATA_RATE_6_25HZ`` (6.25 Hz)
+        * ``BMM350_DATA_RATE_12_5HZ`` (12.5 Hz, default rate)
+        * ``BMM350_DATA_RATE_25HZ`` (25 Hz)
+        * ``BMM350_DATA_RATE_50HZ`` (50 Hz)
+        * ``BMM350_DATA_RATE_100HZ`` (100 Hz)
+        * ``BMM350_DATA_RATE_200HZ`` (200 Hz)
+        * ``BMM350_DATA_RATE_400HZ`` (400 Hz)
+    """
     # self.bmm350_set_powermode(BMM350_NORMAL_MODE)
     avg_odr_reg = self.read_reg(BMM350_REG_PMU_CMD_AGGR_SET, 1)
     avg_reg = self.BMM350_GET_BITS(avg_odr_reg[0], BMM350_AVG_MSK, BMM350_AVG_POS)
@@ -441,10 +716,12 @@ class Magnetometer(object):
 
 
   def get_rate(self):
-    '''!
-      @brief Get the config data rate, unit: HZ
-      @return rate
-    '''
+    """
+    Get the configured data output rate (ODR).
+
+    :return: The current ODR in Hertz (Hz).
+    :rtype: float
+    """
     avg_odr_reg = self.read_reg(BMM350_REG_PMU_CMD_AGGR_SET, 1)
     odr_reg = self.BMM350_GET_BITS(avg_odr_reg[0], BMM350_ODR_MSK, BMM350_ODR_POS)
     if odr_reg == BMM350_ODR_1_5625HZ:
@@ -469,15 +746,32 @@ class Magnetometer(object):
 
 
   def set_preset_mode(self, avg, odr = BMM350_DATA_RATE_12_5HZ):
-    '''!
-      @brief Set preset mode, make it easier for users to configure sensor to get geomagnetic data (The default rate for obtaining geomagnetic data is 12.5Hz)
-      @param modes 
-      @n BMM350_PRESETMODE_LOWPOWER       Low power mode, get a fraction of data and take the mean value.
-      @n BMM350_PRESETMODE_REGULAR        Regular mode, get a number of data and take the mean value.
-      @n BMM350_PRESETMODE_ENHANCED       Enhanced mode, get a plenty of data and take the mean value.
-      @n BMM350_PRESETMODE_HIGHACCURACY   High accuracy mode, get a huge number of data and take the mean value.
+    """
+    Set a preset measurement mode combining averaging and ODR.
 
-    '''
+    This simplifies sensor configuration for common use cases by setting
+    the number of averages and the output data rate.
+
+    :param avg: The averaging setting (number of measurements to average).
+    :type avg: int
+    :options avg:
+        * ``BMM350_AVERAGING_NO_AVG`` (No averaging)
+        * ``BMM350_AVERAGING_2_AVG`` (2 averages)
+        * ``BMM350_AVERAGING_4_AVG`` (4 averages)
+        * ``BMM350_AVERAGING_8_AVG`` (8 averages)
+    :param odr: The desired data output rate. Defaults to ``BMM350_DATA_RATE_12_5HZ``.
+    :type odr: int, optional
+    :options odr:
+        * ``BMM350_DATA_RATE_1_5625HZ``
+        * ``BMM350_DATA_RATE_3_125HZ``
+        * ``BMM350_DATA_RATE_6_25HZ``
+        * ``BMM350_DATA_RATE_12_5HZ``
+        * ``BMM350_DATA_RATE_25HZ``
+        * ``BMM350_DATA_RATE_50HZ``
+        * ``BMM350_DATA_RATE_100HZ``
+        * ``BMM350_DATA_RATE_200HZ``
+        * ``BMM350_DATA_RATE_400HZ``
+    """
     reg_data = (odr & BMM350_ODR_MSK)
     reg_data = self.BMM350_SET_BITS(reg_data, BMM350_AVG_MSK, BMM350_AVG_POS, avg)
     self.write_reg(BMM350_REG_PMU_CMD_AGGR_SET, reg_data)
@@ -485,10 +779,19 @@ class Magnetometer(object):
 
 
   def self_test(self):
-    '''!
-      @brief Sensor self test, the returned character string indicate the self test result.
-      @return The character string of the test result
-    '''
+    """
+    Perform a sensor self-test by checking enabled axes.
+
+    This method reads the axis enable register and reports which axes (X, Y, Z)
+    are currently enabled for measurement. It does not perform a full
+    functional self-test of the sensor hardware.
+
+    :return: A string indicating the self-test result based on enabled axes.
+    :rtype: str
+    :retval "x y z aix test success": If X, Y, and Z axes are enabled.
+    :retval "<axes> aix test success": If a subset of axes are enabled (e.g., "x y ").
+    :retval "xyz aix self test fail": If no axes are enabled.
+    """
     axis_en = self.read_reg(BMM350_REG_PMU_CMD_AXIS_EN, 1)
     en_x = self.BMM350_GET_BITS(axis_en[0], BMM350_EN_X_MSK, BMM350_EN_X_POS)
     en_y = self.BMM350_GET_BITS(axis_en[0], BMM350_EN_Y_MSK, BMM350_EN_Y_POS)
@@ -508,18 +811,28 @@ class Magnetometer(object):
 
 
   def set_measurement_XYZ(self, en_x = BMM350_X_EN, en_y = BMM350_Y_EN, en_z = BMM350_Z_EN):
-    '''!
-      @brief Enable the measurement at x-axis, y-axis and z-axis, default to be enabled. After disabling, the geomagnetic data at x, y, and z axis are wrong.
-      @param en_x
-      @n   BMM350_X_EN        Enable the measurement at x-axis
-      @n   BMM350_X_DIS       Disable the measurement at x-axis
-      @param en_y
-      @n   BMM350_Y_EN        Enable the measurement at y-axis
-      @n   BMM350_Y_DIS       Disable the measurement at y-axis
-      @param en_z
-      @n   BMM350_Z_EN        Enable the measurement at z-axis
-      @n   BMM350_Z_DIS       Disable the measurement at z-axis
-    '''
+    """
+    Enable or disable measurements for X, Y, and Z axes.
+
+    Allows individual control over which magnetic axes are active.
+    Disabling an axis will result in invalid data for that axis.
+
+    :param en_x: Enable state for the X-axis. Defaults to ``BMM350_X_EN``.
+    :type en_x: int, optional
+    :options en_x:
+        * ``BMM350_X_EN``: Enable X-axis measurement.
+        * ``BMM350_X_DIS``: Disable X-axis measurement.
+    :param en_y: Enable state for the Y-axis. Defaults to ``BMM350_Y_EN``.
+    :type en_y: int, optional
+    :options en_y:
+        * ``BMM350_Y_EN``: Enable Y-axis measurement.
+        * ``BMM350_Y_DIS``: Disable Y-axis measurement.
+    :param en_z: Enable state for the Z-axis. Defaults to ``BMM350_Z_EN``.
+    :type en_z: int, optional
+    :options en_z:
+        * ``BMM350_Z_EN``: Enable Z-axis measurement.
+        * ``BMM350_Z_DIS``: Disable Z-axis measurement.
+    """
     if en_x == BMM350_X_DIS and en_y == BMM350_Y_DIS and en_z == BMM350_Z_DIS:
       bmm350_sensor.axis_en = BMM350_DISABLE
     else:
@@ -531,10 +844,13 @@ class Magnetometer(object):
 
 
   def get_measurement_state_XYZ(self):
-    '''!
-      @brief Get the enabling status at x-axis, y-axis and z-axis
-      @return Return enabling status at x-axis, y-axis and z-axis as a character string
-    '''
+    """
+    Get the current enable status for X, Y, and Z axes measurements.
+
+    :return: A string describing the enable status of each axis.
+    :rtype: str
+    :exretval "The x axis is enable! The y axis is enable! The z axis is enable! "
+    """
     axis_en = bmm350_sensor.axis_en
     en_x = self.BMM350_GET_BITS(axis_en, BMM350_EN_X_MSK, BMM350_EN_X_POS)
     en_y = self.BMM350_GET_BITS(axis_en, BMM350_EN_Y_MSK, BMM350_EN_Y_POS)
@@ -546,13 +862,17 @@ class Magnetometer(object):
     return result
 
   def get_raw_magnetic_data_for_calibration(self):
-    ''''!
-      @fn get_raw_magnetic_data_for_calibration
-      @brief Get raw X, Y, Z magnetic data before OTP and software compensations.
-      @note This method is intended for calibration purposes.
-      @return List containing raw x, y, z data, or None if read fails
-      @retval [raw_x, raw_y, raw_z]
-    '''
+    """
+    Get raw X, Y, Z magnetic data before OTP and software compensations.
+
+    This method reads the raw 24-bit ADC values for the X, Y, and Z magnetic axes.
+    It is intended for use during sensor calibration procedures to collect
+    uncompensated data.
+
+    :return: A list containing the raw signed integer values for [X, Y, Z].
+             Returns ``None`` if the read operation fails or returns insufficient data.
+    :rtype: list[int] or None
+    """
     # 1. Read raw data registers for X, Y, Z axes
     # BMM350_MAG_TEMP_DATA_LEN is 12 (Xlsb,Xmsb,Xmmsb, Ylsb,Ymsb,Ymmsb, Zlsb,Zmsb,Zmmsb, Tlsb,Tmsb,Tmmsb)
     # We need the first 9 bytes for X, Y, Z.
@@ -575,12 +895,24 @@ class Magnetometer(object):
     return [raw_x, raw_y, raw_z]
 
   def get_geomagnetic_data(self):
-    '''!
-      @fn get_geomagnetic_data
-      @brief Get calibrated geomagnetic data (X, Y, Z) in microTeslas (uT) and sensor temperature.
-             Uses user-provided hard and soft iron calibration parameters and local Earth field strength.
-      @return List containing [X_uT, Y_uT, Z_uT]
-    '''
+    """
+    Get calibrated geomagnetic data (X, Y, Z) in microTeslas (µT) and update sensor temperature.
+
+    This method performs the following steps:
+    1. Reads raw 24-bit data for X, Y, Z magnetic axes and temperature.
+    2. Applies sign correction to the raw data.
+    3. Stores raw LSB values in `_raw_mag_data`.
+    4. Applies user-defined hard iron calibration offsets (`_CALIBRATION_HARD_IRON`).
+    5. Applies user-defined soft iron calibration transformation (`_CALIBRATION_SOFT_IRON_TRANSFORM`).
+    6. Scales the corrected vector to physical units (µT) using `_LOCAL_EARTH_FIELD_UT`.
+    7. Stores the final calibrated X, Y, Z values in `_mag_data`.
+    8. Calculates and updates the sensor temperature in `_mag_data.temperature` using OTP compensation values.
+
+    :return: List containing calibrated [X_µT, Y_µT, Z_µT].
+              Returns a list of ``BMM350_FLOAT_DATA_ERROR`` (e.g., `float('nan')`)
+              for each component on failure to read sensor data.
+    :rtype: list[float]
+    """
     mag_and_temp_regs = self.read_reg(BMM350_REG_MAG_X_XLSB, BMM350_MAG_TEMP_DATA_LEN)
     if mag_and_temp_regs is None or len(mag_and_temp_regs) < BMM350_MAG_TEMP_DATA_LEN:
         print("Failed to read sensor data.")
@@ -630,16 +962,23 @@ class Magnetometer(object):
     return [geomagnetic_ut_vec[0], geomagnetic_ut_vec[1], geomagnetic_ut_vec[2]]
 
   def get_compass_degree(self):
-    '''!
-      @brief Get compass degree (yaw/heading) assuming the sensor's XY plane is horizontal.
-      @return Compass degree (0.0 - 360.0). 
-              The angle is measured counter-clockwise from the sensor's positive X-axis 
-              to the projection of the magnetic field vector in the XY plane.
-              If the sensor's X-axis points to the vehicle's front, this is the angle
-              to magnetic north relative to the vehicle's orientation.
-              Note: This calculation is not tilt-compensated. For accurate yaw with sensor tilt,
-              accelerometer data would be required.
-    '''
+    """
+    Get compass degree (yaw/heading) assuming the sensor's XY plane is horizontal.
+
+    Calculates the yaw angle based on the calibrated X and Y geomagnetic components.
+    The angle is measured counter-clockwise from the sensor's positive X-axis
+    to the projection of the magnetic field vector in the XY plane.
+
+    .. note::
+        This calculation is **not** tilt-compensated. For accurate yaw when the
+        sensor is tilted, data from an accelerometer would be required to correct
+        for the tilt.
+
+    :return: Compass degree (0.0 to 360.0 degrees).
+             Returns ``BMM350_FLOAT_DATA_ERROR`` (e.g., `float('nan')`) if
+             magnetometer data is invalid.
+    :rtype: float
+    """
     magData = self.get_geomagnetic_data() # Returns [X, Y, Z] in uT
 
     if magData is None or any(math.isnan(comp) for comp in magData):
@@ -661,19 +1000,23 @@ class Magnetometer(object):
     return yaw_degrees
 
   def set_data_ready_pin(self, modes, polarity):
-    '''!
-      @brief Enable or disable data ready interrupt pin
-      @n After enabling, the DRDY pin jump when there's data coming.
-      @n After disabling, the DRDY pin will not jump when there's data coming.
-      @n High polarity  active on high, the default is low level, which turns to high level when the interrupt is triggered.
-      @n Low polarity   active on low, default is high level, which turns to low level when the interrupt is triggered.
-      @param modes
-      @n     BMM350_ENABLE_INTERRUPT        Enable DRDY
-      @n     BMM350_DISABLE_INTERRUPT       Disable DRDY
-      @param polarity
-      @n     BMM350_ACTIVE_HIGH              High polarity
-      @n     BMM350_ACTIVE_LOW               Low polarity
-    '''
+    """
+    Configure the Data Ready (DRDY) interrupt pin.
+
+    Enables or disables the DRDY interrupt and sets its polarity.
+    When enabled, the DRDY pin signals when new data is available.
+
+    :param modes: Enable or disable the DRDY interrupt.
+    :type modes: int
+    :options modes:
+        * ``BMM350_ENABLE_INTERRUPT``: Enable DRDY interrupt.
+        * ``BMM350_DISABLE_INTERRUPT``: Disable DRDY interrupt.
+    :param polarity: Polarity of the DRDY interrupt pin.
+    :type polarity: int
+    :options polarity:
+        * ``BMM350_ACTIVE_HIGH``: Active high polarity. Pin goes high on interrupt.
+        * ``BMM350_ACTIVE_LOW``: Active low polarity. Pin goes low on interrupt.
+    """
     # 1. Gets and sets the interrupt control configuration
     reg_data = self.read_reg(BMM350_REG_INT_CTRL, 1)
     reg_data[0] = self.BMM350_SET_BITS_POS_0(reg_data[0], BMM350_INT_MODE_MSK, BMM350_INT_MODE_PULSED)
@@ -686,12 +1029,14 @@ class Magnetometer(object):
 
 
   def get_data_ready_state(self):
-    '''!
-      @brief Get data ready status, determine whether the data is ready
-      @return status
-      @n True  Data ready
-      @n False Data is not ready
-    '''
+    """
+    Get the data ready status from the interrupt status register.
+
+    Checks if the DRDY (Data Ready) bit is set, indicating new data is available.
+
+    :return: ``True`` if data is ready, ``False`` otherwise.
+    :rtype: bool
+    """
     int_status_reg = self.read_reg(BMM350_REG_INT_STATUS, 1) 
     drdy_status = self.BMM350_GET_BITS(int_status_reg[0], BMM350_DRDY_DATA_REG_MSK, BMM350_DRDY_DATA_REG_POS)
     if drdy_status & 0x01:
@@ -701,19 +1046,26 @@ class Magnetometer(object):
 
 
   def set_threshold_interrupt(self, modes, threshold, polarity):
-    '''!
-      @brief Set threshold interrupt, an interrupt is triggered when the geomagnetic value of a channel is beyond/below the threshold
-      @n      High polarity   active on high level, the default is low level, which turns to high level when the interrupt is triggered.
-      @n      Low polarity    active on low level, the default is high level, which turns to low level when the interrupt is triggered.
-      @param modes
-      @n     LOW_THRESHOLD_INTERRUPT       Low threshold interrupt mode
-      @n     HIGH_THRESHOLD_INTERRUPT      High threshold interrupt mode
-      @param  threshold
-      @n     Threshold, default to expand 16 times, for example: under low threshold mode, if the threshold is set to be 1, actually the geomagnetic data below 16 will trigger an interrupt
-      @param polarity
-      @n     POLARITY_HIGH      High polarity
-      @n     POLARITY_LOW       Low polarity
-    '''
+    """
+    Configure the threshold interrupt.
+
+    Sets up an interrupt that triggers when the geomagnetic value of a channel
+    crosses a defined threshold (either low or high).
+    The threshold value is effectively scaled by 16 internally.
+
+    :param modes: The type of threshold interrupt.
+    :type modes: int
+    :options modes:
+        * ``LOW_THRESHOLD_INTERRUPT``: Interrupt when data is below the threshold.
+        * ``HIGH_THRESHOLD_INTERRUPT``: Interrupt when data is above the threshold (Note: current implementation logic for HIGH seems same as LOW, review needed).
+    :param threshold: The threshold value. The actual trigger threshold will be `threshold * 16`.
+    :type threshold: int or float
+    :param polarity: Polarity of the interrupt pin.
+    :type polarity: int
+    :options polarity:
+        * ``POLARITY_HIGH`` (or ``BMM350_ACTIVE_HIGH``): Active high.
+        * ``POLARITY_LOW`` (or ``BMM350_ACTIVE_LOW``): Active low.
+    """
     if modes == LOW_THRESHOLD_INTERRUPT:
       self.__thresholdMode = LOW_THRESHOLD_INTERRUPT
       self.set_data_ready_pin(BMM350_ENABLE_INTERRUPT, polarity)
@@ -725,13 +1077,18 @@ class Magnetometer(object):
     
 
   def get_threshold_data(self):
-    '''!
-      @brief Get the data that threshold interrupt occured
-      @return Return the list for storing geomagnetic data, how the data at 3 axis influence interrupt status,
-      @n      [0] The data triggering threshold at x-axis, when the data is NO_DATA, the interrupt is triggered.
-      @n      [1] The data triggering threshold at y-axis, when the data is NO_DATA, the interrupt is triggered.
-      @n      [2] The data triggering threshold at z-axis, when the data is NO_DATA, the interrupt is triggered.
-    '''
+    """
+    Get the data that caused a threshold interrupt.
+
+    If a threshold interrupt has occurred (checked via `get_data_ready_state`),
+    this method returns the geomagnetic data components (X, Y, Z) that crossed
+    the configured threshold.
+
+    :return: A list of three elements. Each element is the magnetic data for an axis (X, Y, Z)
+             if it triggered the interrupt, otherwise it's ``NO_DATA``.
+             Example: `[mag_x, NO_DATA, mag_z]` if X and Z triggered the interrupt.
+    :rtype: list[float or int]
+    """
     Data = [NO_DATA] * 3
     state = self.get_data_ready_state()
     if state == True:
@@ -753,6 +1110,12 @@ class Magnetometer(object):
     return Data
 
   def is_raspberrypi(self):
+    """
+    Check if the current platform is a Raspberry Pi.
+
+    :return: ``True`` if a Raspberry Pi is detected, ``False`` otherwise.
+    :rtype: bool
+    """
     import io
     try:
         with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
@@ -761,6 +1124,13 @@ class Magnetometer(object):
     return False
 
   def test_platform(self):
+    """
+    Detects the platform (Linux or Windows) and initializes the I2C bus accordingly.
+
+    For Linux, it attempts to find an `i2c-tiny-usb` adapter if a standard bus is not found.
+    For Windows, it uses `i2c_mp_usb`.
+    Prints a message if the platform is not supported.
+    """
     import re
     import platform
     import subprocess
@@ -784,11 +1154,16 @@ class Magnetometer(object):
 
 
   def write_reg(self, reg, data):
-    '''!
-      @brief writes data to a register
-      @param reg register address
-      @param data written data
-    '''
+    """
+    Writes a byte of data to a specified register.
+
+    Handles I2C communication errors by printing a message and retrying after a delay.
+
+    :param reg: The register address to write to.
+    :type reg: int
+    :param data: The byte of data to write.
+    :type data: int
+    """
     while 1:
       try:
         self.i2cbus.write_byte_data(self.__addr, reg, data)
@@ -799,11 +1174,19 @@ class Magnetometer(object):
         return
   
   def read_reg(self, reg ,len):
-    '''!
-      @brief read the data from the register
-      @param reg register address
-      @param len read data length
-    '''
+    """
+    Reads a specified number of bytes from a register.
+
+    Handles I2C communication, including dummy bytes if required by the BMM350 protocol.
+    Retries on exception.
+
+    :param reg: The register address to read from.
+    :type reg: int
+    :param len: The number of bytes to read (excluding dummy bytes).
+    :type len: int
+    :return: A list of bytes read from the register.
+    :rtype: list[int]
+    """
     while True:
       try:
         # Read data from I2C bus
