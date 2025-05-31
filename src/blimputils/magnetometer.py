@@ -302,7 +302,7 @@ class Magnetometer(object):
   :type addr: int
   """
   I2C_MODE = 1
-  def __init__(self, bus, addr):
+  def __init__(self, bus=1, addr=0x14):
     """
     Initialize the BMM350 sensor.
 
@@ -894,7 +894,7 @@ class Magnetometer(object):
     
     return [raw_x, raw_y, raw_z]
 
-  def get_geomagnetic_data(self):
+  def get_xyz(self):
     """
     Get calibrated geomagnetic data (X, Y, Z) in microTeslas (µT) and update sensor temperature.
 
@@ -960,6 +960,64 @@ class Magnetometer(object):
     _mag_data.temperature = (1 + bmm350_sensor.mag_comp.dut_sensit_coef.t_sens) * temp_adjusted + bmm350_sensor.mag_comp.dut_offset_coef.t_offs
 
     return [geomagnetic_ut_vec[0], geomagnetic_ut_vec[1], geomagnetic_ut_vec[2]]
+
+  def get_x(self):
+    """
+    Get the calibrated X-axis geomagnetic data.
+
+    This is a convenience method that calls `get_geomagnetic_data` and returns only the X component.
+
+    :return: Calibrated X-axis magnetic field strength in microTeslas (µT).
+             Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
+    :rtype: float
+    """
+    # Ensure _mag_data is updated by calling get_geomagnetic_data if it hasn't been called recently
+    # or if a fresh read is desired. For simplicity, we can call it here, though
+    # it might be redundant if get_geomagnetic_data was just called.
+    # Alternatively, rely on _mag_data.x being up-to-date from a previous call.
+    # For robustness, let's ensure data is fresh or at least attempted to be read.
+    self.get_geomagnetic_data() # This updates _mag_data.x
+    return _mag_data.x
+
+  def get_y(self):
+    """
+    Get the calibrated Y-axis geomagnetic data.
+
+    This is a convenience method that calls `get_geomagnetic_data` and returns only the Y component.
+
+    :return: Calibrated Y-axis magnetic field strength in microTeslas (µT).
+             Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
+    :rtype: float
+    """
+    self.get_geomagnetic_data() # This updates _mag_data.y
+    return _mag_data.y
+
+  def get_z(self):
+    """
+    Get the calibrated Z-axis geomagnetic data.
+
+    This is a convenience method that calls `get_geomagnetic_data` and returns only the Z component.
+
+    :return: Calibrated Z-axis magnetic field strength in microTeslas (µT).
+             Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
+    :rtype: float
+    """
+    self.get_geomagnetic_data() # This updates _mag_data.z
+    return _mag_data.z
+
+  def get_t(self):
+    """
+    Get the sensor temperature.
+
+    This is a convenience method that calls `get_geomagnetic_data` (which also calculates temperature)
+    and returns the temperature.
+
+    :return: Sensor temperature in degrees Celsius (°C).
+             Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
+    :rtype: float
+    """
+    self.get_geomagnetic_data() # This updates _mag_data.temperature
+    return _mag_data.temperature
 
   def get_compass_degree(self):
     """
