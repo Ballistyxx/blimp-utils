@@ -2,11 +2,17 @@
 blimp-utils - A Python library for the Falcon Flight embedded controller board.
 """
 from typing import Union, Dict, Tuple # Adjusted imports
+import time
 
 from .accelerometer import Accelerometer
 from .gyroscope import Gyroscope
-from .magnetometer import Magnetometer, _MagnetometerBase # Changed from Magnetometer_I2C, Magnetometer
+from .magnetometer import Magnetometer
 from .motor import Motor
+from .utils import *
+
+# bmi270 may still be needed if other functionalities from it are used directly.
+# For now, assuming Accelerometer and Gyroscope classes are the primary interface.
+# from .bmi270 import BMI270
 
 # Default sensor addresses and bus (assuming I2C)
 DEFAULT_ACCEL_ADDR = 0x68
@@ -22,6 +28,8 @@ DEFAULT_MOTOR_PINS: Dict[str, Dict[str, int]] = {
     "motor4": {"pin1": 5,  "pin2": 6,  "pwm_pin": None},
 }
 
+#PWR_CTRL = 0x7C  # Example register address for PWR_CTRL, replace with actual
+PWR_CTRIL = 0x7D
 # Global instances for sensors and motors
 # Type hints for clarity
 accelerometer_instance: Union[Accelerometer, None] = None
@@ -71,6 +79,44 @@ def init(
     else:
         gyroscope_instance = None
         print("Gyroscope initialization skipped (address is None).")
+
+    # After individual sensor inits, set PWR_CTRL to enable both if they were initialized
+    if accelerometer_instance or gyroscope_instance:
+        pwr_ctrl_val = 0x00
+        if accelerometer_instance:
+            print("DEBUG: Accel instance exists, preparing to set acc_en in PWR_CTRL")
+            pwr_ctrl_val |= 0x04 # acc_en is bit 2
+        if gyroscope_instance:
+            print("DEBUG: Gyro instance exists, preparing to set gyr_en in PWR_CTRL")
+            pwr_ctrl_val |= 0x02 # gyr_en is bit 1
+        
+        # It's assumed that the I2C bus is open via one of the sensor initializations
+        # If both were skipped, this part would not run.
+        # We need a bus object to write to PWR_CTRL. Use accel's or gyro's.
+        bus_to_use = None
+        addr_to_use = None # PWR_CTRL is on the BMI270, so address is the same for both
+
+        if accelerometer_instance and accelerometer_instance.i2c_bus:
+            bus_to_use = accelerometer_instance.i2c_bus
+            addr_to_use = accelerometer_instance.addr
+        elif gyroscope_instance and gyroscope_instance.i2c_bus:
+            bus_to_use = gyroscope_instance.i2c_bus
+            addr_to_use = gyroscope_instance.addr
+
+        if bus_to_use and addr_to_use is not None and pwr_ctrl_val != 0x00:
+            try:
+                print(f"DEBUG: Writing PWR_CTRL = {hex(pwr_ctrl_val)} to address {hex(addr_to_use)}")
+                bus_to_use.write_byte_data(addr_to_use, PWR_CTRL, pwr_ctrl_val)
+                time.sleep(0.002) # Short delay after enabling sensors (2ms from datasheet for acc_en)
+                # Verify PWR_CTRL value
+                # read_pwr_ctrl = bus_to_use.read_byte_data(addr_to_use, PWR_CTRL)
+                # print(f"DEBUG: PWR_CTRL after write: {hex(read_pwr_ctrl)}")
+            except Exception as e:
+                print(f"Error writing to PWR_CTRL: {e}")
+        elif pwr_ctrl_val == 0x00:
+            print("DEBUG: Both accel and gyro not initialized, PWR_CTRL not written.")
+        else:
+            print("DEBUG: No I2C bus available to write PWR_CTRL.")
 
     if mag_addr is not None:
         try:

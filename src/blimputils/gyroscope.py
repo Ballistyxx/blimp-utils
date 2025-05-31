@@ -1,337 +1,271 @@
-"""
-Gyroscope module for the blimp-utils library, specifically for the Bosch-Sensortec BMI270.
-"""
+import numpy as np
+from smbus2 import SMBus
+from time import sleep
 
-import time
-from typing import List
-from smbus2 import SMBus # Use smbus2 for I2C communication
+from .config_file import *
+from .registers import *
+from .definitions import *
 
-# BMI270 specific imports
-try:
-    from .config_file import bmi270_config_file
-    from .registers import (
-        CHIP_ID_ADDRESS, CMD, PWR_CONF, PWR_CTRL,
-        INIT_CTRL, INIT_ADDR_0, INIT_ADDR_1, INIT_DATA,
-        INTERNAL_STATUS,
-        GYR_CONF, GYR_RANGE,
-        GYR_X_7_0, GYR_Y_7_0, GYR_Z_7_0 # LSB registers for raw data
-    )
-    from .definitions import (
-        GYR_ODR_100, GYR_ODR_200, GYR_ODR_400, GYR_ODR_800, GYR_ODR_1600, GYR_ODR_3200, # ODR options
-        GYR_BWP_NORMAL, GYR_BWP_OSR2, GYR_BWP_OSR4, # Bandwidth options
-        GYR_RANGE_2000, GYR_RANGE_1000, GYR_RANGE_500, GYR_RANGE_250, GYR_RANGE_125 # Range options
-    )
-except ImportError as e:
-    print("ERROR: Could not import BMI270 specific files (config_file.py, registers.py, definitions.py).")
-    print("Please ensure these files are present in the 'src/blimputils/' directory and contain the necessary variables.")
-    print(f"Import error: {e}")
-    raise
-
-BMI270_CHIP_ID = 0x24  # Standard BMI270 Chip ID
-I2C_PRIM_ADDR = 0x68   # Default I2C primary address for BMI270
-
-# Gyroscope range settings and their corresponding DPS values and sensitivities
-_GYR_RANGE_MAP = {
-    GYR_RANGE_2000: {"dps": 2000.0, "sensitivity_lsb_dps": 16.4},
-    GYR_RANGE_1000: {"dps": 1000.0, "sensitivity_lsb_dps": 32.8},
-    GYR_RANGE_500:  {"dps": 500.0,  "sensitivity_lsb_dps": 65.6},
-    GYR_RANGE_250:  {"dps": 250.0,  "sensitivity_lsb_dps": 131.2},
-    GYR_RANGE_125:  {"dps": 125.0,  "sensitivity_lsb_dps": 262.4}
-}
+# from src.bmi270.config_file import *
+# from src.bmi270.registers import *
+# from src.bmi270.definitions import *
 
 class Gyroscope:
-    """
-    A class to represent the BMI270 gyroscope.
-
-    :param bus: The I2C bus number (e.g., 1 for Raspberry Pi).
-    :type bus: int
-    :param addr: The I2C address of the BMI270 (hardwired to 0x68).
-    :type addr: int
-    :param default_odr: Default Output Data Rate for the gyroscope, e.g., GYR_ODR_100.
-    :type default_odr: int
-    :param default_bwp: Default Bandwidth Parameter for the gyroscope, e.g., GYR_BWP_NORMAL.
-    :type default_bwp: int
-    :param default_range: Default range setting for the gyroscope, e.g., GYR_RANGE_2000.
-    :type default_range: int
-    :raises TypeError: if bus or addr are not integers.
-    :raises IOError: if I2C bus cannot be opened or BMI270 initialization fails.
-    """
-    def __init__(self, bus: int, addr: int = I2C_PRIM_ADDR, 
-                 default_odr: int = GYR_ODR_100,
-                 default_bwp: int = GYR_BWP_NORMAL,
-                 default_range: int = GYR_RANGE_2000):
-        if not isinstance(bus, int):
-            raise TypeError("I2C bus must be an integer")
-        if not isinstance(addr, int):
-            raise TypeError("I2C address must be an integer")
-
-        self.bus_num = bus
-        self.addr = addr
-        self.i2c_bus = None  # Initialize to None
-
-        self.default_gyr_odr = default_odr
-        self.default_gyr_bwp = default_bwp
-        self.default_gyr_range_setting = default_range
-        
-        self.current_dps_val = 0.0
-        self.raw_to_dps_factor = 0.0
-
-        try:
-            self.i2c_bus = SMBus(self.bus_num)
-        except Exception as e:
-            raise IOError(f"Failed to open I2C bus {self.bus_num} for gyroscope: {e}")
-
-        try:
-            self._check_chip_id()
-            self._load_config_file()
-            self._configure_sensor(odr=self.default_gyr_odr, 
-                                   bwp=self.default_gyr_bwp, 
-                                   gyr_range_setting=self.default_gyr_range_setting)
-            print(f"Gyroscope (BMI270) initialized on I2C bus {self.bus_num}, address {hex(self.addr)}")
-        except Exception as e:
-            if self.i2c_bus:
-                self.i2c_bus.close()
-            raise IOError(f"Failed to initialize BMI270 gyroscope: {e}")
-
-    def _write_register(self, register: int, value: int):
-        """Helper to write a byte to a register."""
-        self.i2c_bus.write_byte_data(self.addr, register, value)
-
-    def _read_register(self, register: int) -> int:
-        """Helper to read a byte from a register."""
-        return self.i2c_bus.read_byte_data(self.addr, register)
-
-    def _check_chip_id(self):
-        """Verify that the device at the address is a BMI270."""
-        chip_id = self._read_register(CHIP_ID_ADDRESS)
-        if chip_id != BMI270_CHIP_ID:
-            raise RuntimeError(f"BMI270 not found at address {hex(self.addr)}. Found Chip ID: {hex(chip_id)}")
-        print(f"BMI270 Chip ID {hex(chip_id)} verified for gyroscope.")
-
-    def _load_config_file(self):
-        """Loads the configuration firmware into the BMI270."""
-        print("Loading BMI270 configuration file for gyroscope...")
-        self._write_register(PWR_CONF, 0x00)  # Disable Advanced Power Save (APS)
-        time.sleep(0.00045)  # Wait 450us
-
-        self._write_register(INIT_CTRL, 0x00)  # Prepare for config loading
-
-        # Set initial address for config loading (0x0000)
-        self._write_register(INIT_ADDR_0, 0x00)  # LSB of address
-        self._write_register(INIT_ADDR_1, 0x00)  # MSB of address
-
-        # Write the config file in bursts to INIT_DATA register
-        # SMBus write_i2c_block_data typically has a max length (e.g., 32 bytes)
-        max_burst_len = 32 
-        for i in range(0, len(bmi270_config_file), max_burst_len):
-            chunk = bmi270_config_file[i:i + max_burst_len]
-            self.i2c_bus.write_i2c_block_data(self.addr, INIT_DATA, chunk)
-            # A small delay might be needed if issues arise, but typically not for burst writes.
-
-        self._write_register(INIT_CTRL, 0x01)  # Finalize config load
-        
-        time.sleep(0.150)  # Wait for initialization to complete (conservative, matches accelerometer)
-
-        internal_status = self._read_register(INTERNAL_STATUS)
-        # Check bit 0 (init_ok) of INTERNAL_STATUS (0x21)
-        if not (internal_status & 0x01): # init_err is bit 1, init_ok is bit 0.
-            # Bit 0 = 1 means initialization is OK.
-            raise RuntimeError(f"BMI270 configuration loading failed for gyroscope. INTERNAL_STATUS: {hex(internal_status)}")
-        print("BMI270 configuration file loaded successfully for gyroscope.")
-
-    def _configure_sensor(self, odr: int, bwp: int, gyr_range_setting: int):
-        """
-        Configures the gyroscope's ODR, BWP, range, and enables it.
-
-        :param odr: Output Data Rate setting (e.g., GYR_ODR_100).
-        :type odr: int
-        :param bwp: Bandwidth Parameter setting (e.g., GYR_BWP_NORMAL).
-        :type bwp: int
-        :param gyr_range_setting: Gyroscope range setting (e.g., GYR_RANGE_2000).
-        :type gyr_range_setting: int
-        """
-        print(f"Configuring BMI270 gyroscope: ODR={hex(odr)}, BWP={hex(bwp)}, Range={hex(gyr_range_setting)}")
-        
-        # Enable Gyroscope
-        # Read current PWR_CTRL, enable gyro (bit 1), keep other bits (e.g. acc_en bit 2)
-        # This is safer if accelerometer might also be active.
-        # However, to mirror accelerometer.py's direct write:
-        # self._write_register(PWR_CTRL, 0x02) # Enable Gyro (0b00000010)
-        # For now, let's enable only gyro, assuming it might be used standalone or
-        # a higher-level IMU class would manage PWR_CTRL for combined operation.
-        # If accelerometer.py writes 0x04, this write of 0x02 would disable accel.
-        # A common approach is to enable both if both are expected:
-        # self._write_register(PWR_CTRL, 0x06) # Enable Accel and Gyro
-        # For now, strictly enabling Gyro:
-        current_pwr_ctrl = self._read_register(PWR_CTRL)
-        self._write_register(PWR_CTRL, current_pwr_ctrl | 0x02) # Set bit 1 (gyr_en)
-        time.sleep(0.001) # Short delay after power mode change
-
-        # Configure Gyroscope ODR and BWP
-        # GYR_CONF (0x42): bits [3:0] odr, bits [5:4] bwp, bit 6 noise_perf, bit 7 filter_perf
-        # Assuming standard performance (bits 7:6 = 00)
-        gyr_conf_val = (odr & 0x0F) | ((bwp & 0x03) << 4)
-        self._write_register(GYR_CONF, gyr_conf_val)
-        time.sleep(0.001)
-
-        # Configure Gyroscope Range
-        self._write_register(GYR_RANGE, gyr_range_setting & 0x07) # Range is bits [2:0]
-        time.sleep(0.001)
-
-        # Update scaling factors
-        self.current_gyr_range_setting = gyr_range_setting
-        range_info = _GYR_RANGE_MAP.get(self.current_gyr_range_setting)
-        if range_info:
-            self.current_dps_val = range_info["dps"]
-            # Sensitivity: LSB/dps. To get dps from raw: raw / sensitivity
-            # Or: raw * (dps_range / 32768.0)
-            self.raw_to_dps_factor = self.current_dps_val / 32768.0 
+    def __init__(self, i2c_addr=I2C_PRIM_ADDR) -> None:
+        self.bus = SMBus(I2C_BUS)
+        if (self.bus == -1):
+            print("---- ERROR: I2C BUS NOT FOUND ----")
+            exit(1)
         else:
-            raise ValueError(f"Invalid gyroscope range setting: {hex(gyr_range_setting)}")
+            print("---- I2C BUS FOUND ----")
+        self.address        = i2c_addr
+        print(hex(self.address), " --> Chip ID: " + hex(self.bus.read_byte_data(i2c_addr, CHIP_ID_ADDRESS)))
+        self.acc_range        = 2 * GRAVITY
+        self.acc_odr          = 100
+        self.gyr_range        = 1000
+        self.gyr_odr          = 200
+
+    def __unsignedToSigned__(self, n, byte_count) -> int:
+        return int.from_bytes(n.to_bytes(byte_count, 'little', signed=False), 'little', signed=True)
+
+    def __signedToUnsigned__(self, n, byte_count) -> int:
+        return int.from_bytes(n.to_bytes(byte_count, 'little', signed=True), 'little', signed=False)
+
+    def read_register(self, register_address) -> int:
+            return self.bus.read_byte_data(self.address, register_address)
+
+    def write_register(self, register_address, byte_data) -> None:
+            self.bus.write_byte_data(self.address, register_address, byte_data)
+
+    def load_config_file(self) -> None:
+        if (self.read_register(INTERNAL_STATUS) == 0x01):
+            print(hex(self.address), " --> Initialization already done")
+        else:
+            print(hex(self.address), " --> Initializing...")
+            self.write_register(PWR_CONF, 0x00)
+            sleep(0.00045)
+            self.write_register(INIT_CTRL, 0x00)
+            for i in range(256):
+                self.write_register(INIT_ADDR_0, 0x00)
+                self.write_register(INIT_ADDR_1, i)
+                self.bus.write_i2c_block_data(self.address, INIT_DATA, bmi270_config_file[i*32:(i+1)*32])
+                sleep(0.000020)
+            self.write_register(INIT_CTRL, 0x01)
+            sleep(0.02)
+        print(hex(self.address), " --> Initialization status: " + '{:08b}'.format(self.read_register(INTERNAL_STATUS)) + "\t(00000001 --> OK)")
+
+    def set_mode(self, mode="performance") -> None:
+        if (mode == "low_power"):
+            self.write_register(PWR_CTRL, 0x04)
+            self.write_register(ACC_CONF, 0x17)
+            self.write_register(GYR_CONF, 0x28)
+            self.write_register(PWR_CONF, 0x03)
+            self.acc_odr = 50
+            self.gyr_odr = 100
+            print(hex(self.address), " --> Mode set to: LOW_POWER_MODE")
+        elif (mode == "normal"):
+            self.write_register(PWR_CTRL, 0x0E)
+            self.write_register(ACC_CONF, 0xA8)
+            self.write_register(GYR_CONF, 0xA9)
+            self.write_register(PWR_CONF, 0x02)
+            self.acc_odr = 100
+            self.gyr_odr = 200
+            print(hex(self.address), " --> Mode set to: NORMAL_MODE")
+        elif (mode == "performance"):
+            self.write_register(PWR_CTRL, 0x0E)
+            self.write_register(ACC_CONF, 0xA8)
+            self.write_register(GYR_CONF, 0xE9)
+            self.write_register(PWR_CONF, 0x02)
+            self.acc_odr = 100
+            self.gyr_odr = 200
+            print(hex(self.address), " --> Mode set to: PERFORMANCE_MODE")
+        else:
+            print("Wrong mode. Use 'low_power', 'normal' or 'performance'")
+
+    def print_read_register(self, register_address, output_format=BINARY) -> None:
+        if (output_format == BINARY):
+            data = self.read_register(register_address)
+            print("Register " + hex(register_address) + ": " + '{:08b}'.format(data))
+        elif (output_format == HEXADECIMAL):
+            data = self.read_register(register_address)
+            print("Register " + hex(register_address) + ": " + hex(data))
+        else:
+            print("Wrong format. Use 'hex' or 'bin'")
+
+    def print_write_register(self, register_address, byte_data, output_format=BINARY) -> None:
+        if (output_format == BINARY):
+            print(hex(register_address) + " before: \t" + '{:08b}'.format(self.read_register(register_address)))
+            self.bus.write_byte_data(self.address, register_address, byte_data)
+            print(hex(register_address) + " after: \t" + '{:08b}'.format(self.read_register(register_address)))
+        elif (output_format == HEXADECIMAL):
+            print(hex(register_address) + " before: \t" + hex(self.read_register(register_address)))
+            self.bus.write_byte_data(self.address, register_address, byte_data)
+            print(hex(register_address) + " after: \t" + hex(self.read_register(register_address)))
+        else:
+            print("Wrong format. Use 'hex' or 'bin'")
+
+    def enable_aux(self) -> None:
+        self.write_register(PWR_CTRL, (self.read_register(PWR_CTRL) | BIT_0))
+
+    def disable_aux(self) -> None:
+        self.write_register(PWR_CTRL, (self.read_register(PWR_CTRL) & ~BIT_0))
+
+    def enable_gyr(self) -> None:
+        self.write_register(PWR_CTRL, (self.read_register(PWR_CTRL) | BIT_1))
+
+    def disable_gyr(self) -> None:
+        self.write_register(PWR_CTRL, (self.read_register(PWR_CTRL) & ~BIT_1))
+
+    def enable_temp(self) -> None:
+        self.write_register(PWR_CTRL, (self.read_register(PWR_CTRL) | BIT_3))
+
+    def disable_temp(self) -> None:
+        self.write_register(PWR_CTRL, (self.read_register(PWR_CTRL) & ~BIT_3))
+
+    def enable_fifo_header(self) -> None:
+        self.write_register(FIFO_CONFIG_1, (self.read_register(FIFO_CONFIG_1) | BIT_4))
+        print(hex(self.address), " --> FIFO Header enabled")
+
+    def disable_fifo_header(self) -> None:
+        self.write_register(FIFO_CONFIG_1, (self.read_register(FIFO_CONFIG_1) & ~BIT_4))
+        print(hex(self.address), " --> FIFO Header disabled (ODR of all enabled sensors need to be identical)")
+
+    def enable_data_streaming(self) -> None:
+        self.write_register(FIFO_CONFIG_1, (self.read_register(FIFO_CONFIG_1) | LAST_3_BITS))
+        print(hex(self.address), " --> Streaming Mode enabled (no data will be stored in FIFO)")
+
+    def disable_data_streaming(self) -> None:
+        self.write_register(FIFO_CONFIG_1, (self.read_register(FIFO_CONFIG_1) & ~LAST_3_BITS))
+        print(hex(self.address), " --> Streaming Mode disabled (data will be stored in FIFO)")
+
+    def enable_gyr_noise_perf(self) -> None:
+        self.write_register(GYR_CONF, (self.read_register(GYR_CONF) | BIT_6))
+        print(hex(self.address), " --> Gyroscope noise performance enabled (performance optimized)")
+
+    def disable_gyr_noise_perf(self) -> None:
+        self.write_register(GYR_CONF, (self.read_register(GYR_CONF) & ~BIT_6))
+        print(hex(self.address), " --> Gyroscope noise performance disabled (power optimized)")
+
+    def enable_gyr_filter_perf(self) -> None:
+        self.write_register(GYR_CONF, (self.read_register(GYR_CONF) | BIT_7))
+        print(hex(self.address), " --> Gyroscope filter performance enabled (performance optimized)")
+
+    def disable_gyr_filter_perf(self) -> None:
+        self.write_register(GYR_CONF, (self.read_register(GYR_CONF) & ~BIT_7))
+        print(hex(self.address), " --> Gyroscope filter performance disabled (power optimized)")
+
+    def set_gyr_range(self, range=GYR_RANGE_2000) -> None:
+        if (range == GYR_RANGE_2000):
+            self.write_register(GYR_RANGE, GYR_RANGE_2000)
+            self.gyr_range = 2000
+            print(hex(self.address), " --> GYR range set to: 2000")
+        elif (range == GYR_RANGE_1000):
+            self.write_register(GYR_RANGE, GYR_RANGE_1000)
+            self.gyr_range = 1000
+            print(hex(self.address), " --> GYR range set to: 1000")
+        elif (range == GYR_RANGE_500):
+            self.write_register(GYR_RANGE, GYR_RANGE_500)
+            self.gyr_range = 500
+            print(hex(self.address), " --> GYR range set to: 500")
+        elif (range == GYR_RANGE_250):
+            self.write_register(GYR_RANGE, GYR_RANGE_250)
+            self.gyr_range = 250
+            print(hex(self.address), " --> GYR range set to: 250")
+        elif (range == GYR_RANGE_125):
+            self.write_register(GYR_RANGE, GYR_RANGE_125)
+            self.gyr_range = 125
+            print(hex(self.address), " --> GYR range set to: 125")
+        else:
+            print("Wrong GYR range. Use 'GYR_RANGE_2000', 'GYR_RANGE_1000', 'GYR_RANGE_500', 'GYR_RANGE_250' or 'GYR_RANGE_125'")
+
+    def set_gyr_odr(self, odr=GYR_ODR_200) -> None:
+        if (odr == GYR_ODR_3200):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_3200))
+            self.gyr_odr = 3200
+            print(hex(self.address), " --> GYR ODR set to: 3200")
+        elif (odr == GYR_ODR_1600):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_1600))
+            self.gyr_odr = 1600
+            print(hex(self.address), " --> GYR ODR set to: 1600")
+        elif (odr == GYR_ODR_800):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_800))
+            self.gyr_odr = 800
+            print(hex(self.address), " --> GYR ODR set to: 800")
+        elif (odr == GYR_ODR_400):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_400))
+            self.gyr_odr = 400
+            print(hex(self.address), " --> GYR ODR set to: 400")
+        elif (odr == GYR_ODR_200):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_200))
+            self.gyr_odr = 200
+            print(hex(self.address), " --> GYR ODR set to: 200")
+        elif (odr == GYR_ODR_100):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_100))
+            self.gyr_odr = 100
+            print(hex(self.address), " --> GYR ODR set to: 100")
+        elif (odr == GYR_ODR_50):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_50))
+            self.gyr_odr = 50
+            print(hex(self.address), " --> GYR ODR set to: 50")
+        elif (odr == GYR_ODR_25):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & MSB_MASK_8BIT) | GYR_ODR_25))
+            self.gyr_odr = 25
+            print(hex(self.address), " --> GYR ODR set to: 25")
+        else:
+            print("Wrong GYR ODR. Use 'GYR_ODR_3200', 'GYR_ODR_1600', 'GYR_ODR_800', 'GYR_ODR_400', 'GYR_ODR_200', 'GYR_ODR_100', 'GYR_ODR_50' or 'GYR_ODR_25'")
+
+    
+    def set_gyr_bwp(self, bwp=GYR_BWP_NORMAL) -> None:
+        if (bwp == GYR_BWP_OSR4):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & LSB_MASK_8BIT_8) | (GYR_BWP_OSR4 << 4)))
+            print(hex(self.address), " --> GYR BWP set to: OSR4")
+        elif (bwp == GYR_BWP_OSR2):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & LSB_MASK_8BIT_8) | (GYR_BWP_OSR2 << 4)))
+            print(hex(self.address), " --> GYR BWP set to: OSR2")
+        elif (bwp == GYR_BWP_NORMAL):
+            self.write_register(GYR_CONF, ((self.read_register(GYR_CONF) & LSB_MASK_8BIT_8) | (GYR_BWP_NORMAL << 4)))
+            print(hex(self.address), " --> GYR BWP set to: NORMAL")
+        else:
+            print("Wrong GYR BWP. Use 'GYR_BWP_OSR4', 'GYR_BWP_OSR2' or 'GYR_BWP_NORMAL'")
+
+    def get_sensor_time(self) -> int:
+        sensortime_0 = self.read_register(SENSORTIME_0)
+        sensortime_1 = self.read_register(SENSORTIME_1)
+        sensortime_2 = self.read_register(SENSORTIME_2)
+
+        return (sensortime_2 << 16) | (sensortime_1 << 8) | sensortime_0
+
+    
+    def get_raw_gyr_data(self) -> np.ndarray:
+        gyr_value_x_lsb = self.read_register(GYR_X_7_0)
+        gyr_value_x_msb = self.read_register(GYR_X_15_8)
+        gyr_value_x = (gyr_value_x_msb << 8) | gyr_value_x_lsb  # - GYR_CAS.factor_zx * (gyr_value_z_msb << 8 | gyr_value_z_lsb) / 2**9
+
+        gyr_value_y_lsb = self.read_register(GYR_Y_7_0)
+        gyr_value_y_msb = self.read_register(GYR_Y_15_8)
+        gyr_value_y = (gyr_value_y_msb << 8) | gyr_value_y_lsb
+
+        gyr_value_z_lsb = self.read_register(GYR_Z_7_0)
+        gyr_value_z_msb = self.read_register(GYR_Z_15_8)
+        gyr_value_z = (gyr_value_z_msb << 8) | gyr_value_z_lsb
+
+        return np.array([gyr_value_x, gyr_value_y, gyr_value_z]).astype(np.int16)
+    
+    def get_raw_temp_data(self) -> int:
+        temp_value_lsb = self.read_register(TEMP_7_0)
+        temp_value_msb = self.read_register(TEMP_15_8)
+        temp_value = (temp_value_msb << 8) | temp_value_lsb
+
+        return self.__unsignedToSigned__(temp_value, 2)
+    
+    def get_xyz(self) -> np.ndarray:
+        raw_gyr_data = self.get_raw_gyr_data()
+        angular_velocity = np.deg2rad(1) * raw_gyr_data / 32768 * self.gyr_range    # in rad/s
+
+        return angular_velocity
+    
+    def get_temp_data(self) -> float:
+        raw_data = self.get_raw_temp_data()
+        temp_celsius = raw_data * 0.001952594 + 23.0
         
-        print(f"Gyroscope configured. Range: +/-{self.current_dps_val} dps. Factor: {self.raw_to_dps_factor}")
-
-    def _read_sensor_word_signed(self, register_lsb: int) -> int:
-        """
-        Reads a 16-bit signed word (LSB first) from two consecutive registers.
-
-        :param register_lsb: The starting register (LSB).
-        :type register_lsb: int
-        :return: The 16-bit signed value.
-        :rtype: int
-        """
-        try:
-            low_byte = self._read_register(register_lsb)
-            high_byte = self._read_register(register_lsb + 1)
-            val = (high_byte << 8) | low_byte
-            if val & (1 << 15):  # Check if MSB is set (negative number)
-                val -= (1 << 16)  # Convert to signed 16-bit
-            return val
-        except Exception as e:
-            print(f"Error reading signed word from gyroscope: addr {hex(self.addr)}, reg_lsb {hex(register_lsb)}: {e}")
-            return 0 # Return 0 on error, or raise exception
-
-    def get_x_raw(self) -> int:
-        """
-        Get the raw X-axis gyroscope value from BMI270.
-        Uses GYR_X_7_0 (LSB) and GYR_X_15_8 (MSB) registers.
-
-        :return: The raw X-axis gyroscope value.
-        :rtype: int
-        :example: ``raw_x = gyro.get_x_raw()``
-        """
-        return self._read_sensor_word_signed(GYR_X_7_0)
-
-    def get_y_raw(self) -> int:
-        """
-        Get the raw Y-axis gyroscope value from BMI270.
-        Uses GYR_Y_7_0 (LSB) and GYR_Y_15_8 (MSB) registers.
-
-        :return: The raw Y-axis gyroscope value.
-        :rtype: int
-        :example: ``raw_y = gyro.get_y_raw()``
-        """
-        return self._read_sensor_word_signed(GYR_Y_7_0)
-
-    def get_z_raw(self) -> int:
-        """
-        Get the raw Z-axis gyroscope value from BMI270.
-        Uses GYR_Z_7_0 (LSB) and GYR_Z_15_8 (MSB) registers.
-
-        :return: The raw Z-axis gyroscope value.
-        :rtype: int
-        :example: ``raw_z = gyro.get_z_raw()``
-        """
-        return self._read_sensor_word_signed(GYR_Z_7_0)
-
-    def get_xyz_raw(self) -> List[int]:
-        """
-        Get the raw X, Y, and Z-axis gyroscope values.
-
-        :return: A list containing [X, Y, Z] raw gyroscope values.
-        :rtype: list[int]
-        :example: ``raw_xyz = gyro.get_xyz_raw()``
-        """
-        return [self.get_x_raw(), self.get_y_raw(), self.get_z_raw()]
-
-    def get_x(self) -> float:
-        """
-        Get the X-axis gyroscope value scaled to degrees per second (dps).
-
-        :return: The X-axis gyroscope value in dps.
-        :rtype: float
-        :example: ``dps_x = gyro.get_x()``
-        """
-        return self.get_x_raw() * self.raw_to_dps_factor
-
-    def get_y(self) -> float:
-        """
-        Get the Y-axis gyroscope value scaled to degrees per second (dps).
-
-        :return: The Y-axis gyroscope value in dps.
-        :rtype: float
-        :example: ``dps_y = gyro.get_y()``
-        """
-        return self.get_y_raw() * self.raw_to_dps_factor
-
-    def get_z(self) -> float:
-        """
-        Get the Z-axis gyroscope value scaled to degrees per second (dps).
-
-        :return: The Z-axis gyroscope value in dps.
-        :rtype: float
-        :example: ``dps_z = gyro.get_z()``
-        """
-        return self.get_z_raw() * self.raw_to_dps_factor
-
-    def get_xyz(self) -> List[float]:
-        """
-        Get the X, Y, and Z-axis gyroscope values scaled to degrees per second (dps).
-
-        :return: A list containing [X, Y, Z] gyroscope values in dps.
-        :rtype: list[float]
-        :example: ``dps_xyz = gyro.get_xyz()``
-        """
-        return [self.get_x(), self.get_y(), self.get_z()]
-
-    def close(self) -> None:
-        """
-        Close the I2C bus connection.
-        Also attempts to disable the gyroscope if it was enabled by this instance.
-        """
-        if hasattr(self, 'i2c_bus') and self.i2c_bus:
-            try:
-                # Attempt to disable gyroscope: clear bit 1 of PWR_CTRL
-                if self._read_register(CHIP_ID_ADDRESS) == BMI270_CHIP_ID: # Check if still connected
-                    current_pwr_ctrl = self._read_register(PWR_CTRL)
-                    self._write_register(PWR_CTRL, current_pwr_ctrl & ~0x02) # Clear gyr_en bit
-            except Exception as e:
-                print(f"Warning: Could not disable gyroscope on close: {e}")
-            finally:
-                self.i2c_bus.close()
-                print(f"I2C bus {self.bus_num} closed for gyroscope {hex(self.addr)}.")
-
-# Example usage (for testing, not part of the library file):
-if __name__ == '__main__':
-    try:
-        # Assuming I2C bus 1, default address 0x68
-        # You might need to change the bus number depending on your Raspberry Pi version and setup
-        gyro = Gyroscope(bus=1, addr=0x68) 
-        print("Gyroscope (BMI270) initialized successfully.")
-        
-        for _ in range(10):
-            raw_xyz = gyro.get_xyz_raw()
-            scaled_xyz = gyro.get_xyz()
-            print(f"Raw Gyro (X,Y,Z): {raw_xyz}")
-            print(f"Scaled Gyro (X,Y,Z) [dps]: {scaled_xyz[0]:.2f}, {scaled_xyz[1]:.2f}, {scaled_xyz[2]:.2f}")
-            time.sleep(0.5)
-            
-    except IOError as e:
-        print(f"I/O error: {e}")
-    except RuntimeError as e:
-        print(f"Runtime error: {e}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-    finally:
-        if 'gyro' in locals() and gyro:
-            gyro.close()
+        return temp_celsius

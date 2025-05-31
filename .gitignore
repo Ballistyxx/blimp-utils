@@ -34,3 +34,6 @@ pi_calculate_calibration.py
 plot_calibration_data.py
 source_libraries/
 test_import.py
+src/blimputils/bmm350.py
+src/blimputils/bmi270.py
+test_imu.py
