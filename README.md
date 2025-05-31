@@ -1,4 +1,3 @@
-
 **blimp-utils** is a Python library designed specifically for the custom embedded flight controller board for the Falcon Flight project. The board includes an accelerometer, gyroscope, magnetometer, and motor drivers for up to 4 brushed DC motors. This library is designed for production use, fully documented using Sphinx, and built with modularity and extensibility in mind.
 
 ## Features
@@ -18,6 +17,7 @@ To install the library, run the following command in a terminal:
 git clone https://github.com/Ballistyxx/blimp-utils.git
 cd blimp-utils
 sudo pip3 install .
+cd .. && rm -rf blimp-utils
 ```
 
 ## Usage Examples

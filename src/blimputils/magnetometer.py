@@ -887,7 +887,7 @@ class Magnetometer(object):
     raw_mag_z_u = mag_data_regs[6] + (mag_data_regs[7] << 8) + (mag_data_regs[8] << 16)
 
     # Apply sign correction using the existing fix_sign method
-    # BMM350_SIGNED_24_BIT is used in get_geomagnetic_data for these raw values
+    # BMM350_SIGNED_24_BIT is used in get_xyz for these raw values
     raw_x = self.fix_sign(raw_mag_x_u, BMM350_SIGNED_24_BIT)
     raw_y = self.fix_sign(raw_mag_y_u, BMM350_SIGNED_24_BIT)
     raw_z = self.fix_sign(raw_mag_z_u, BMM350_SIGNED_24_BIT)
@@ -965,58 +965,58 @@ class Magnetometer(object):
     """
     Get the calibrated X-axis geomagnetic data.
 
-    This is a convenience method that calls `get_geomagnetic_data` and returns only the X component.
+    This is a convenience method that calls `get_xyz` and returns only the X component.
 
     :return: Calibrated X-axis magnetic field strength in microTeslas (µT).
              Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
     :rtype: float
     """
-    # Ensure _mag_data is updated by calling get_geomagnetic_data if it hasn't been called recently
+    # Ensure _mag_data is updated by calling get_xyz if it hasn't been called recently
     # or if a fresh read is desired. For simplicity, we can call it here, though
-    # it might be redundant if get_geomagnetic_data was just called.
+    # it might be redundant if get_xyz was just called.
     # Alternatively, rely on _mag_data.x being up-to-date from a previous call.
     # For robustness, let's ensure data is fresh or at least attempted to be read.
-    self.get_geomagnetic_data() # This updates _mag_data.x
+    self.get_xyz() # This updates _mag_data.x
     return _mag_data.x
 
   def get_y(self):
     """
     Get the calibrated Y-axis geomagnetic data.
 
-    This is a convenience method that calls `get_geomagnetic_data` and returns only the Y component.
+    This is a convenience method that calls `get_xyz` and returns only the Y component.
 
     :return: Calibrated Y-axis magnetic field strength in microTeslas (µT).
              Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
     :rtype: float
     """
-    self.get_geomagnetic_data() # This updates _mag_data.y
+    self.get_xyz() # This updates _mag_data.y
     return _mag_data.y
 
   def get_z(self):
     """
     Get the calibrated Z-axis geomagnetic data.
 
-    This is a convenience method that calls `get_geomagnetic_data` and returns only the Z component.
+    This is a convenience method that calls `get_xyz` and returns only the Z component.
 
     :return: Calibrated Z-axis magnetic field strength in microTeslas (µT).
              Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
     :rtype: float
     """
-    self.get_geomagnetic_data() # This updates _mag_data.z
+    self.get_xyz() # This updates _mag_data.z
     return _mag_data.z
 
   def get_t(self):
     """
     Get the sensor temperature.
 
-    This is a convenience method that calls `get_geomagnetic_data` (which also calculates temperature)
+    This is a convenience method that calls `get_xyz` (which also calculates temperature)
     and returns the temperature.
 
     :return: Sensor temperature in degrees Celsius (°C).
              Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
     :rtype: float
     """
-    self.get_geomagnetic_data() # This updates _mag_data.temperature
+    self.get_xyz() # This updates _mag_data.temperature
     return _mag_data.temperature
 
   def get_compass_degree(self):
@@ -1037,7 +1037,7 @@ class Magnetometer(object):
              magnetometer data is invalid.
     :rtype: float
     """
-    magData = self.get_geomagnetic_data() # Returns [X, Y, Z] in uT
+    magData = self.get_xyz() # Returns [X, Y, Z] in uT
 
     if magData is None or any(math.isnan(comp) for comp in magData):
         print("Warning: Invalid magnetometer data received for compass calculation.")
@@ -1150,7 +1150,7 @@ class Magnetometer(object):
     Data = [NO_DATA] * 3
     state = self.get_data_ready_state()
     if state == True:
-      magData = self.get_geomagnetic_data()
+      magData = self.get_xyz()
       if self.__thresholdMode == LOW_THRESHOLD_INTERRUPT:
         if magData[0] < self.threshold*16:
           Data[0] = magData[0]
