@@ -1272,17 +1272,28 @@ class Magnetometer(_MagnetometerBase):
     :rtype: list[int] | None
     :raises IOError: If an I2C communication error occurs.
     """
-    try:
-      # BMM350 I2C read protocol requires reading `length + BMM350_DUMMY_BYTES`
-      # The first BMM350_DUMMY_BYTES are then discarded.
-      raw_read = self.i2cbus.read_i2c_block_data(self.__addr, reg, length + BMM350_DUMMY_BYTES)
-      # Return the actual data, skipping the dummy bytes
-      return raw_read[BMM350_DUMMY_BYTES:]
-    except Exception as e:
-      print(f"I2C read error from reg {hex(reg)} for length {length}: {e}")
-      # raise IOError(f"I2C read failed from register {hex(reg)}") from e # Option to raise
-      return None # Current behavior is to return None on error
+    # try:
+    #   # BMM350 I2C read protocol requires reading `length + BMM350_DUMMY_BYTES`
+    #   # The first BMM350_DUMMY_BYTES are then discarded.
+    #   raw_read = self.i2cbus.read_i2c_block_data(self.__addr, reg, length + BMM350_DUMMY_BYTES)
+    #   # Return the actual data, skipping the dummy bytes
+    #   return raw_read[BMM350_DUMMY_BYTES:]
+    # except Exception as e:
+    #   print(f"I2C read error from reg {hex(reg)} for length {length}: {e}")
+    #   # raise IOError(f"I2C read failed from register {hex(reg)}") from e # Option to raise
+    #   return None # Current behavior is to return None on error
+    while True:
+      try:
+        # Read data from I2C bus
+        temp_buf = self.i2cbus.read_i2c_block_data(self.__addr, reg, length + BMM350_DUMMY_BYTES)
+        # Copy data after dummy byte indices
+        reg_data = temp_buf[BMM350_DUMMY_BYTES:]
+        return reg_data  # Assuming this function is part of a larger method
+      except Exception as e:
+        time.sleep(1)
+        print("please check connect r!")
 
+    
   def get_xyz(self) -> List[float]:
     """
     Retrieves the compensated geomagnetic data for X, Y, and Z axes.
