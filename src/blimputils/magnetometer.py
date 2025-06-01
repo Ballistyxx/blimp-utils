@@ -564,8 +564,8 @@ class Magnetometer(object):
 
     :return: Status of the initialization.
     :rtype: int
-    :retval BMM350_OK: Initialization successful.
-    :retval BMM350_CHIP_ID_ERROR: Chip ID mismatch, initialization failed.
+    :retval: BMM350_OK: Initialization successful.
+    :retval: BMM350_CHIP_ID_ERROR: Chip ID mismatch, initialization failed.
     """
   
     rslt = BMM350_OK
@@ -663,11 +663,11 @@ class Magnetometer(object):
 
     :return: A string describing the current operation mode.
     :rtype: str
-    :retval "bmm350 is suspend mode!": Sensor is in suspend mode.
-    :retval "bmm350 is normal mode!": Sensor is in normal mode.
-    :retval "bmm350 is forced mode!": Sensor is in forced mode.
-    :retval "bmm350 is forced_fast mode!": Sensor is in forced-fast mode.
-    :retval "error mode!": Unknown or error in power mode status.
+    :retval: "bmm350 is suspend mode!": Sensor is in suspend mode.
+    :retval: "bmm350 is normal mode!": Sensor is in normal mode.
+    :retval: "bmm350 is forced mode!": Sensor is in forced mode.
+    :retval: "bmm350 is forced_fast mode!": Sensor is in forced-fast mode.
+    :retval: "error mode!": Unknown or error in power mode status.
     """
     result = ""
     if bmm350_sensor.power_mode == BMM350_SUSPEND_MODE:
@@ -786,9 +786,9 @@ class Magnetometer(object):
 
     :return: A string indicating the self-test result based on enabled axes.
     :rtype: str
-    :retval "x y z aix test success": If X, Y, and Z axes are enabled.
-    :retval "<axes> aix test success": If a subset of axes are enabled (e.g., "x y ").
-    :retval "xyz aix self test fail": If no axes are enabled.
+    :retval: "x y z aix test success": If X, Y, and Z axes are enabled.
+    :retval: "<axes> aix test success": If a subset of axes are enabled (e.g., "x y ").
+    :retval: "xyz aix self test fail": If no axes are enabled.
     """
     axis_en = self.read_reg(BMM350_REG_PMU_CMD_AXIS_EN, 1)
     en_x = self.BMM350_GET_BITS(axis_en[0], BMM350_EN_X_MSK, BMM350_EN_X_POS)
@@ -847,16 +847,17 @@ class Magnetometer(object):
 
     :return: A string describing the enable status of each axis.
     :rtype: str
-    :exretval "The x axis is enable! The y axis is enable! The z axis is enable! "
+    :retval: "x-axis enabled, y-axis enabled, z-axis enabled."
+    :retval: "x-axis disabled, y-axis disabled, z-axis disabled."
     """
     axis_en = bmm350_sensor.axis_en
     en_x = self.BMM350_GET_BITS(axis_en, BMM350_EN_X_MSK, BMM350_EN_X_POS)
     en_y = self.BMM350_GET_BITS(axis_en, BMM350_EN_Y_MSK, BMM350_EN_Y_POS)
     en_z = self.BMM350_GET_BITS(axis_en, BMM350_EN_Z_MSK, BMM350_EN_Z_POS)
     result = ""
-    result += "The x axis is enable! " if en_x == 1 else "The x axis is disable! "
-    result += "The y axis is enable! " if en_y == 1 else "The y axis is disable! "
-    result += "The z axis is enable! " if en_z == 1 else "The z axis is disable! "
+    result += "x-axis enabled, " if en_x == 1 else "x-axis disabled, "
+    result += "y-axis enabled, " if en_y == 1 else "y-axis disabled, "
+    result += "z-axis enabled." if en_z == 1 else "z-axis disabled."
     return result
 
   def get_raw_magnetic_data_for_calibration(self):
@@ -896,14 +897,14 @@ class Magnetometer(object):
     Get calibrated geomagnetic data (X, Y, Z) in microTeslas (µT) and update sensor temperature.
 
     This method performs the following steps:
-    1. Reads raw 24-bit data for X, Y, Z magnetic axes and temperature.
-    2. Applies sign correction to the raw data.
-    3. Stores raw LSB values in `_raw_mag_data`.
-    4. Applies user-defined hard iron calibration offsets (`_CALIBRATION_HARD_IRON`).
-    5. Applies user-defined soft iron calibration transformation (`_CALIBRATION_SOFT_IRON_TRANSFORM`).
-    6. Scales the corrected vector to physical units (µT) using `_LOCAL_EARTH_FIELD_UT`.
-    7. Stores the final calibrated X, Y, Z values in `_mag_data`.
-    8. Calculates and updates the sensor temperature in `_mag_data.temperature` using OTP compensation values.
+    \n 1. Reads raw 24-bit data for X, Y, Z magnetic axes and temperature.
+    \n 2. Applies sign correction to the raw data.
+    \n 3. Stores raw LSB values in `_raw_mag_data`.
+    \n 4. Applies user-defined hard iron calibration offsets (`_CALIBRATION_HARD_IRON`).
+    \n 5. Applies user-defined soft iron calibration transformation (`_CALIBRATION_SOFT_IRON_TRANSFORM`).
+    \n 6. Scales the corrected vector to physical units (µT) using `_LOCAL_EARTH_FIELD_UT`.
+    \n 7. Stores the final calibrated X, Y, Z values in `_mag_data`.
+    \n 8. Calculates and updates the sensor temperature in `_mag_data.temperature` using OTP compensation values.
 
     :return: List containing calibrated [X_µT, Y_µT, Z_µT].
               Returns a list of ``BMM350_FLOAT_DATA_ERROR`` (e.g., `float('nan')`)
