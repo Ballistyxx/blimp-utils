@@ -13,7 +13,6 @@ import math
 import numpy as np # Added for matrix multiplication
 from .magnetometer_vars import *
 
-# Define BMM350_FLOAT_DATA_ERROR if not already defined elsewhere (e.g. in magnetometer_vars.py)
 # This is a common way to handle sensor errors.
 if 'BMM350_FLOAT_DATA_ERROR' not in globals():
     BMM350_FLOAT_DATA_ERROR = float('nan')
@@ -44,7 +43,7 @@ except np.linalg.LinAlgError:
     _CALIBRATION_SOFT_IRON_TRANSFORM = np.eye(3)
 
 
-_LOCAL_EARTH_FIELD_UT = 45.0 # Default placeholder - USER SHOULD UPDATE THIS
+_LOCAL_EARTH_FIELD_UT = 45.0 # Default placeholder - USER CAN UPDATE THIS
 
 # --------------------------------------------
 '''!
@@ -382,7 +381,7 @@ class Magnetometer(object):
     """
     return ((reg_data & ~(mask)) | (data & mask))  
 
-  # brief This internal API converts the raw data from the IC data registers to signed integer
+  # This internal API converts the raw data from the IC data registers to signed integer
   def fix_sign(self, inval, number_of_bits):
     """
     Convert raw data from IC data registers to a signed integer.
@@ -420,7 +419,7 @@ class Magnetometer(object):
       inval = inval - (power * 2)
     return inval
 
-  # brief This internal API is used to update magnetometer offset and sensitivity data.
+  # This internal API is used to update magnetometer offset and sensitivity data.
   def update_mag_off_sens(self):
     """
     Update magnetometer offset and sensitivity data from OTP values.
@@ -568,8 +567,7 @@ class Magnetometer(object):
     :retval BMM350_OK: Initialization successful.
     :retval BMM350_CHIP_ID_ERROR: Chip ID mismatch, initialization failed.
     """
-    # _magData = [0, 0, 0]
-    # rslt = self._get_compensated_mag_xyz_data(_magData)
+  
     rslt = BMM350_OK
     # Specifies that all axes are enabled
     bmm350_sensor.axis_en = BMM350_EN_XYZ_MSK
@@ -609,7 +607,7 @@ class Magnetometer(object):
       # 5. Magnetic reset
       self.bmm350_magnetic_reset_and_wait()
     else:
-      # The chip id verification failed and initialization failed. Procedure
+      # The chip id verification failed and initialization failed.
       rslt = BMM350_CHIP_ID_ERROR
     return rslt
 
@@ -705,7 +703,7 @@ class Magnetometer(object):
         * ``BMM350_DATA_RATE_200HZ`` (200 Hz)
         * ``BMM350_DATA_RATE_400HZ`` (400 Hz)
     """
-    # self.bmm350_set_powermode(BMM350_NORMAL_MODE)
+    
     avg_odr_reg = self.read_reg(BMM350_REG_PMU_CMD_AGGR_SET, 1)
     avg_reg = self.BMM350_GET_BITS(avg_odr_reg[0], BMM350_AVG_MSK, BMM350_AVG_POS)
     reg_data = (rates & BMM350_ODR_MSK)
@@ -875,7 +873,6 @@ class Magnetometer(object):
     """
     # 1. Read raw data registers for X, Y, Z axes
     # BMM350_MAG_TEMP_DATA_LEN is 12 (Xlsb,Xmsb,Xmmsb, Ylsb,Ymsb,Ymmsb, Zlsb,Zmsb,Zmmsb, Tlsb,Tmsb,Tmmsb)
-    # We need the first 9 bytes for X, Y, Z.
     mag_data_regs = self.read_reg(BMM350_REG_MAG_X_XLSB, 9)
     if mag_data_regs is None or len(mag_data_regs) < 9:
         # Handle error case if read_reg fails or returns insufficient data
@@ -918,9 +915,8 @@ class Magnetometer(object):
         print("Failed to read sensor data.")
         # Ensure _mag_data is accessible here if it's a global or instance variable
         # For safety, directly return error values if _mag_data might not be defined/accessible.
-        # _mag_data.x = _mag_data.y = _mag_data.z = BMM350_FLOAT_DATA_ERROR
-        # _mag_data.temperature = BMM350_FLOAT_DATA_ERROR
-        return [BMM350_FLOAT_DATA_ERROR] * 3
+        # _mag_data.x = _mag_data.y = _mag_data.z = _mag_data.temperature = BMM350_FLOAT_DATA_ERROR
+        return [BMM350_FLOAT_DATA_ERROR] * 4
 
     raw_mag_x_u = mag_and_temp_regs[0] + (mag_and_temp_regs[1] << 8) + (mag_and_temp_regs[2] << 16)
     raw_mag_y_u = mag_and_temp_regs[3] + (mag_and_temp_regs[4] << 8) + (mag_and_temp_regs[5] << 16)
@@ -932,7 +928,6 @@ class Magnetometer(object):
     raw_z_lsb = self.fix_sign(raw_mag_z_u, BMM350_SIGNED_24_BIT)
     
     # Access _raw_mag_data correctly (e.g., self._raw_mag_data or global _raw_mag_data)
-    # Assuming _raw_mag_data is a global instance for now as per original structure hints
     _raw_mag_data.raw_t_data = self.fix_sign(raw_temp_u, BMM350_SIGNED_24_BIT)
     _raw_mag_data.raw_x_data = raw_x_lsb
     _raw_mag_data.raw_y_data = raw_y_lsb
@@ -975,7 +970,6 @@ class Magnetometer(object):
     # or if a fresh read is desired. For simplicity, we can call it here, though
     # it might be redundant if get_xyz was just called.
     # Alternatively, rely on _mag_data.x being up-to-date from a previous call.
-    # For robustness, let's ensure data is fresh or at least attempted to be read.
     self.get_xyz() # This updates _mag_data.x
     return _mag_data.x
 
@@ -989,7 +983,7 @@ class Magnetometer(object):
              Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
     :rtype: float
     """
-    self.get_xyz() # This updates _mag_data.y
+    self.get_xyz()
     return _mag_data.y
 
   def get_z(self):
@@ -1002,7 +996,7 @@ class Magnetometer(object):
              Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
     :rtype: float
     """
-    self.get_xyz() # This updates _mag_data.z
+    self.get_xyz()
     return _mag_data.z
 
   def get_t(self):
@@ -1016,7 +1010,7 @@ class Magnetometer(object):
              Returns ``BMM350_FLOAT_DATA_ERROR`` if data retrieval fails.
     :rtype: float
     """
-    self.get_xyz() # This updates _mag_data.temperature
+    self.get_xyz()
     return _mag_data.temperature
 
   def get_compass_degree(self):
@@ -1028,21 +1022,23 @@ class Magnetometer(object):
     to the projection of the magnetic field vector in the XY plane.
 
     .. note::
-        This calculation is **not** tilt-compensated. For accurate yaw when the
-        sensor is tilted, data from an accelerometer would be required to correct
-        for the tilt.
+        This calculation is **not** tilt-compensated; To derive True North heading, apply your real-world 
+        declination constant post-function call. 
+    .. warning::
+        This function is still in development, due to the complexity associated with hard-iron, soft-iron, and tilt 
+        compensation calibration. 
 
     :return: Compass degree (0.0 to 360.0 degrees).
              Returns ``BMM350_FLOAT_DATA_ERROR`` (e.g., `float('nan')`) if
              magnetometer data is invalid.
     :rtype: float
     """
-    magData = self.get_xyz() # Returns [X, Y, Z] in uT
+    magData = self.get_xyz()
 
     if magData is None or any(math.isnan(comp) for comp in magData):
         print("Warning: Invalid magnetometer data received for compass calculation.")
-        return BMM350_FLOAT_DATA_ERROR # Or a suitable error value like float('nan')
-
+        return BMM350_FLOAT_DATA_ERROR
+    
     # Standard formula for yaw (heading) from magnetometer X and Y components
     # atan2(Y, X) gives the angle in radians from the positive X-axis to the point (X,Y)
     yaw_radians = math.atan2(magData[1], magData[0]) # magData[1] is Y, magData[0] is X

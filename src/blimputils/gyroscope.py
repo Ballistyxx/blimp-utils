@@ -15,10 +15,6 @@ from .config_file import *
 from .registers import *
 from .definitions import *
 
-# from src.bmi270.config_file import *
-# from src.bmi270.registers import *
-# from src.bmi270.definitions import *
-
 class Gyroscope:
     """
     Bosch BMI270 sensor class for gyroscope data.
@@ -487,7 +483,7 @@ class Gyroscope:
         :rtype: np.ndarray
         """
         raw_gyr_data = self.get_raw_gyr_data()
-        angular_velocity = np.deg2rad(1) * raw_gyr_data / 32768 * self.gyr_range    # in rad/s
+        angular_velocity = np.deg2rad(1) * raw_gyr_data / 32768 * self.gyr_range # in rad/s
 
         return angular_velocity
     

@@ -15,10 +15,6 @@ from .config_file import *
 from .registers import *
 from .definitions import *
 
-# from src.bmi270.config_file import *
-# from src.bmi270.registers import *
-# from src.bmi270.definitions import *
-
 class Accelerometer:
     """
     Bosch BMI270 sensor class for accelerometer and gyroscope data.
@@ -516,7 +512,7 @@ class Accelerometer:
         :rtype: np.ndarray
         """
         raw_acc_data = self.get_raw_acc_data()
-        acceleration = raw_acc_data / 32768 * self.acc_range                        # in m/s²
+        acceleration = raw_acc_data / 32768 * self.acc_range # in m/s²
 
         return acceleration
     

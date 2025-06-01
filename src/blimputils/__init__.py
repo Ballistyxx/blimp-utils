@@ -1,7 +1,7 @@
 """
 blimp-utils - A Python library for the Falcon Flight embedded controller board.
 """
-from typing import Union, Dict, Tuple # Adjusted imports
+from typing import Union, Dict, Tuple
 import time
 
 from .accelerometer import Accelerometer
@@ -10,14 +10,10 @@ from .magnetometer import Magnetometer
 from .motor import Motor
 from .utils import *
 
-# bmi270 may still be needed if other functionalities from it are used directly.
-# For now, assuming Accelerometer and Gyroscope classes are the primary interface.
-# from .bmi270 import BMI270
-
-# Default sensor addresses and bus (assuming I2C)
+# Default sensor addresses and bus
 DEFAULT_ACCEL_ADDR = 0x68
 DEFAULT_GYRO_ADDR = 0x68
-DEFAULT_MAG_ADDR = 0x14 # Corrected BMM350 default address
+DEFAULT_MAG_ADDR = 0x14
 DEFAULT_I2C_BUS = 1     # Usually 1, can be adjusted to 0
 
 # Default motor pin configurations (using BCM numbering)
@@ -28,20 +24,21 @@ DEFAULT_MOTOR_PINS: Dict[str, Dict[str, int]] = {
     "motor4": {"pin1": 5,  "pin2": 6,  "pwm_pin": None},
 }
 
-#PWR_CTRL = 0x7C  # Example register address for PWR_CTRL, replace with actual
+
 PWR_CTRIL = 0x7D
 # Global instances for sensors and motors
 # Type hints for clarity
 accelerometer_instance: Union[Accelerometer, None] = None
 gyroscope_instance: Union[Gyroscope, None] = None
-magnetometer_instance: Union[Magnetometer, None] = None # Changed from Magnetometer_I2C
+magnetometer_instance: Union[Magnetometer, None] = None
 motors: Dict[str, Motor] = {}
 
 def init(
     i2c_bus: int = DEFAULT_I2C_BUS,
-    accel_addr: Union[int, None] = DEFAULT_ACCEL_ADDR, # Allow None to skip init
-    gyro_addr: Union[int, None] = DEFAULT_GYRO_ADDR,   # Allow None to skip init
-    mag_addr: Union[int, None] = DEFAULT_MAG_ADDR,     # Allow None to skip init
+     # Allow None to skip init
+    accel_addr: Union[int, None] = DEFAULT_ACCEL_ADDR,
+    gyro_addr: Union[int, None] = DEFAULT_GYRO_ADDR,   
+    mag_addr: Union[int, None] = DEFAULT_MAG_ADDR,     
     motor_pins_config: Union[Dict[str, Dict[str, Union[int, None]]], None] = None,
 ) -> Tuple[Union[Accelerometer, None], Union[Gyroscope, None], Union[Magnetometer, None], Dict[str, Motor]]:
     """
@@ -90,9 +87,8 @@ def init(
             print("DEBUG: Gyro instance exists, preparing to set gyr_en in PWR_CTRL")
             pwr_ctrl_val |= 0x02 # gyr_en is bit 1
         
-        # It's assumed that the I2C bus is open via one of the sensor initializations
-        # If both were skipped, this part would not run.
-        # We need a bus object to write to PWR_CTRL. Use accel's or gyro's.
+        
+        # needs a bus object to write to PWR_CTRL. Use accel's or gyro's.
         bus_to_use = None
         addr_to_use = None # PWR_CTRL is on the BMI270, so address is the same for both
 
@@ -120,7 +116,7 @@ def init(
 
     if mag_addr is not None:
         try:
-            magnetometer_instance = Magnetometer(bus=i2c_bus, addr=mag_addr) # This line remains correct
+            magnetometer_instance = Magnetometer(bus=i2c_bus, addr=mag_addr)
         except IOError as e:
             print(f"Failed to initialize magnetometer: {e}")
             magnetometer_instance = None

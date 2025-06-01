@@ -6,8 +6,7 @@ from typing import Literal, Union
 import time
 import RPi.GPIO as GPIO
 
-# Setup GPIO mode and warnings
-GPIO.setmode(GPIO.BCM) # Or GPIO.BOARD
+GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 class Motor:
