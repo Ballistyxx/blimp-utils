@@ -6,7 +6,7 @@ magnetometer.py
 Module for the Bosch-Sensortec BMM350 magnetometer. Provides class infrastructure and
 implementation of underlying methods for interacting with the sensor.
 """
-import serial
+
 import time
 import os
 import math

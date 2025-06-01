@@ -1,3 +1,7 @@
+echo "Updating package lists and installing dependencies..."
+sudo apt update
+sudo apt install python3-pip python3-setuptools
+
 git clone https://github.com/Ballistyxx/blimp-utils.git
 if [ $? -ne 0 ]; then
     echo "Failed to clone the repository. Please check your internet connection or the repository URL. If a directory named 'blimp-utils' already exists, please remove it and try again."

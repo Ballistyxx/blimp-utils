@@ -8,7 +8,7 @@ setuptools.setup(
     version="1.0.0",
     author="Eli Ferrara",
     author_email="eli.ferrara256@gmail.com",
-    description="A Python library for a custom embedded flight controller board.",
+    description="A Python library for the Falcon Flight custom embedded flight controller board.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Ballistyxx/blimp-utils",
@@ -26,9 +26,9 @@ setuptools.setup(
     ],
     python_requires='>=3.9',
     install_requires=[
-        # Add any hardware-specific libraries here if they are pip-installable
-        # e.g., 'RPi.GPIO', 'smbus2'
-        # For now, these are mocked for broader compatibility without hardware
+        "numpy",
+        "RPi.GPIO",
+        "smbus2",
     ],
     extras_require={
         "dev": [

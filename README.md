@@ -11,9 +11,11 @@
 
 ## Installation
 
-To install the library, run the following command in a terminal:
+To install the library, run the following commands in a terminal:
 
 ```bash
+sudo apt update
+sudo apt install python3-pip python3-setuptools
 git clone https://github.com/Ballistyxx/blimp-utils.git
 cd blimp-utils
 sudo pip3 install .
