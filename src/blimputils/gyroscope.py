@@ -486,8 +486,35 @@ class Gyroscope:
         angular_velocity = np.deg2rad(1) * raw_gyr_data / 32768 * self.gyr_range # in rad/s
 
         return angular_velocity
+
+    def get_x(self) -> float:
+        """
+        Get the calibrated gyroscope data for the X-axis in rad/s.
+
+        :return: The X-axis angular velocity in rad/s.
+        :rtype: float
+        """
+        return self.get_xyz()[0]
+
+    def get_y(self) -> float:
+        """
+        Get the calibrated gyroscope data for the Y-axis in rad/s.
+
+        :return: The Y-axis angular velocity in rad/s.
+        :rtype: float
+        """
+        return self.get_xyz()[1]
+
+    def get_z(self) -> float:
+        """
+        Get the calibrated gyroscope data for the Z-axis in rad/s.
+
+        :return: The Z-axis angular velocity in rad/s.
+        :rtype: float
+        """
+        return self.get_xyz()[2]
     
-    def get_temp_data(self) -> float:
+    def get_t(self) -> float:
         """
         Get the temperature in degrees Celsius.
 

@@ -515,8 +515,35 @@ class Accelerometer:
         acceleration = raw_acc_data / 32768 * self.acc_range # in m/s²
 
         return acceleration
+
+    def get_x(self) -> float:
+        """
+        Get the calibrated accelerometer data for the X-axis in m/s².
+
+        :return: The X-axis acceleration in m/s².
+        :rtype: float
+        """
+        return self.get_xyz()[0]
+
+    def get_y(self) -> float:
+        """
+        Get the calibrated accelerometer data for the Y-axis in m/s².
+
+        :return: The Y-axis acceleration in m/s².
+        :rtype: float
+        """
+        return self.get_xyz()[1]
+
+    def get_z(self) -> float:
+        """
+        Get the calibrated accelerometer data for the Z-axis in m/s².
+
+        :return: The Z-axis acceleration in m/s².
+        :rtype: float
+        """
+        return self.get_xyz()[2]
     
-    def get_temp_data(self) -> float:
+    def get_t(self) -> float:
         """
         Get the temperature in degrees Celsius.
 
