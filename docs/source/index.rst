@@ -19,3 +19,4 @@ Contents
 
    usage.rst
    modules.rst
+   credits.rst
