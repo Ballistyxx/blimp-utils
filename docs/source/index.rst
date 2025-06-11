@@ -9,8 +9,6 @@ Welcome to blimp-utils' documentation!
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
 
-Contents
---------
 
 
 .. toctree::
