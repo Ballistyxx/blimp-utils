@@ -37,3 +37,5 @@ test_import.py
 src/blimputils/bmm350.py
 src/blimputils/bmi270.py
 test_imu.py
+test_motor_functionality.py
+src/blimputils/motor.py
