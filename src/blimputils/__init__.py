@@ -1,13 +1,13 @@
 """
 blimp-utils - A Python library for the Falcon Flight embedded controller board.
 """
-from typing import Union, Dict, Tuple
+from typing import Union, Dict, Tuple, Any
 import time
 
 from .accelerometer import Accelerometer
 from .gyroscope import Gyroscope
 from .magnetometer import Magnetometer
-from .motor import Motor
+from .motor import Motor # Assuming Motor class is in .motor
 from .utils import *
 
 # Default sensor addresses and bus
@@ -24,45 +24,75 @@ DEFAULT_MOTOR_PINS: Dict[str, Dict[str, int]] = {
     "motor4": {"pin1": 5,  "pin2": 6,  "pwm_pin": None},
 }
 
+PWR_CTRL = 0x7D
 
-PWR_CTRIL = 0x7D
 # Global instances for sensors and motors
-# Type hints for clarity
 accelerometer_instance: Union[Accelerometer, None] = None
 gyroscope_instance: Union[Gyroscope, None] = None
 magnetometer_instance: Union[Magnetometer, None] = None
-motors: Dict[str, Motor] = {}
+# motors: Dict[str, Motor] = {} # This will be populated by the main init, not the Motor.init from motor.py
+
+# --- Motor Proxy and __getattr__ for dynamic motor access --- 
+class _MotorProxy:
+    def __init__(self, motor_name: str):
+        self.motor_name = motor_name
+        self._instance = None
+
+    def _get_instance(self) -> Union[Motor, None]:
+        if self._instance is None:
+            # Attempt to get from Motor.instances if Motor.init() was called
+            if hasattr(Motor, 'instances') and isinstance(Motor.instances, dict):
+                self._instance = Motor.instances.get(self.motor_name)
+        return self._instance
+
+    def __getattr__(self, name: str) -> Any:
+        instance = self._get_instance()
+        if instance:
+            # This will now correctly fetch the 'spin' method (and others) 
+            # from the actual Motor instance.
+            return getattr(instance, name)
+        # If trying to access an attribute before init, or if it's not on the motor object
+        raise AttributeError(f"Motor '{self.motor_name}' is not initialized or attribute '{name}' not found.")
+
+    def __bool__(self) -> bool:
+        return self._get_instance() is not None
+
+# Expose motor1, motor2, motor3, motor4 at the package level
+# These will be instances of _MotorProxy
+motor1 = _MotorProxy("motor1")
+motor2 = _MotorProxy("motor2")
+motor3 = _MotorProxy("motor3")
+motor4 = _MotorProxy("motor4")
+
+# The main init function for the blimputils package
+# This is DIFFERENT from Motor.init() in motor.py
+# This init handles sensors and can also call Motor.init() if needed by design.
+# For the current test_motor_functionality.py, it seems Motor.init() is called directly.
+# If you want this main init to also initialize motors from motor.py, you would add:
+# Motor.init() # Call the static method from the motor module
 
 def init(
     i2c_bus: int = DEFAULT_I2C_BUS,
-     # Allow None to skip init
     accel_addr: Union[int, None] = DEFAULT_ACCEL_ADDR,
-    gyro_addr: Union[int, None] = DEFAULT_GYRO_ADDR,   
-    mag_addr: Union[int, None] = DEFAULT_MAG_ADDR,     
-    motor_pins_config: Union[Dict[str, Dict[str, Union[int, None]]], None] = None,
+    gyro_addr: Union[int, None] = DEFAULT_GYRO_ADDR,
+    mag_addr: Union[int, None] = DEFAULT_MAG_ADDR,
+    # motor_pins_config is for a different motor implementation if used by this init
+    # motor_pins_config: Union[Dict[str, Dict[str, Union[int, None]]], None] = None,
 ) -> Tuple[Union[Accelerometer, None], Union[Gyroscope, None], Union[Magnetometer, None], Dict[str, Motor]]:
     """
-    Initializes the sensors and motors.
-
-    :param i2c_bus: The I2C bus number for sensors.
-    :param accel_addr: I2C address for the accelerometer. If None, accelerometer is not initialized.
-    :param gyro_addr: I2C address for the gyroscope. If None, gyroscope is not initialized.
-    :param mag_addr: I2C address for the magnetometer. If None, magnetometer is not initialized.
-    :param motor_pins_config: Configuration for motor pins. 
-                              Example: {"motor1": {"pin1": 17, "pin2": 18, "pwm_pin": None}}
-                              If None, uses DEFAULT_MOTOR_PINS.
-    :return: A tuple containing the initialized (or None) sensor instances and a dictionary of motor instances.
-    :raises IOError: If sensor initialization fails.
+    Initializes the sensors. Motors are initialized separately by calling Motor.init()
+    from the motor module, which populates Motor.instances for the proxies.
     """
-    global accelerometer_instance, gyroscope_instance, magnetometer_instance, motors
+    global accelerometer_instance, gyroscope_instance, magnetometer_instance
+    # Removed `motors` from global as it's not used by this simplified init for motors
 
-    # Initialize Sensors
+    # Initialize Sensors (copied from your existing __init__.py)
     if accel_addr is not None:
         try:
             accelerometer_instance = Accelerometer(bus=i2c_bus, addr=accel_addr)
         except IOError as e:
             print(f"Failed to initialize accelerometer: {e}")
-            accelerometer_instance = None # Ensure it's None on failure
+            accelerometer_instance = None
     else:
         accelerometer_instance = None
         print("Accelerometer initialization skipped (address is None).")
@@ -77,42 +107,24 @@ def init(
         gyroscope_instance = None
         print("Gyroscope initialization skipped (address is None).")
 
-    # After individual sensor inits, set PWR_CTRL to enable both if they were initialized
     if accelerometer_instance or gyroscope_instance:
         pwr_ctrl_val = 0x00
-        if accelerometer_instance:
-            print("DEBUG: Accel instance exists, preparing to set acc_en in PWR_CTRL")
-            pwr_ctrl_val |= 0x04 # acc_en is bit 2
-        if gyroscope_instance:
-            print("DEBUG: Gyro instance exists, preparing to set gyr_en in PWR_CTRL")
-            pwr_ctrl_val |= 0x02 # gyr_en is bit 1
-        
-        
-        # needs a bus object to write to PWR_CTRL. Use accel's or gyro's.
+        if accelerometer_instance: pwr_ctrl_val |= 0x04
+        if gyroscope_instance: pwr_ctrl_val |= 0x02
         bus_to_use = None
-        addr_to_use = None # PWR_CTRL is on the BMI270, so address is the same for both
-
+        addr_to_use = None
         if accelerometer_instance and accelerometer_instance.i2c_bus:
             bus_to_use = accelerometer_instance.i2c_bus
             addr_to_use = accelerometer_instance.addr
         elif gyroscope_instance and gyroscope_instance.i2c_bus:
             bus_to_use = gyroscope_instance.i2c_bus
             addr_to_use = gyroscope_instance.addr
-
         if bus_to_use and addr_to_use is not None and pwr_ctrl_val != 0x00:
             try:
-                print(f"DEBUG: Writing PWR_CTRL = {hex(pwr_ctrl_val)} to address {hex(addr_to_use)}")
                 bus_to_use.write_byte_data(addr_to_use, PWR_CTRL, pwr_ctrl_val)
-                time.sleep(0.002) # Short delay after enabling sensors (2ms from datasheet for acc_en)
-                # Verify PWR_CTRL value
-                # read_pwr_ctrl = bus_to_use.read_byte_data(addr_to_use, PWR_CTRL)
-                # print(f"DEBUG: PWR_CTRL after write: {hex(read_pwr_ctrl)}")
+                time.sleep(0.002)
             except Exception as e:
                 print(f"Error writing to PWR_CTRL: {e}")
-        elif pwr_ctrl_val == 0x00:
-            print("DEBUG: Both accel and gyro not initialized, PWR_CTRL not written.")
-        else:
-            print("DEBUG: No I2C bus available to write PWR_CTRL.")
 
     if mag_addr is not None:
         try:
@@ -124,40 +136,39 @@ def init(
         magnetometer_instance = None
         print("Magnetometer initialization skipped (address is None).")
 
-    # Initialize Motors
-    current_motor_pins = motor_pins_config if motor_pins_config is not None else DEFAULT_MOTOR_PINS
-    motors = {}
-    for name, pins in current_motor_pins.items():
-        try:
-            # Ensure pwm_pin is correctly passed as Union[int, None]
-            pwm_pin_val = pins.get("pwm_pin") # Will be int or None
-            motors[name] = Motor(pin1=pins["pin1"], pin2=pins["pin2"], pwm_pin=pwm_pin_val)
-        except Exception as e:
-            print(f"Failed to initialize motor {name}: {e}")
-            # Optionally, decide if this should raise an error or just skip the motor
-
-    return accelerometer_instance, gyroscope_instance, magnetometer_instance, motors
+    # Motors are expected to be initialized by calling blimputils.Motor.init() directly.
+    # The _MotorProxy instances (motor1, motor2, etc.) will pick up their instances from Motor.instances.
+    # No motor initialization logic here for the pigpio motors.
+    
+    # Return sensor instances and an empty dict for motors from this specific init function
+    # as the pigpio motors are handled by Motor.instances and proxies.
+    return accelerometer_instance, gyroscope_instance, magnetometer_instance, {}
 
 def cleanup():
     """
-    Cleans up resources used by sensors and motors.
+    Cleans up resources. Calls Motor.cleanup() for pigpio motors.
     """
-    global accelerometer_instance, gyroscope_instance, magnetometer_instance, motors
+    global accelerometer_instance, gyroscope_instance, magnetometer_instance
 
-    if accelerometer_instance:
+    # Cleanup sensors initialized by this package's init
+    if accelerometer_instance and hasattr(accelerometer_instance, 'close'):
         accelerometer_instance.close()
-    if gyroscope_instance:
+    if gyroscope_instance and hasattr(gyroscope_instance, 'close'):
         gyroscope_instance.close()
-    if magnetometer_instance:
+    if magnetometer_instance and hasattr(magnetometer_instance, 'close'):
         magnetometer_instance.close()
     
-    for motor_name, motor_obj in motors.items():
-        try:
-            motor_obj.cleanup()
-        except Exception as e:
-            print(f"Error cleaning up motor {motor_name}: {e}")
+    # Call the static cleanup method from the motor module
+    # This will handle stopping motors in Motor.instances and cleaning up pigpio/GPIO
+    Motor.cleanup()
     
     print("blimputils cleanup complete.")
 
-#__all__ = ['Accelerometer', 'Gyroscope', 'Magnetometer', 'Motor', 'init', 'cleanup',
-#           'DEFAULT_ACCEL_ADDR', 'DEFAULT_GYRO_ADDR', 'DEFAULT_MAG_ADDR', 'DEFAULT_I2C_BUS', 'DEFAULT_MOTOR_PINS']
+# __all__ can be defined to control `from blimputils import *` behavior
+__all__ = [
+    'Accelerometer', 'Gyroscope', 'Magnetometer', 'Motor',
+    'init', 'cleanup',
+    'motor1', 'motor2', 'motor3', 'motor4',
+    'DEFAULT_ACCEL_ADDR', 'DEFAULT_GYRO_ADDR', 'DEFAULT_MAG_ADDR', 'DEFAULT_I2C_BUS',
+    'DEFAULT_MOTOR_PINS', 'PWR_CTRL' # Add other utilities from .utils if needed
+]
