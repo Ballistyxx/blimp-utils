@@ -51,6 +51,11 @@ class Gyroscope:
         self.gyr_range        = 1000
         self.gyr_odr          = 200
 
+        self.load_config_file()
+        self.enable_gyr()
+        self.enable_temp()
+
+
     def __unsignedToSigned__(self, n, byte_count) -> int:
         """
         Convert an unsigned integer to a signed integer.
