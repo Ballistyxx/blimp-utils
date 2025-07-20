@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to blimp-utils’ documentation! &mdash; blimp-utils Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            blimp-utils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">blimp-utils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to blimp-utils’ documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-blimp-utils-documentation">
+<h1>Welcome to blimp-utils’ documentation!<a class="headerlink" href="#welcome-to-blimp-utils-documentation" title="Link to this heading"></a></h1>
+<p><strong>blimp-utils</strong> is a Python library designed specifically for the <a class="reference external" href="https://github.com/PHS-SMCS/falcon-flight">custom embedded flight controller board</a> for the Falcon Flight project. The board includes an accelerometer, gyroscope, magnetometer, and motor drivers for up to 4 brushed DC motors. This library is designed for production use, fully documented using Sphinx, and built with modularity and extensibility in mind.</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Modular design for sensors (Accelerometer, Gyroscope, Magnetometer) and actuators (Motor).</p></li>
+<li><p>Clear, class-based API.</p></li>
+<li><p>Simulation of I²C and GPIO operations for development off-hardware.</p></li>
+<li><p>Comprehensive Sphinx documentation.</p></li>
+<li><p>Python 3.9+ type hinting.</p></li>
+<li><p>PEP8 compliant.</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>To install the library, run the following commands in a terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>python3-pip<span class="w"> </span>python3-setuptools
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Ballistyxx/blimp-utils.git
+<span class="nb">cd</span><span class="w"> </span>blimp-utils
+sudo<span class="w"> </span>pip3<span class="w"> </span>install<span class="w"> </span>.
+<span class="nb">cd</span><span class="w"> </span>..<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>blimp-utils
+</pre></div>
+</div>
+</section>
+<section id="usage-examples">
+<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h2>
+<p>Here’s a quick example of how to use the <code class="docutils literal notranslate"><span class="pre">blimp-utils</span></code> library:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">blimputils</span> <span class="kn">import</span> <span class="n">Motor</span><span class="p">,</span> <span class="n">Accelerometer</span><span class="p">,</span> <span class="n">Gyroscope</span><span class="p">,</span> <span class="n">Magnetometer</span>
+
+<span class="c1"># Initialize a motor on GPIO pins 13 and 21</span>
+<span class="c1"># Assumes pin 13 is used for PWM if no dedicated pwm_pin is provided</span>
+<span class="n">motor1</span> <span class="o">=</span> <span class="n">Motor</span><span class="p">(</span><span class="n">pin1</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">pin2</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+
+<span class="c1"># Initialize an accelerometer on I2C bus 1, address 0x68</span>
+<span class="n">accel</span> <span class="o">=</span> <span class="n">Accelerometer</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">addr</span><span class="o">=</span><span class="mh">0x68</span><span class="p">)</span> <span class="c1"># BMI270 default address</span>
+
+<span class="c1"># Initialize a gyroscope (same chip as accelerometer)</span>
+<span class="n">gyro</span> <span class="o">=</span> <span class="n">Gyroscope</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">addr</span><span class="o">=</span><span class="mh">0x68</span><span class="p">)</span> <span class="c1"># BMI270 default address</span>
+
+<span class="c1"># Initialize a magnetometer on I2C bus 1, address 0x14</span>
+<span class="n">mag</span> <span class="o">=</span> <span class="n">Magnetometer</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">addr</span><span class="o">=</span><span class="mh">0x14</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Motor Control ---&quot;</span><span class="p">)</span>
+<span class="n">motor1</span><span class="o">.</span><span class="n">spin_forward</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="n">ramp</span><span class="o">=</span><span class="s2">&quot;quadratic&quot;</span><span class="p">)</span>
+<span class="c1"># Simulate some action</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">motor1</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- Sensor Readings ---&quot;</span><span class="p">)</span>
+<span class="n">accel_data</span> <span class="o">=</span> <span class="n">accel</span><span class="o">.</span><span class="n">get_xyz</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accelerometer: X=</span><span class="si">{</span><span class="n">accel_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, Y=</span><span class="si">{</span><span class="n">accel_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, Z=</span><span class="si">{</span><span class="n">accel_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">gyro_data</span> <span class="o">=</span> <span class="n">gyro</span><span class="o">.</span><span class="n">get_xyz</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gyroscope: X=</span><span class="si">{</span><span class="n">gyro_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, Y=</span><span class="si">{</span><span class="n">gyro_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, Z=</span><span class="si">{</span><span class="n">gyro_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">mag_data</span> <span class="o">=</span> <span class="n">mag</span><span class="o">.</span><span class="n">get_xyz</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Magnetometer: X=</span><span class="si">{</span><span class="n">mag_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, Y=</span><span class="si">{</span><span class="n">mag_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, Z=</span><span class="si">{</span><span class="n">mag_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Clean up GPIO resources used by the motor</span>
+<span class="n">motor1</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Example finished.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<p>The full documentation is built with Sphinx and can be found in the <code class="docutils literal notranslate"><span class="pre">docs/build/html</span></code> directory after running <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code> inside <code class="docutils literal notranslate"><span class="pre">docs/</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>sphinx
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Ballistyxx/blimp-utils.git
+<span class="nb">cd</span><span class="w"> </span>blimp-utils/docs
+make<span class="w"> </span>clean
+make<span class="w"> </span>html
+<span class="c1"># Open docs/build/html/index.html in your browser</span>
+</pre></div>
+</div>
+<p>Documentation can also be found at https://ballistyxx.github.io/blimp-utils/</p>
+</section>
+<section id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">blimputils.accelerometer</span></code>: Provides the <code class="docutils literal notranslate"><span class="pre">Accelerometer</span></code> class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blimputils.gyroscope</span></code>: Provides the <code class="docutils literal notranslate"><span class="pre">Gyroscope</span></code> class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blimputils.magnetometer</span></code>: Provides the <code class="docutils literal notranslate"><span class="pre">Magnetometer</span></code> class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blimputils.motor</span></code>: Provides the <code class="docutils literal notranslate"><span class="pre">Motor</span></code> class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blimputils.utils</span></code>: Utility functions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blimputils.interfaces</span></code>: Abstract base classes (e.g., <code class="docutils literal notranslate"><span class="pre">SensorInterface</span></code>).</p></li>
+</ul>
+<p>Refer to the Sphinx documentation for detailed API references.</p>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
+<p>Contributions are welcome! Please ensure your code follows PEP8 and includes type hints and docstrings.</p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>This project is licensed under the MIT License - see the <code class="docutils literal notranslate"><span class="pre">LICENSE</span></code> file for details</p>
+</section>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.accelerometer.html">blimputils.accelerometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.gyroscope.html">blimputils.gyroscope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.magnetometer.html">blimputils.magnetometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.motor.html">blimputils.motor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.utils.html">blimputils.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/blimputils.interfaces.html">blimputils.interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Eli Ferrara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

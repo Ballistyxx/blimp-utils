@@ -1,0 +1,1066 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blimputils.magnetometer &mdash; blimp-utils Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="blimputils.motor" href="blimputils.motor.html" />
+    <link rel="prev" title="blimputils.gyroscope" href="blimputils.gyroscope.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            blimp-utils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="blimputils.accelerometer.html">blimputils.accelerometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.gyroscope.html">blimputils.gyroscope</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">blimputils.magnetometer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#magnetometer-py">magnetometer.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_offset_coef"><code class="docutils literal notranslate"><span class="pre">bmm350_dut_offset_coef</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_sensit_coef"><code class="docutils literal notranslate"><span class="pre">bmm350_dut_sensit_coef</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_tco"><code class="docutils literal notranslate"><span class="pre">bmm350_dut_tco</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_tcs"><code class="docutils literal notranslate"><span class="pre">bmm350_dut_tcs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_cross_axis"><code class="docutils literal notranslate"><span class="pre">bmm350_cross_axis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_mag_compensate"><code class="docutils literal notranslate"><span class="pre">bmm350_mag_compensate</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dev"><code class="docutils literal notranslate"><span class="pre">bmm350_dev</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.BMM350RawMagData"><code class="docutils literal notranslate"><span class="pre">BMM350RawMagData</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.BMM350MagData"><code class="docutils literal notranslate"><span class="pre">BMM350MagData</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.bmm350_pmu_cmd_status_0"><code class="docutils literal notranslate"><span class="pre">bmm350_pmu_cmd_status_0</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer"><code class="docutils literal notranslate"><span class="pre">Magnetometer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.I2C_MODE"><code class="docutils literal notranslate"><span class="pre">Magnetometer.I2C_MODE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.BMM350_SET_BITS"><code class="docutils literal notranslate"><span class="pre">Magnetometer.BMM350_SET_BITS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.BMM350_GET_BITS"><code class="docutils literal notranslate"><span class="pre">Magnetometer.BMM350_GET_BITS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.BMM350_GET_BITS_POS_0"><code class="docutils literal notranslate"><span class="pre">Magnetometer.BMM350_GET_BITS_POS_0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.BMM350_SET_BITS_POS_0"><code class="docutils literal notranslate"><span class="pre">Magnetometer.BMM350_SET_BITS_POS_0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.fix_sign"><code class="docutils literal notranslate"><span class="pre">Magnetometer.fix_sign()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.update_mag_off_sens"><code class="docutils literal notranslate"><span class="pre">Magnetometer.update_mag_off_sens()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.bmm350_set_powermode"><code class="docutils literal notranslate"><span class="pre">Magnetometer.bmm350_set_powermode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.bmm350_magnetic_reset_and_wait"><code class="docutils literal notranslate"><span class="pre">Magnetometer.bmm350_magnetic_reset_and_wait()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.sensor_init"><code class="docutils literal notranslate"><span class="pre">Magnetometer.sensor_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_chip_id"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_chip_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.soft_reset"><code class="docutils literal notranslate"><span class="pre">Magnetometer.soft_reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.set_operation_mode"><code class="docutils literal notranslate"><span class="pre">Magnetometer.set_operation_mode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_operation_mode"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_operation_mode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.set_rate"><code class="docutils literal notranslate"><span class="pre">Magnetometer.set_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_rate"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.set_preset_mode"><code class="docutils literal notranslate"><span class="pre">Magnetometer.set_preset_mode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.self_test"><code class="docutils literal notranslate"><span class="pre">Magnetometer.self_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.set_measurement_XYZ"><code class="docutils literal notranslate"><span class="pre">Magnetometer.set_measurement_XYZ()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_measurement_state_XYZ"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_measurement_state_XYZ()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_raw_magnetic_data_for_calibration"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_raw_magnetic_data_for_calibration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_xyz"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_xyz()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_x"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_x()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_y"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_z"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_z()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_t"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_t()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_compass_degree"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_compass_degree()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.set_data_ready_pin"><code class="docutils literal notranslate"><span class="pre">Magnetometer.set_data_ready_pin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_data_ready_state"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_data_ready_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.set_threshold_interrupt"><code class="docutils literal notranslate"><span class="pre">Magnetometer.set_threshold_interrupt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.get_threshold_data"><code class="docutils literal notranslate"><span class="pre">Magnetometer.get_threshold_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.is_raspberrypi"><code class="docutils literal notranslate"><span class="pre">Magnetometer.is_raspberrypi()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.test_platform"><code class="docutils literal notranslate"><span class="pre">Magnetometer.test_platform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.write_reg"><code class="docutils literal notranslate"><span class="pre">Magnetometer.write_reg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blimputils.magnetometer.Magnetometer.read_reg"><code class="docutils literal notranslate"><span class="pre">Magnetometer.read_reg()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.motor.html">blimputils.motor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.utils.html">blimputils.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blimputils.interfaces.html">blimputils.interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">blimp-utils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">Modules</a></li>
+      <li class="breadcrumb-item active">blimputils.magnetometer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/blimputils.magnetometer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-blimputils.magnetometer">
+<span id="blimputils-magnetometer"></span><h1>blimputils.magnetometer<a class="headerlink" href="#module-blimputils.magnetometer" title="Link to this heading"></a></h1>
+<section id="magnetometer-py">
+<h2>magnetometer.py<a class="headerlink" href="#magnetometer-py" title="Link to this heading"></a></h2>
+<p>Module for the Bosch-Sensortec BMM350 magnetometer. Provides class infrastructure and
+implementation of underlying methods for interacting with the sensor.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_dut_offset_coef">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_dut_offset_coef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_offs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_dut_offset_coef" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 magnetometer DUT offset coefficient structure.</p>
+<p>Stores temperature and XYZ offset coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_offs</strong> (<em>float</em>) – Temperature offset coefficient.</p></li>
+<li><p><strong>offset_x</strong> (<em>float</em>) – X-axis offset coefficient.</p></li>
+<li><p><strong>offset_y</strong> (<em>float</em>) – Y-axis offset coefficient.</p></li>
+<li><p><strong>offset_z</strong> (<em>float</em>) – Z-axis offset coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_dut_sensit_coef">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_dut_sensit_coef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_sens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sens_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sens_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sens_z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_dut_sensit_coef" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 magnetometer DUT sensitivity coefficient structure.</p>
+<p>Stores temperature and XYZ sensitivity coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_sens</strong> (<em>float</em>) – Temperature sensitivity coefficient.</p></li>
+<li><p><strong>sens_x</strong> (<em>float</em>) – X-axis sensitivity coefficient.</p></li>
+<li><p><strong>sens_y</strong> (<em>float</em>) – Y-axis sensitivity coefficient.</p></li>
+<li><p><strong>sens_z</strong> (<em>float</em>) – Z-axis sensitivity coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_dut_tco">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_dut_tco</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tco_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tco_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tco_z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_dut_tco" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 magnetometer DUT TCO (Temperature Coefficient of Offset) structure.</p>
+<p>Stores TCO coefficients for X, Y, and Z axes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tco_x</strong> (<em>float</em>) – X-axis TCO coefficient.</p></li>
+<li><p><strong>tco_y</strong> (<em>float</em>) – Y-axis TCO coefficient.</p></li>
+<li><p><strong>tco_z</strong> (<em>float</em>) – Z-axis TCO coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_dut_tcs">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_dut_tcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tcs_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tcs_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tcs_z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_dut_tcs" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 magnetometer DUT TCS (Temperature Coefficient of Sensitivity) structure.</p>
+<p>Stores TCS coefficients for X, Y, and Z axes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tcs_x</strong> (<em>float</em>) – X-axis TCS coefficient.</p></li>
+<li><p><strong>tcs_y</strong> (<em>float</em>) – Y-axis TCS coefficient.</p></li>
+<li><p><strong>tcs_z</strong> (<em>float</em>) – Z-axis TCS coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_cross_axis">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_cross_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cross_x_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cross_y_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cross_z_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cross_z_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_cross_axis" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 magnetometer cross-axis compensation structure.</p>
+<p>Stores cross-axis sensitivity coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cross_x_y</strong> (<em>float</em>) – Cross-axis sensitivity from Y to X.</p></li>
+<li><p><strong>cross_y_x</strong> (<em>float</em>) – Cross-axis sensitivity from X to Y.</p></li>
+<li><p><strong>cross_z_x</strong> (<em>float</em>) – Cross-axis sensitivity from X to Z.</p></li>
+<li><p><strong>cross_z_y</strong> (<em>float</em>) – Cross-axis sensitivity from Y to Z.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_mag_compensate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_mag_compensate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dut_offset_coef</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_offset_coef" title="blimputils.magnetometer.bmm350_dut_offset_coef"><span class="pre">bmm350_dut_offset_coef</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dut_sensit_coef</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_sensit_coef" title="blimputils.magnetometer.bmm350_dut_sensit_coef"><span class="pre">bmm350_dut_sensit_coef</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dut_tco</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_tco" title="blimputils.magnetometer.bmm350_dut_tco"><span class="pre">bmm350_dut_tco</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dut_tcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_tcs" title="blimputils.magnetometer.bmm350_dut_tcs"><span class="pre">bmm350_dut_tcs</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dut_t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cross_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blimputils.magnetometer.bmm350_cross_axis" title="blimputils.magnetometer.bmm350_cross_axis"><span class="pre">bmm350_cross_axis</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_mag_compensate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 magnetometer compensation data structure.</p>
+<p>Holds all compensation coefficients required for sensor data correction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dut_offset_coef</strong> (<a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_offset_coef" title="blimputils.magnetometer.bmm350_dut_offset_coef"><em>bmm350_dut_offset_coef</em></a>) – DUT offset coefficients.</p></li>
+<li><p><strong>dut_sensit_coef</strong> (<a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_sensit_coef" title="blimputils.magnetometer.bmm350_dut_sensit_coef"><em>bmm350_dut_sensit_coef</em></a>) – DUT sensitivity coefficients.</p></li>
+<li><p><strong>dut_tco</strong> (<a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_tco" title="blimputils.magnetometer.bmm350_dut_tco"><em>bmm350_dut_tco</em></a>) – DUT TCO coefficients.</p></li>
+<li><p><strong>dut_tcs</strong> (<a class="reference internal" href="#blimputils.magnetometer.bmm350_dut_tcs" title="blimputils.magnetometer.bmm350_dut_tcs"><em>bmm350_dut_tcs</em></a>) – DUT TCS coefficients.</p></li>
+<li><p><strong>dut_t0</strong> (<em>float</em>) – DUT T0 (reference temperature).</p></li>
+<li><p><strong>cross_axis</strong> (<a class="reference internal" href="#blimputils.magnetometer.bmm350_cross_axis" title="blimputils.magnetometer.bmm350_cross_axis"><em>bmm350_cross_axis</em></a>) – Cross-axis compensation coefficients.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_dev">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_dev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag_comp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#blimputils.magnetometer.bmm350_mag_compensate" title="blimputils.magnetometer.bmm350_mag_compensate"><span class="pre">bmm350_mag_compensate</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_dev" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 device structure.</p>
+<p>Represents the BMM350 sensor device, including its chip ID, OTP data,
+compensation data, power mode, and enabled axes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mag_comp</strong> (<a class="reference internal" href="#blimputils.magnetometer.bmm350_mag_compensate" title="blimputils.magnetometer.bmm350_mag_compensate"><em>bmm350_mag_compensate</em></a>) – Magnetometer compensation data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.BMM350RawMagData">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">BMM350RawMagData</span></span><a class="headerlink" href="#blimputils.magnetometer.BMM350RawMagData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Structure to hold uncompensated (raw) BMM350 magnetometer and temperature data.</p>
+<p>Used internally to store raw ADC counts before any compensation or scaling.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.BMM350MagData">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">BMM350MagData</span></span><a class="headerlink" href="#blimputils.magnetometer.BMM350MagData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Structure to hold compensated BMM350 magnetometer and temperature data.</p>
+<p>Stores the final X, Y, Z magnetic field values (typically in µT) and
+the temperature (typically in °C) after all compensations.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.bmm350_pmu_cmd_status_0">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">bmm350_pmu_cmd_status_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pmu_cmd_busy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odr_ovwr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avr_ovwr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwr_mode_is_normal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmd_is_illegal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmu_cmd_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.bmm350_pmu_cmd_status_0" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BMM350 PMU (Power Management Unit) command status 0 register structure.</p>
+<p>Decodes the bits of the PMU_CMD_STATUS_0 register.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pmu_cmd_busy</strong> (<em>int</em>) – PMU command busy status.</p></li>
+<li><p><strong>odr_ovwr</strong> (<em>int</em>) – ODR (Output Data Rate) overwrite status.</p></li>
+<li><p><strong>avr_ovwr</strong> (<em>int</em>) – Averaging overwrite status.</p></li>
+<li><p><strong>pwr_mode_is_normal</strong> (<em>int</em>) – Power mode is normal status.</p></li>
+<li><p><strong>cmd_is_illegal</strong> (<em>int</em>) – Command is illegal status.</p></li>
+<li><p><strong>pmu_cmd_value</strong> (<em>int</em>) – PMU command value.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blimputils.magnetometer.</span></span><span class="sig-name descname"><span class="pre">Magnetometer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Bosch BMM350 Magnetometer sensor class.</p>
+<p>Provides methods to initialize, configure, and read data from the BMM350 sensor
+using I2C communication. This class handles low-level register interactions,
+OTP data loading, power mode management, and data compensation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bus</strong> (<em>int</em>) – The I2C bus number (e.g., 1 for Raspberry Pi’s /dev/i2c-1).</p></li>
+<li><p><strong>addr</strong> (<em>int</em>) – The I2C address of the BMM350 sensor.
+Defaults to <code class="docutils literal notranslate"><span class="pre">BMM350_I2C_ADDRESS_PRIMARY</span></code> if not provided,
+but typically specified during instantiation.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.I2C_MODE">
+<span class="sig-name descname"><span class="pre">I2C_MODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.I2C_MODE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.BMM350_SET_BITS">
+<span class="sig-name descname"><span class="pre">BMM350_SET_BITS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitname_msk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitname_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.BMM350_SET_BITS" title="Link to this definition"></a></dt>
+<dd><p>Set specific bits in a register value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_data</strong> (<em>int</em>) – The original register value.</p></li>
+<li><p><strong>bitname_msk</strong> (<em>int</em>) – The mask for the bits to be set.</p></li>
+<li><p><strong>bitname_pos</strong> (<em>int</em>) – The starting position of the bits.</p></li>
+<li><p><strong>data</strong> (<em>int</em>) – The data to write to the specified bits.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified register value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.BMM350_GET_BITS">
+<span class="sig-name descname"><span class="pre">BMM350_GET_BITS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.BMM350_GET_BITS" title="Link to this definition"></a></dt>
+<dd><p>Get specific bits from a register value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_data</strong> (<em>int</em>) – The register value.</p></li>
+<li><p><strong>mask</strong> (<em>int</em>) – The mask for the bits to be retrieved.</p></li>
+<li><p><strong>pos</strong> (<em>int</em>) – The starting position of the bits.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the specified bits.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.BMM350_GET_BITS_POS_0">
+<span class="sig-name descname"><span class="pre">BMM350_GET_BITS_POS_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.BMM350_GET_BITS_POS_0" title="Link to this definition"></a></dt>
+<dd><p>Get specific bits from a register value, assuming bit position 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_data</strong> (<em>int</em>) – The register value.</p></li>
+<li><p><strong>mask</strong> (<em>int</em>) – The mask for the bits to be retrieved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the specified bits.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.BMM350_SET_BITS_POS_0">
+<span class="sig-name descname"><span class="pre">BMM350_SET_BITS_POS_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.BMM350_SET_BITS_POS_0" title="Link to this definition"></a></dt>
+<dd><p>Set specific bits in a register value, assuming bit position 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_data</strong> (<em>int</em>) – The original register value.</p></li>
+<li><p><strong>mask</strong> (<em>int</em>) – The mask for the bits to be set.</p></li>
+<li><p><strong>data</strong> (<em>int</em>) – The data to write to the specified bits.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified register value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.fix_sign">
+<span class="sig-name descname"><span class="pre">fix_sign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_bits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.fix_sign" title="Link to this definition"></a></dt>
+<dd><p>Convert raw data from IC data registers to a signed integer.</p>
+<p>This internal API handles the conversion of unsigned ADC values to
+signed integer representations based on the number of bits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inval</strong> (<em>int</em>) – The input unsigned integer value.</p></li>
+<li><p><strong>number_of_bits</strong> (<em>int</em>) – The number of bits representing the signed integer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Options number_of_bits<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_SIGNED_8_BIT</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_SIGNED_12_BIT</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_SIGNED_16_BIT</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_SIGNED_21_BIT</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_SIGNED_24_BIT</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The signed integer value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.update_mag_off_sens">
+<span class="sig-name descname"><span class="pre">update_mag_off_sens</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.update_mag_off_sens" title="Link to this definition"></a></dt>
+<dd><p>Update magnetometer offset and sensitivity data from OTP values.</p>
+<p>This internal API reads the OTP (One-Time Programmable) memory data
+and populates the compensation structures (<cite>bmm350_sensor.mag_comp</cite>)
+with offset, sensitivity, TCO, TCS, T0, and cross-axis coefficients.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.bmm350_set_powermode">
+<span class="sig-name descname"><span class="pre">bmm350_set_powermode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">powermode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.bmm350_set_powermode" title="Link to this definition"></a></dt>
+<dd><p>Set the power mode of the BMM350 sensor.</p>
+<p>Transitions the sensor to the specified power mode (Suspend, Normal, Forced, Forced Fast).
+Includes necessary delays for mode transitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>powermode</strong> (<em>int</em>) – The desired power mode.</p>
+</dd>
+<dt class="field-even">Options powermode<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_SUSPEND_MODE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_NORMAL_MODE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_FORCED_MODE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_FORCED_MODE_FAST</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.bmm350_magnetic_reset_and_wait">
+<span class="sig-name descname"><span class="pre">bmm350_magnetic_reset_and_wait</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.bmm350_magnetic_reset_and_wait" title="Link to this definition"></a></dt>
+<dd><p>Perform a magnetic reset sequence and wait for completion.</p>
+<p>This sequence involves transitioning to suspend mode, issuing
+magnetic reset commands (BR and FGR), and then optionally
+restoring the previous normal mode if it was active.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.sensor_init">
+<span class="sig-name descname"><span class="pre">sensor_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.sensor_init" title="Link to this definition"></a></dt>
+<dd><p>Initialize the BMM350 sensor.</p>
+<p>Performs a software reset, verifies the chip ID, downloads OTP compensation data,
+updates internal compensation parameters, and performs a magnetic reset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Status of the initialization.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Retval<span class="colon">:</span></dt>
+<dd class="field-odd"><p>BMM350_OK: Initialization successful.</p>
+</dd>
+<dt class="field-even">Retval<span class="colon">:</span></dt>
+<dd class="field-even"><p>BMM350_CHIP_ID_ERROR: Chip ID mismatch, initialization failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_chip_id">
+<span class="sig-name descname"><span class="pre">get_chip_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_chip_id" title="Link to this definition"></a></dt>
+<dd><p>Read the chip ID from the BMM350 sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The chip ID value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.soft_reset">
+<span class="sig-name descname"><span class="pre">soft_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.soft_reset" title="Link to this definition"></a></dt>
+<dd><p>Perform a soft reset on the BMM350 sensor.</p>
+<p>Restores the sensor to suspend mode after the soft reset.
+This involves issuing a soft reset command, disabling OTP,
+performing a magnetic reset, and finally setting the power mode to suspend.
+The user needs to manually set the desired operation mode afterwards.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.set_operation_mode">
+<span class="sig-name descname"><span class="pre">set_operation_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.set_operation_mode" title="Link to this definition"></a></dt>
+<dd><p>Set the sensor operation mode.</p>
+<p>Allows switching between suspend, normal, forced, and forced-fast modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>modes</strong> (<em>int</em>) – The desired operation mode.</p>
+</dd>
+<dt class="field-even">Options modes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">BMM350_SUSPEND_MODE</span></code>: Suspend mode. Minimal current consumption.</dt><dd><p>All registers are accessible. Default after power-on.</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_NORMAL_MODE</span></code>: Normal mode. Continuous measurement at the configured ODR.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_FORCED_MODE</span></code>: Forced mode. Single measurement, then returns to suspend mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_FORCED_MODE_FAST</span></code>: Forced mode fast. Single measurement with faster ODR capability (up to 200Hz), then returns to suspend mode.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_operation_mode">
+<span class="sig-name descname"><span class="pre">get_operation_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_operation_mode" title="Link to this definition"></a></dt>
+<dd><p>Get the current sensor operation mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string describing the current operation mode.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Retval<span class="colon">:</span></dt>
+<dd class="field-odd"><p>“bmm350 is suspend mode!”: Sensor is in suspend mode.</p>
+</dd>
+<dt class="field-even">Retval<span class="colon">:</span></dt>
+<dd class="field-even"><p>“bmm350 is normal mode!”: Sensor is in normal mode.</p>
+</dd>
+<dt class="field-odd">Retval<span class="colon">:</span></dt>
+<dd class="field-odd"><p>“bmm350 is forced mode!”: Sensor is in forced mode.</p>
+</dd>
+<dt class="field-even">Retval<span class="colon">:</span></dt>
+<dd class="field-even"><p>“bmm350 is forced_fast mode!”: Sensor is in forced-fast mode.</p>
+</dd>
+<dt class="field-odd">Retval<span class="colon">:</span></dt>
+<dd class="field-odd"><p>“error mode!”: Unknown or error in power mode status.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.set_rate">
+<span class="sig-name descname"><span class="pre">set_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rates</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.set_rate" title="Link to this definition"></a></dt>
+<dd><p>Set the data output rate (ODR) for geomagnetic data.</p>
+<p>The ODR determines how frequently new data is available from the sensor
+when in normal mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rates</strong> (<em>int</em>) – The desired data rate identifier.</p>
+</dd>
+<dt class="field-even">Options rates<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_1_5625HZ</span></code> (1.5625 Hz)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_3_125HZ</span></code> (3.125 Hz)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_6_25HZ</span></code> (6.25 Hz)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_12_5HZ</span></code> (12.5 Hz, default rate)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_25HZ</span></code> (25 Hz)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_50HZ</span></code> (50 Hz)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_100HZ</span></code> (100 Hz)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_200HZ</span></code> (200 Hz)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_400HZ</span></code> (400 Hz)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_rate">
+<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_rate" title="Link to this definition"></a></dt>
+<dd><p>Get the configured data output rate (ODR).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current ODR in Hertz (Hz).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.set_preset_mode">
+<span class="sig-name descname"><span class="pre">set_preset_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">avg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.set_preset_mode" title="Link to this definition"></a></dt>
+<dd><p>Set a preset measurement mode combining averaging and ODR.</p>
+<p>This simplifies sensor configuration for common use cases by setting
+the number of averages and the output data rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>avg</strong> (<em>int</em>) – The averaging setting (number of measurements to average).</p></li>
+<li><p><strong>odr</strong> (<em>int</em><em>, </em><em>optional</em>) – The desired data output rate. Defaults to <code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_12_5HZ</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Options avg<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_AVERAGING_NO_AVG</span></code> (No averaging)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_AVERAGING_2_AVG</span></code> (2 averages)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_AVERAGING_4_AVG</span></code> (4 averages)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_AVERAGING_8_AVG</span></code> (8 averages)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Options odr<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_1_5625HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_3_125HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_6_25HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_12_5HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_25HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_50HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_100HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_200HZ</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DATA_RATE_400HZ</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.self_test">
+<span class="sig-name descname"><span class="pre">self_test</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.self_test" title="Link to this definition"></a></dt>
+<dd><p>Perform a sensor self-test by checking enabled axes.</p>
+<p>This method reads the axis enable register and reports which axes (X, Y, Z)
+are currently enabled for measurement. It does not perform a full
+functional self-test of the sensor hardware.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string indicating the self-test result based on enabled axes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Retval<span class="colon">:</span></dt>
+<dd class="field-odd"><p>“x y z aix test success”: If X, Y, and Z axes are enabled.</p>
+</dd>
+<dt class="field-even">Retval<span class="colon">:</span></dt>
+<dd class="field-even"><p>“&lt;axes&gt; aix test success”: If a subset of axes are enabled (e.g., “x y “).</p>
+</dd>
+<dt class="field-odd">Retval<span class="colon">:</span></dt>
+<dd class="field-odd"><p>“xyz aix self test fail”: If no axes are enabled.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.set_measurement_XYZ">
+<span class="sig-name descname"><span class="pre">set_measurement_XYZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">en_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">en_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">en_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.set_measurement_XYZ" title="Link to this definition"></a></dt>
+<dd><p>Enable or disable measurements for X, Y, and Z axes.</p>
+<p>Allows individual control over which magnetic axes are active.
+Disabling an axis will result in invalid data for that axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>en_x</strong> (<em>int</em><em>, </em><em>optional</em>) – Enable state for the X-axis. Defaults to <code class="docutils literal notranslate"><span class="pre">BMM350_X_EN</span></code>.</p></li>
+<li><p><strong>en_y</strong> (<em>int</em><em>, </em><em>optional</em>) – Enable state for the Y-axis. Defaults to <code class="docutils literal notranslate"><span class="pre">BMM350_Y_EN</span></code>.</p></li>
+<li><p><strong>en_z</strong> (<em>int</em><em>, </em><em>optional</em>) – Enable state for the Z-axis. Defaults to <code class="docutils literal notranslate"><span class="pre">BMM350_Z_EN</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Options en_x<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_X_EN</span></code>: Enable X-axis measurement.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_X_DIS</span></code>: Disable X-axis measurement.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Options en_y<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_Y_EN</span></code>: Enable Y-axis measurement.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_Y_DIS</span></code>: Disable Y-axis measurement.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Options en_z<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_Z_EN</span></code>: Enable Z-axis measurement.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_Z_DIS</span></code>: Disable Z-axis measurement.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_measurement_state_XYZ">
+<span class="sig-name descname"><span class="pre">get_measurement_state_XYZ</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_measurement_state_XYZ" title="Link to this definition"></a></dt>
+<dd><p>Get the current enable status for X, Y, and Z axes measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string describing the enable status of each axis.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Retval<span class="colon">:</span></dt>
+<dd class="field-odd"><p>“x-axis enabled, y-axis enabled, z-axis enabled.”</p>
+</dd>
+<dt class="field-even">Retval<span class="colon">:</span></dt>
+<dd class="field-even"><p>“x-axis disabled, y-axis disabled, z-axis disabled.”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_raw_magnetic_data_for_calibration">
+<span class="sig-name descname"><span class="pre">get_raw_magnetic_data_for_calibration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_raw_magnetic_data_for_calibration" title="Link to this definition"></a></dt>
+<dd><p>Get raw X, Y, Z magnetic data before OTP and software compensations.</p>
+<p>This method reads the raw 24-bit ADC values for the X, Y, and Z magnetic axes.
+It is intended for use during sensor calibration procedures to collect
+uncompensated data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list containing the raw signed integer values for [X, Y, Z].
+Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if the read operation fails or returns insufficient data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[int] or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_xyz">
+<span class="sig-name descname"><span class="pre">get_xyz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_xyz" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Get calibrated geomagnetic data (X, Y, Z) in microTeslas (µT) and update sensor temperature.</p>
+<p>This method performs the following steps:</p>
+</div></blockquote>
+<ol class="arabic simple">
+<li><p>Reads raw 24-bit data for X, Y, Z magnetic axes and temperature.</p></li>
+<li><p>Applies sign correction to the raw data.</p></li>
+<li><p>Stores raw LSB values in <cite>_raw_mag_data</cite>.</p></li>
+<li><p>Applies user-defined hard iron calibration offsets (<cite>_CALIBRATION_HARD_IRON</cite>).</p></li>
+<li><p>Applies user-defined soft iron calibration transformation (<cite>_CALIBRATION_SOFT_IRON_TRANSFORM</cite>).</p></li>
+<li><p>Scales the corrected vector to physical units (µT) using <cite>_LOCAL_EARTH_FIELD_UT</cite>.</p></li>
+<li><p>Stores the final calibrated X, Y, Z values in <cite>_mag_data</cite>.</p></li>
+<li><p>Calculates and updates the sensor temperature in <cite>_mag_data.temperature</cite> using OTP compensation values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List containing calibrated [X_µT, Y_µT, Z_µT].
+Returns a list of <code class="docutils literal notranslate"><span class="pre">BMM350_FLOAT_DATA_ERROR</span></code> (e.g., <cite>float(‘nan’)</cite>)
+for each component on failure to read sensor data.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[float]</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_x">
+<span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_x" title="Link to this definition"></a></dt>
+<dd><p>Get the calibrated X-axis geomagnetic data.</p>
+<p>This is a convenience method that calls <cite>get_xyz</cite> and returns only the X component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calibrated X-axis magnetic field strength in microTeslas (µT).
+Returns <code class="docutils literal notranslate"><span class="pre">BMM350_FLOAT_DATA_ERROR</span></code> if data retrieval fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_y">
+<span class="sig-name descname"><span class="pre">get_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_y" title="Link to this definition"></a></dt>
+<dd><p>Get the calibrated Y-axis geomagnetic data.</p>
+<p>This is a convenience method that calls <cite>get_xyz</cite> and returns only the Y component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calibrated Y-axis magnetic field strength in microTeslas (µT).
+Returns <code class="docutils literal notranslate"><span class="pre">BMM350_FLOAT_DATA_ERROR</span></code> if data retrieval fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_z">
+<span class="sig-name descname"><span class="pre">get_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_z" title="Link to this definition"></a></dt>
+<dd><p>Get the calibrated Z-axis geomagnetic data.</p>
+<p>This is a convenience method that calls <cite>get_xyz</cite> and returns only the Z component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calibrated Z-axis magnetic field strength in microTeslas (µT).
+Returns <code class="docutils literal notranslate"><span class="pre">BMM350_FLOAT_DATA_ERROR</span></code> if data retrieval fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_t">
+<span class="sig-name descname"><span class="pre">get_t</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_t" title="Link to this definition"></a></dt>
+<dd><p>Get the sensor temperature.</p>
+<p>This is a convenience method that calls <cite>get_xyz</cite> (which also calculates temperature)
+and returns the temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sensor temperature in degrees Celsius (°C).
+Returns <code class="docutils literal notranslate"><span class="pre">BMM350_FLOAT_DATA_ERROR</span></code> if data retrieval fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_compass_degree">
+<span class="sig-name descname"><span class="pre">get_compass_degree</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_compass_degree" title="Link to this definition"></a></dt>
+<dd><p>Get compass degree (yaw/heading) assuming the sensor’s XY plane is horizontal.</p>
+<p>Calculates the yaw angle based on the calibrated X and Y geomagnetic components.
+The angle is measured counter-clockwise from the sensor’s positive X-axis
+to the projection of the magnetic field vector in the XY plane.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This calculation is <strong>not</strong> tilt-compensated; To derive True North heading, apply your real-world
+declination constant post-function call.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is still in development, due to the complexity associated with hard-iron, soft-iron, and tilt
+compensation calibration.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Compass degree (0.0 to 360.0 degrees).
+Returns <code class="docutils literal notranslate"><span class="pre">BMM350_FLOAT_DATA_ERROR</span></code> (e.g., <cite>float(‘nan’)</cite>) if
+magnetometer data is invalid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.set_data_ready_pin">
+<span class="sig-name descname"><span class="pre">set_data_ready_pin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polarity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.set_data_ready_pin" title="Link to this definition"></a></dt>
+<dd><p>Configure the Data Ready (DRDY) interrupt pin.</p>
+<p>Enables or disables the DRDY interrupt and sets its polarity.
+When enabled, the DRDY pin signals when new data is available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modes</strong> (<em>int</em>) – Enable or disable the DRDY interrupt.</p></li>
+<li><p><strong>polarity</strong> (<em>int</em>) – Polarity of the DRDY interrupt pin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Options modes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_ENABLE_INTERRUPT</span></code>: Enable DRDY interrupt.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_DISABLE_INTERRUPT</span></code>: Disable DRDY interrupt.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Options polarity<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_ACTIVE_HIGH</span></code>: Active high polarity. Pin goes high on interrupt.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BMM350_ACTIVE_LOW</span></code>: Active low polarity. Pin goes low on interrupt.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_data_ready_state">
+<span class="sig-name descname"><span class="pre">get_data_ready_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_data_ready_state" title="Link to this definition"></a></dt>
+<dd><p>Get the data ready status from the interrupt status register.</p>
+<p>Checks if the DRDY (Data Ready) bit is set, indicating new data is available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if data is ready, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.set_threshold_interrupt">
+<span class="sig-name descname"><span class="pre">set_threshold_interrupt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polarity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.set_threshold_interrupt" title="Link to this definition"></a></dt>
+<dd><p>Configure the threshold interrupt.</p>
+<p>Sets up an interrupt that triggers when the geomagnetic value of a channel
+crosses a defined threshold (either low or high).
+The threshold value is effectively scaled by 16 internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modes</strong> (<em>int</em>) – The type of threshold interrupt.</p></li>
+<li><p><strong>threshold</strong> (<em>int</em><em> or </em><em>float</em>) – The threshold value. The actual trigger threshold will be <cite>threshold * 16</cite>.</p></li>
+<li><p><strong>polarity</strong> (<em>int</em>) – Polarity of the interrupt pin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Options modes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LOW_THRESHOLD_INTERRUPT</span></code>: Interrupt when data is below the threshold.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HIGH_THRESHOLD_INTERRUPT</span></code>: Interrupt when data is above the threshold (Note: current implementation logic for HIGH seems same as LOW, review needed).</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Options polarity<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">POLARITY_HIGH</span></code> (or <code class="docutils literal notranslate"><span class="pre">BMM350_ACTIVE_HIGH</span></code>): Active high.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">POLARITY_LOW</span></code> (or <code class="docutils literal notranslate"><span class="pre">BMM350_ACTIVE_LOW</span></code>): Active low.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.get_threshold_data">
+<span class="sig-name descname"><span class="pre">get_threshold_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.get_threshold_data" title="Link to this definition"></a></dt>
+<dd><p>Get the data that caused a threshold interrupt.</p>
+<p>If a threshold interrupt has occurred (checked via <cite>get_data_ready_state</cite>),
+this method returns the geomagnetic data components (X, Y, Z) that crossed
+the configured threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of three elements. Each element is the magnetic data for an axis (X, Y, Z)
+if it triggered the interrupt, otherwise it’s <code class="docutils literal notranslate"><span class="pre">NO_DATA</span></code>.
+Example: <cite>[mag_x, NO_DATA, mag_z]</cite> if X and Z triggered the interrupt.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[float or int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.is_raspberrypi">
+<span class="sig-name descname"><span class="pre">is_raspberrypi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.is_raspberrypi" title="Link to this definition"></a></dt>
+<dd><p>Check if the current platform is a Raspberry Pi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if a Raspberry Pi is detected, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.test_platform">
+<span class="sig-name descname"><span class="pre">test_platform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.test_platform" title="Link to this definition"></a></dt>
+<dd><p>Detects the platform (Linux or Windows) and initializes the I2C bus accordingly.</p>
+<p>For Linux, it attempts to find an <cite>i2c-tiny-usb</cite> adapter if a standard bus is not found.
+For Windows, it uses <cite>i2c_mp_usb</cite>.
+Prints a message if the platform is not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.write_reg">
+<span class="sig-name descname"><span class="pre">write_reg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.write_reg" title="Link to this definition"></a></dt>
+<dd><p>Writes a byte of data to a specified register.</p>
+<p>Handles I2C communication errors by printing a message and retrying after a delay.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg</strong> (<em>int</em>) – The register address to write to.</p></li>
+<li><p><strong>data</strong> (<em>int</em>) – The byte of data to write.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blimputils.magnetometer.Magnetometer.read_reg">
+<span class="sig-name descname"><span class="pre">read_reg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blimputils.magnetometer.Magnetometer.read_reg" title="Link to this definition"></a></dt>
+<dd><p>Reads a specified number of bytes from a register.</p>
+<p>Handles I2C communication, including dummy bytes if required by the BMM350 protocol.
+Retries on exception.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg</strong> (<em>int</em>) – The register address to read from.</p></li>
+<li><p><strong>len</strong> (<em>int</em>) – The number of bytes to read (excluding dummy bytes).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of bytes read from the register.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="blimputils.gyroscope.html" class="btn btn-neutral float-left" title="blimputils.gyroscope" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="blimputils.motor.html" class="btn btn-neutral float-right" title="blimputils.motor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Eli Ferrara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
