@@ -301,25 +301,53 @@ class Magnetometer(object):
   :type addr: int
   """
   I2C_MODE = 1
-  def __init__(self, bus=1, addr=0x14):
+  def __init__(self, bus=1, addr=0x14, retry_init=True, max_retries=10, retry_delay=1.0):
     """
     Initialize the BMM350 sensor.
 
-    Sets up I2C communication based on the detected platform (Raspberry Pi or other Linux/Windows).
+    Sets up I2C communication and automatically retries sensor initialization until successful.
 
     :param bus: The I2C bus number.
     :type bus: int
     :param addr: The I2C address of the BMM350 sensor.
     :type addr: int
+    :param retry_init: Whether to automatically retry initialization on failure.
+    :type retry_init: bool
+    :param max_retries: Maximum number of retry attempts. None for unlimited retries.
+    :type max_retries: int or None
+    :param retry_delay: Delay in seconds between retry attempts.
+    :type retry_delay: float
     """
     self.__i2c_i3c = self.I2C_MODE
     self.bus = bus
     self.__addr = addr
+    
     if self.is_raspberrypi():
       import smbus
       self.i2cbus = smbus.SMBus(bus)
     else:
       self.test_platform()
+
+    # Automatic sensor initialization with retry logic
+    if retry_init:
+        retry_count = 0
+        while True:
+            init_result = self.sensor_init()
+            if init_result == BMM350_OK:
+                print("BMM350 sensor initialized successfully!")
+                break
+            else:
+                retry_count += 1
+                if max_retries is not None and retry_count >= max_retries:
+                    raise RuntimeError(f"Failed to initialize BMM350 sensor after {max_retries} attempts. Please check connection.")
+                
+                print(f"Sensor init error (attempt {retry_count}), retrying in {retry_delay}s...")
+                time.sleep(retry_delay)
+    else:
+        # Single initialization attempt without retries
+        init_result = self.sensor_init()
+        if init_result != BMM350_OK:
+            raise RuntimeError("Failed to initialize BMM350 sensor. Check connection or set retry_init=True for automatic retries.")
 
   def BMM350_SET_BITS(self, reg_data, bitname_msk, bitname_pos, data):
     """
