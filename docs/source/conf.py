@@ -48,7 +48,15 @@ html_favicon = '_static/favicon.ico'
 html_title = 'blimp-utils Documentation'
 
 # -- Options for autodoc -----------------------------------------------------
-autodoc_mock_imports = ["RPi.GPIO", "RPi", "smbus2", "serial"] # Mock hardware-specific libraries
+autodoc_mock_imports = [
+    "RPi.GPIO", 
+    "RPi", 
+    "smbus2", 
+    "smbus",
+    "serial",
+    "pigpio",
+    "i2c_mp_usb"
+] # Mock hardware-specific libraries
 autodoc_member_order = 'bysource' # Optional: Order members by source order
 
 # -- Options for MyST Parser -------------------------------------------------
