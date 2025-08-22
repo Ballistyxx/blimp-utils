@@ -334,6 +334,7 @@ class Magnetometer(object):
         while True:
             init_result = self.sensor_init()
             if init_result == BMM350_OK:
+                self.set_operation_mode(BMM350_NORMAL_MODE)
                 print("BMM350 sensor initialized successfully!")
                 break
             else:
@@ -348,6 +349,8 @@ class Magnetometer(object):
         init_result = self.sensor_init()
         if init_result != BMM350_OK:
             raise RuntimeError("Failed to initialize BMM350 sensor. Check connection or set retry_init=True for automatic retries.")
+        self.set_operation_mode(BMM350_NORMAL_MODE)
+        
 
   def BMM350_SET_BITS(self, reg_data, bitname_msk, bitname_pos, data):
     """
@@ -771,7 +774,7 @@ class Magnetometer(object):
     return result
 
 
-  def set_preset_mode(self, avg, odr = BMM350_DATA_RATE_12_5HZ):
+  def set_preset_mode(self, avg = BMM350_AVERAGING_2, odr = BMM350_DATA_RATE_12_5HZ):
     """
     Set a preset measurement mode combining averaging and ODR.
 
